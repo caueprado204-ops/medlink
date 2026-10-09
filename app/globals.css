@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    @apply bg-canvas font-sans text-base text-ink antialiased;
+    font-feature-settings: "tnum" 1, "cv11" 1;
+  }
+  h1, h2, h3 { @apply font-semibold tracking-[-0.01em] text-navy; }
+  :focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; border-radius: 4px; }
+  ::selection { background: #D1FAE5; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
+
+@layer components {
+  .panel { @apply rounded-md border border-line bg-white; }
+  .input {
+    @apply block w-full rounded border border-line bg-white px-3 py-2 text-base text-ink placeholder:text-ink-faint
+           transition-colors hover:border-[#C9D2DD] focus:border-teal focus:outline-none focus:ring-2 focus:ring-teal/15
+           disabled:cursor-not-allowed disabled:bg-canvas aria-[invalid=true]:border-danger;
+  }
+  .label { @apply mb-1 block text-sm font-medium text-ink; }
+  .hint { @apply mt-1 text-xs text-ink-faint; }
+  .table-head { @apply border-b border-line px-4 py-2.5 text-left text-xs font-medium text-ink-soft; }
+  .table-cell { @apply border-b border-line px-4 py-3 align-middle; }
+}
