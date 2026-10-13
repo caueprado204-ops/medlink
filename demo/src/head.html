@@ -1,0 +1,55 @@
+<title>MedLink</title>
+<meta name="description" content="MedLink: escalas, equipes, vacinação, estoque e financeiro para instituições de saúde. Demonstração navegável com dados fictícios.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Manrope:wght@300;400;500;600;700;800&display=swap">
+<style>
+/* Layout: app em "aparelho" grafite com navegação em pílulas e acento verde-limão; apresentação em azul-cobalto com tipografia larga gigante. */
+:root{
+  --c-bg:233 234 238; --c-panel:255 255 255; --c-panel2:243 244 246; --c-line:222 224 229; --c-ink:22 24 28; --c-soft:88 93 104; --c-faint:128 133 143;
+  --c-navy:12 13 15; --c-onnavy:255 255 255; --c-lime:197 247 58; --c-onlime:18 20 12; --c-teal:72 112 8; --c-tealsoft:236 251 205;
+  --c-sky:224 234 255; --c-skyink:30 70 200; --c-amber:168 92 0; --c-amberbg:255 241 210; --c-danger:196 40 30; --c-dangerbg:255 229 225;
+  --c-cobalt:28 62 228; --c-cobaltdeep:18 40 170; --c-mint:236 251 205;
+  --font-ui:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif; --font-display:"Archivo","Arial Black",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --c-bg:18 19 22; --c-panel:31 33 38; --c-panel2:42 44 50; --c-line:52 55 62; --c-ink:238 240 243; --c-soft:162 166 175; --c-faint:115 119 128;
+  --c-navy:255 255 255; --c-onnavy:16 17 19; --c-teal:197 247 58; --c-tealsoft:46 56 22;
+  --c-sky:30 42 70; --c-skyink:150 185 255; --c-amber:255 192 84; --c-amberbg:62 46 16; --c-danger:255 122 110; --c-dangerbg:72 28 25; --c-mint:46 56 22; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --c-bg:18 19 22; --c-panel:31 33 38; --c-panel2:42 44 50; --c-line:52 55 62; --c-ink:238 240 243; --c-soft:162 166 175; --c-faint:115 119 128;
+  --c-navy:255 255 255; --c-onnavy:16 17 19; --c-teal:197 247 58; --c-tealsoft:46 56 22;
+  --c-sky:30 42 70; --c-skyink:150 185 255; --c-amber:255 192 84; --c-amberbg:62 46 16; --c-danger:255 122 110; --c-dangerbg:72 28 25; --c-mint:46 56 22; color-scheme:dark;
+}
+html,body{min-height:100%}
+body{background:rgb(var(--c-bg));color:rgb(var(--c-ink));font-family:var(--font-ui);font-size:15px;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+#root{min-height:100%}
+h1,h2,h3{text-wrap:balance}
+.display{font-family:var(--font-display);font-stretch:125%;font-weight:900;letter-spacing:-0.035em;line-height:.86;text-transform:uppercase}
+.display-n{font-family:var(--font-display);font-stretch:112%;font-weight:800;letter-spacing:-0.02em}
+.thin{font-weight:300;letter-spacing:-0.02em}
+.label-up{text-transform:uppercase;letter-spacing:.08em;font-size:.72rem;font-weight:700}
+:focus-visible{outline:2px solid rgb(var(--c-lime));outline-offset:2px;border-radius:10px}
+dialog::backdrop{background:rgb(8 9 11 / .55);backdrop-filter:blur(3px)}
+@keyframes slidein{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(var(--r,0deg))}50%{transform:translateY(-10px) rotate(var(--r,0deg))}}
+@keyframes draw{from{stroke-dashoffset:600}to{stroke-dashoffset:0}}
+.anim{animation:slidein .18s ease-out}
+.spin{animation:spin 18s linear infinite}
+.floaty{animation:floaty 6s ease-in-out infinite}
+.draw{stroke-dasharray:600;animation:draw 1.4s .2s ease-out both}
+.grid-bg{background-image:linear-gradient(rgb(255 255 255 / .07) 1px,transparent 1px),linear-gradient(90deg,rgb(255 255 255 / .07) 1px,transparent 1px);background-size:56px 56px}
+.glass{background:rgb(255 255 255 / .16);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgb(255 255 255 / .35)}
+.hatch{background-image:repeating-linear-gradient(135deg,rgb(var(--c-line)) 0 1px,transparent 1px 9px)}
+.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+#boot{padding:48px 16px;color:rgb(var(--c-soft))}
+</style>
+/*TAILWIND*/
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
+<script>try{var t=localStorage.getItem('medlink-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<div id="root"><p id="boot">Carregando a MedLink…</p></div>

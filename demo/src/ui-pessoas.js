@@ -1,0 +1,161 @@
+/* ------------------------------------------------------------------ profissionais */
+function Profissionais(){
+  const {S,u,go}=useApp();const [q,setQ]=useState('');const [cat,setCat]=useState('');const [v,setV]=useState('');const [nw,setNw]=useState(false);
+  const rows=S.profs.filter(p=>(!q||(p.name+' '+p.num).toLowerCase().includes(q.toLowerCase()))&&(!cat||p.cat===cat)&&(!v||p.validation===v)).sort((a,b)=>a.name.localeCompare(b.name));
+  const T=today(),ws=weekStart(T);
+  const wh=pid=>S.asg.filter(a=>a.prof===pid&&ACTIVE(a.status)).map(a=>shiftOf(S,a.shift)).filter(s=>s.status!=='cancelado'&&dkey(s.start)>=ws&&dkey(s.start)<addDays(ws,7)).reduce((t,s)=>t+hours(s.start,s.end,s.brk),0);
+  return html`<div><${PageHead} title="Profissionais" desc="Equipe assistencial, validação de cadastro, competências e carga da semana." actions=${can(S,u,'professionals.manage')&&html`<${Btn} v="lime" icon="plus" onClick=${()=>setNw(true)}>Novo profissional<//>`}/>
+    <div className="mb-4 grid gap-2 sm:grid-cols-[2fr_1fr_1fr]">
+      <input id="pq" className=${inputCls+' bg-panel'} placeholder="Buscar por nome ou registro" aria-label="Buscar" value=${q} onInput=${e=>setQ(e.target.value)}/>
+      <select id="pc" className=${inputCls+' bg-panel'} aria-label="Categoria" value=${cat} onChange=${e=>setCat(e.target.value)}><option value="">Todas as categorias</option>${Object.entries(CAT).map(([k,l])=>html`<option key=${k} value=${k}>${l}</option>`)}</select>
+      <select id="pv" className=${inputCls+' bg-panel'} aria-label="Validação" value=${v} onChange=${e=>setV(e.target.value)}><option value="">Qualquer validação</option>${Object.entries(VST).map(([k,l])=>html`<option key=${k} value=${k}>${l[0]}</option>`)}</select></div>
+    ${rows.length===0?html`<${Empty} title="Nenhum profissional encontrado"/>`:html`<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">${rows.map(p=>{const h=wh(p.id),lim=p.maxWeek||S.rules.week;return html`<button key=${p.id} onClick=${()=>go({page:'prof',id:p.id})} className=${cx('group rounded-[26px] bg-panel p-5 text-left shadow-[0_1px_0_rgb(var(--c-line))] transition hover:ring-2 hover:ring-lime',!p.active&&'opacity-60')}>
+      <div className="flex items-start gap-3"><${Avatar} name=${p.name} size=${46}/><div className="min-w-0 flex-1"><p className="truncate font-bold">${p.name}</p><p className="text-[13px] text-soft">${CAT[p.cat]}</p><p className="text-xs text-faint">${p.council} ${p.num}/${p.uf}</p></div><${Icon} n="ur" className="text-faint group-hover:text-teal"/></div>
+      <div className="mt-4 flex flex-wrap gap-1.5"><${Badge} tone=${VST[p.validation][1]}>${VST[p.validation][0]}<//>${!p.active&&html`<${Badge}>Inativo<//>`}${S.users.some(x=>x.prof===p.id)&&html`<${Badge} tone="sky">Usa a Minha área<//>`}</div>
+      <div className="mt-4"><div className="mb-1 flex justify-between text-[12px] text-faint"><span>Semana</span><span>${fmtH(h)} de ${fmtH(lim)}</span></div><div className="h-2 rounded-full bg-panel2"><div className=${cx('h-full rounded-full',h>lim?'bg-amber':'bg-lime')} style=${{width:Math.min(100,h/lim*100)+'%'}}></div></div></div></button>`})}</div>`}
+    ${nw&&html`<${Modal} open wide onClose=${()=>setNw(false)} title="Novo profissional" desc="O cadastro começa com validação pendente até a verificação dos documentos."><${ProfForm} onDone=${id=>{setNw(false);if(id)go({page:'prof',id})}}/><//>`}</div>`;
+}
+function ProfForm({p,onDone}){
+  const {S,run}=useApp();const [f,setF]=useState(()=>p?{...p,comps:p.comps.join(', ')}:{name:'',cat:'',council:'',num:'',uf:'SP',email:'',phone:'',comps:'',units:[]});
+  const [err,setErr]=useState(null);const set=k=>e=>setF({...f,[k]:e.target.value});
+  const submit=e=>{e.preventDefault();const r=run((D,U)=>A.saveProf(D,U,{...f,comps:f.comps.split(',').map(x=>x.trim()).filter(Boolean)}),p?'Cadastro atualizado.':'Profissional cadastrado.');if(r.ok)onDone&&onDone(r.data);else setErr(r.msg)};
+  return html`<form onSubmit=${submit} className="grid gap-4 sm:grid-cols-6">
+    <${Field} label="Nome completo" id="pf-n" className="sm:col-span-4"><input id="pf-n" required className=${inputCls} value=${f.name} onInput=${set('name')}/><//>
+    <${Field} label="Categoria" id="pf-c" className="sm:col-span-2"><select id="pf-c" required className=${inputCls} value=${f.cat} onChange=${e=>setF({...f,cat:e.target.value,council:COUNCIL[e.target.value]||''})}><option value="" disabled>Selecione</option>${Object.entries(CAT).map(([k,l])=>html`<option key=${k} value=${k}>${l}</option>`)}</select><//>
+    <${Field} label="E-mail" id="pf-e" className="sm:col-span-3"><input id="pf-e" type="email" className=${inputCls} value=${f.email} onInput=${set('email')}/><//>
+    <${Field} label="Telefone" id="pf-t" className="sm:col-span-3"><input id="pf-t" className=${inputCls} value=${f.phone} onInput=${set('phone')}/><//>
+    <${Field} label="Conselho" id="pf-co" className="sm:col-span-2"><input id="pf-co" className=${inputCls} value=${f.council} onInput=${set('council')}/><//>
+    <${Field} label="Número do registro" id="pf-nu" className="sm:col-span-3"><input id="pf-nu" className=${inputCls} value=${f.num} onInput=${set('num')}/><//>
+    <${Field} label="UF" id="pf-uf" className="sm:col-span-1"><input id="pf-uf" maxLength="2" className=${inputCls+' uppercase'} value=${f.uf} onInput=${set('uf')}/><//>
+    <${Field} label="Competências" id="pf-cp" hint="Separe por vírgula. São comparadas com as exigidas em cada plantão." className="sm:col-span-6"><input id="pf-cp" className=${inputCls} value=${f.comps} onInput=${set('comps')}/><//>
+    <fieldset className="sm:col-span-6"><legend className="mb-1.5 text-[13px] font-semibold text-soft">Unidades em que atua (vazio = qualquer)</legend><div className="flex flex-wrap gap-2">${S.units.map(x=>html`<label key=${x.id} className=${cx('cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-semibold',f.units.includes(x.id)?'bg-lime text-onlime':'bg-panel2')}><input type="checkbox" className="sr-only" checked=${f.units.includes(x.id)} onChange=${e=>setF({...f,units:e.target.checked?[...f.units,x.id]:f.units.filter(y=>y!==x.id)})}/>${x.name}</label>`)}</div></fieldset>
+    ${err&&html`<p role="alert" className="rounded-2xl bg-dangerbg px-4 py-2.5 text-sm text-danger sm:col-span-6">${err}</p>`}
+    <div className="flex justify-end sm:col-span-6"><${Btn} type="submit" v="lime">${p?'Salvar alterações':'Cadastrar profissional'}<//></div></form>`;
+}
+function ProfDetail({id}){
+  const {S,u,run,go}=useApp();const p=profOf(S,id);const [edit,setEdit]=useState(false);
+  if(!p)return html`<${Empty} title="Profissional não encontrado"/>`;
+  const manage=can(S,u,'professionals.manage');
+  const asg=S.asg.filter(a=>a.prof===id).map(a=>({a,s:shiftOf(S,a.shift)})).sort((x,y)=>y.s.start.localeCompare(x.s.start)).slice(0,10);
+  return html`<div className="space-y-5"><${PageHead} back=${()=>go({page:'profissionais'})} title=${p.name} desc=${`${CAT[p.cat]}, ${p.council} ${p.num}/${p.uf}`}
+    actions=${html`${can(S,u,'documents.verify')&&html`<select id="val" aria-label="Validação" className=${inputCls+' h-10 w-48 bg-panel py-1.5'} value=${p.validation} onChange=${e=>run((D,U)=>A.validate(D,U,id,e.target.value),'Situação de validação atualizada.')}>${Object.entries(VST).map(([k,l])=>html`<option key=${k} value=${k}>${l[0]}</option>`)}</select>`}
+      ${manage&&html`<${Btn} icon="pencil" onClick=${()=>setEdit(true)}>Editar<//><${Btn} v=${p.active?'danger':'soft'} onClick=${()=>run((D,U)=>A.setActive(D,U,id,!p.active),p.active?'Profissional desativado. Plantões já publicados não mudam.':'Profissional reativado.')}>${p.active?'Desativar':'Reativar'}<//>`}`}/>
+    <div className="grid gap-3 sm:grid-cols-4">${[['Validação',html`<${Badge} tone=${VST[p.validation][1]}>${VST[p.validation][0]}<//>`],['E-mail',p.email||'Não informado'],['Telefone',p.phone||'Não informado'],['Unidades',p.units.length?p.units.map(x=>unitOf(S,x).name).join(', '):'Qualquer unidade']].map(([k,v])=>html`<div key=${k} className="rounded-[22px] bg-panel p-4 shadow-[0_1px_0_rgb(var(--c-line))]"><p className="text-[12px] text-faint">${k}</p><div className="mt-1 truncate text-sm font-semibold">${v}</div></div>`)}</div>
+    <${Card} title="Competências"><div className="flex flex-wrap gap-2">${p.comps.length?p.comps.map(c=>html`<${Badge} key=${c} tone="ink" className="px-3 py-1 text-[13px]">${c}<//>`):html`<span className="text-sm text-soft">Não informadas</span>`}</div><//>
+    <div className="grid gap-5 xl:grid-cols-2"><${Card} title="Disponibilidade"><${Avail} p=${p} readOnly=${!manage}/><//>
+      <div className="space-y-5"><${Card} title="Férias e afastamentos"><${Absences} p=${p} readOnly=${!manage}/><//>
+        <${Card} title="Plantões recentes">${asg.length===0?html`<p className="text-sm text-soft">Nenhum plantão atribuído.</p>`:html`<ul className="space-y-1.5">${asg.map(({a,s})=>html`<li key=${a.id}><button onClick=${()=>go({page:'escalas',shift:s.id,d:dkey(s.start)})} className="flex w-full items-center gap-3 rounded-[18px] bg-panel2 px-3.5 py-2.5 text-left text-sm hover:ring-2 hover:ring-lime">
+          <span className="w-40 shrink-0 font-semibold">${cap(F(s.start,{weekday:'short',day:'2-digit',month:'2-digit'}))} ${hm(s.start)}</span><span className="min-w-0 flex-1 truncate text-soft">${unitOf(S,s.unit).name}</span><${Badge} tone=${AST[a.status][1]}>${AST[a.status][0]}<//></button></li>`)}</ul>`}<//></div></div>
+    ${edit&&html`<${Modal} open wide onClose=${()=>setEdit(false)} title="Editar cadastro"><${ProfForm} p=${p} onDone=${()=>setEdit(false)}/><//>`}</div>`;
+}
+function Avail({p,readOnly}){
+  const {run}=useApp();const [slots,setSlots]=useState(p.avail.map(x=>({...x})));const [max,setMax]=useState(p.maxWeek||'');const [dirty,setDirty]=useState(false);
+  const upd=fn=>{setSlots(fn);setDirty(true)};
+  return html`<div className="space-y-4"><p className="text-sm text-soft">Disponibilidade não é escala: alterar aqui não muda plantões já publicados.</p>
+    <div className="space-y-1.5">${[1,2,3,4,5,6,0].map(w=>{const ds=slots.map((s,i)=>({s,i})).filter(x=>x.s.wd===w);return html`<div key=${w} className="flex flex-wrap items-center gap-2 rounded-[18px] bg-panel2 px-3 py-2">
+      <span className="w-20 text-sm font-bold">${WD[w]}</span>${!ds.length&&html`<span className="text-sm text-faint">Indisponível</span>`}
+      ${ds.map(({s,i})=>html`<span key=${i} className="inline-flex items-center gap-1 rounded-full bg-panel px-2.5 py-1">
+        <input type="time" aria-label="Início" className="w-[5.4rem] bg-transparent text-sm" disabled=${readOnly} value=${s.s} onChange=${e=>upd(xs=>xs.map((x,j)=>j===i?{...x,s:e.target.value}:x))}/><span className="text-faint">às</span>
+        <input type="time" aria-label="Término" className="w-[5.4rem] bg-transparent text-sm" disabled=${readOnly} value=${s.e} onChange=${e=>upd(xs=>xs.map((x,j)=>j===i?{...x,e:e.target.value}:x))}/>
+        ${!readOnly&&html`<button className="text-faint hover:text-danger" aria-label="Remover faixa" onClick=${()=>upd(xs=>xs.filter((_,j)=>j!==i))}><${Icon} n="x" s=${14}/></button>`}</span>`)}
+      ${!readOnly&&html`<button className="ml-auto inline-flex items-center gap-1 rounded-full bg-panel px-3 py-1 text-[13px] font-semibold hover:bg-lime hover:text-onlime" onClick=${()=>upd(xs=>[...xs,{wd:w,s:'07:00',e:'19:00'}])}><${Icon} n="plus" s=${12}/>Faixa</button>`}</div>`})}</div>
+    <div className="flex flex-wrap items-end gap-3"><${Field} label="Carga semanal máxima (h)" id=${'mx'+p.id} hint="Vazio = referência da instituição."><input id=${'mx'+p.id} type="number" min="1" max="168" disabled=${readOnly} className=${inputCls+' w-40'} value=${max} onInput=${e=>{setMax(e.target.value);setDirty(true)}}/><//>
+      ${!readOnly&&html`<${Btn} v="lime" className="ml-auto" disabled=${!dirty} onClick=${()=>{const r=run((D,U)=>A.availability(D,U,p.id,slots,+max||null),'Disponibilidade salva. Plantões publicados não mudaram.');if(r.ok)setDirty(false)}}>Salvar disponibilidade<//>`}</div></div>`;
+}
+function Absences({p,readOnly}){
+  const {S,run}=useApp();const list=S.abs.filter(a=>a.prof===p.id).sort((a,b)=>b.from.localeCompare(a.from));
+  const [k,setK]=useState('ferias');const [from,setFrom]=useState('');const [to,setTo]=useState('');const [n,setN]=useState('');
+  return html`<div className="space-y-4">${list.length===0?html`<p className="text-sm text-soft">Nenhum período registrado.</p>`:html`<ul className="space-y-1.5">${list.map(a=>html`<li key=${a.id} className="flex items-center gap-3 rounded-[18px] bg-panel2 px-3.5 py-2.5 text-sm">
+      <${Badge} tone=${a.kind==='indisponivel'?'amber':'sky'}>${ABS[a.kind]}<//><span>${D2(a.from)} a ${F(a.to,{day:'2-digit',month:'2-digit',year:'numeric'})}</span>${a.note&&html`<span className="hidden truncate text-faint sm:inline">${a.note}</span>`}
+      ${!readOnly&&html`<button className="ml-auto text-faint hover:text-danger" aria-label="Remover período" onClick=${()=>run((D,U)=>A.absenceRm(D,U,a.id),'Período removido.')}><${Icon} n="trash"/></button>`}</li>`)}</ul>`}
+    ${!readOnly&&html`<div className="grid gap-3 rounded-[22px] bg-panel2 p-3 sm:grid-cols-3">
+      <${Field} label="Tipo" id=${'ak'+p.id}><select id=${'ak'+p.id} className=${inputCls+' bg-panel'} value=${k} onChange=${e=>setK(e.target.value)}>${Object.entries(ABS).map(([x,l])=>html`<option key=${x} value=${x}>${l}</option>`)}</select><//>
+      <${Field} label="De" id=${'af'+p.id}><input id=${'af'+p.id} type="date" className=${inputCls+' bg-panel'} value=${from} onChange=${e=>{setFrom(e.target.value);if(!to)setTo(e.target.value)}}/><//>
+      <${Field} label="Até" id=${'at'+p.id}><input id=${'at'+p.id} type="date" className=${inputCls+' bg-panel'} value=${to} onChange=${e=>setTo(e.target.value)}/><//>
+      <${Field} label="Observação" id=${'an'+p.id} className="sm:col-span-2"><input id=${'an'+p.id} className=${inputCls+' bg-panel'} value=${n} onInput=${e=>setN(e.target.value)}/><//>
+      <div className="flex items-end"><${Btn} v="lime" className="w-full" disabled=${!from||!to} onClick=${()=>{const r=run((D,U)=>A.absence(D,U,p.id,k,from,to,n),'Período registrado. Plantões publicados não mudam: peça substituição se precisar.');if(r.ok){setFrom('');setTo('');setN('')}}}>Registrar<//></div></div>`}
+    <p className="text-xs text-faint">Férias, licenças e afastamentos impedem novas escalas. “Indisponível” só gera alerta para a gestão.</p></div>`;
+}
+
+/* ------------------------------------------------------------------ banco de talentos */
+const TST={disponivel:['Disponível','neutral'],convidado:['Convidado','sky'],em_analise:['Em análise','amber'],selecionado:['Selecionado','teal'],recusado:['Não seguiu','danger']};
+function Talentos(){
+  const {S,run}=useApp();const [cat,setCat]=useState('');const [nw,setNw]=useState(false);const [f,setF]=useState({title:'',unit:'u1',cat:'tecnico_enfermagem',period:'',slots:1});
+  const list=S.cands.filter(c=>!cat||c.cat===cat);
+  const next={disponivel:['convidado','Convidar'],convidado:['em_analise','Iniciar análise'],em_analise:['selecionado','Selecionar']};
+  return html`<div className="space-y-5"><${PageHead} title="Banco de talentos" desc="Profissionais que aceitaram aparecer no banco. Dados de contato só são liberados depois que a pessoa aceita o convite." actions=${html`<${Btn} v="lime" icon="plus" onClick=${()=>setNw(true)}>Publicar oportunidade<//>`}/>
+    <div className="grid gap-3 sm:grid-cols-4">${Object.entries(TST).slice(0,4).map(([k,[l]])=>html`<${Stat} key=${k} label=${l} value=${S.cands.filter(c=>c.status===k).length}/>`)}</div>
+    <div className="grid gap-5 xl:grid-cols-[1.6fr_1fr]">
+      <${Card} title="Profissionais no banco" action=${html`<${Seg} size="sm" items=${[['','Todos'],['tecnico_enfermagem','Técnicos'],['enfermeiro','Enfermeiros']]} value=${cat} onChange=${setCat}/>`}>
+        <div className="grid gap-3 md:grid-cols-2">${list.map(c=>html`<article key=${c.id} className="rounded-[24px] bg-panel2 p-4">
+          <div className="flex items-start gap-3"><${Avatar} name=${c.name} size=${42}/><div className="min-w-0 flex-1"><p className="font-bold">${c.name}</p><p className="text-[13px] text-soft">${CAT[c.cat]}</p></div><${Badge} tone=${TST[c.status][1]}>${TST[c.status][0]}<//></div>
+          <p className="mt-3 flex items-center gap-1.5 text-[13px] text-soft"><${Icon} n="pin" s=${13}/>${c.region}</p><p className="mt-1 flex items-center gap-1.5 text-[13px] text-soft"><${Icon} n="clock" s=${13}/>${c.avail}</p>
+          <div className="mt-3 flex flex-wrap gap-1">${c.comps.map(x=>html`<span key=${x} className="rounded-full bg-panel px-2.5 py-0.5 text-[11px] font-semibold">${x}</span>`)}</div>
+          ${next[c.status]&&html`<div className="mt-4 flex gap-2"><${Btn} size="sm" v="lime" onClick=${()=>run((D,U)=>A.talent(D,U,c.id,next[c.status][0]),`${c.name}: ${TST[next[c.status][0]][0].toLowerCase()}.`)}>${next[c.status][1]}<//>${c.status!=='disponivel'&&html`<${Btn} size="sm" className="bg-panel" onClick=${()=>run((D,U)=>A.talent(D,U,c.id,'recusado'),'Processo encerrado.')}>Encerrar<//>`}</div>`}</article>`)}</div><//>
+      <${Card} title="Oportunidades abertas"><ul className="space-y-2">${S.opps.map(o=>html`<li key=${o.id} className="rounded-[22px] bg-navy p-4 text-onnavy"><p className="font-bold">${o.title}</p><p className="mt-1 text-[13px] opacity-75">${unitOf(S,o.unit).name}, ${o.period}</p>
+        <div className="mt-3 flex items-center justify-between"><span className="rounded-full bg-lime px-3 py-1 text-xs font-bold text-onlime">${o.slots} ${o.slots===1?'vaga':'vagas'}</span><span className="text-xs opacity-70">${CAT[o.cat]}</span></div></li>`)}</ul>
+        <p className="mt-3 text-xs text-faint">Cadastro no banco não cria vínculo de trabalho nem autoriza compartilhar dados sem consentimento.</p><//></div>
+    ${nw&&html`<${Modal} open onClose=${()=>setNw(false)} title="Publicar oportunidade" footer=${html`<${Btn} onClick=${()=>setNw(false)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const r=run((D,U)=>A.opp(D,U,f),'Oportunidade publicada.');if(r.ok)setNw(false)}}>Publicar<//>`}>
+      <div className="grid gap-4"><${Field} label="Título" id="op-t"><input id="op-t" className=${inputCls} value=${f.title} onInput=${e=>setF({...f,title:e.target.value})}/><//>
+        <div className="grid gap-4 sm:grid-cols-2"><${Field} label="Unidade" id="op-u"><select id="op-u" className=${inputCls} value=${f.unit} onChange=${e=>setF({...f,unit:e.target.value})}>${S.units.map(x=>html`<option key=${x.id} value=${x.id}>${x.name}</option>`)}</select><//>
+          <${Field} label="Categoria" id="op-c"><select id="op-c" className=${inputCls} value=${f.cat} onChange=${e=>setF({...f,cat:e.target.value})}>${Object.entries(CAT).map(([k,l])=>html`<option key=${k} value=${k}>${l}</option>`)}</select><//></div>
+        <div className="grid gap-4 sm:grid-cols-[2fr_1fr]"><${Field} label="Período" id="op-p"><input id="op-p" className=${inputCls} placeholder="Ex.: manhãs, segunda a sexta" value=${f.period} onInput=${e=>setF({...f,period:e.target.value})}/><//>
+          <${Field} label="Vagas" id="op-s"><input id="op-s" type="number" min="1" className=${inputCls} value=${f.slots} onInput=${e=>setF({...f,slots:e.target.value})}/><//></div></div><//>`}</div>`;
+}
+
+/* ------------------------------------------------------------------ equipe */
+function Equipe(){
+  const {S,u,run}=useApp();const [st,setSt]=useState(S.rolePerms);const [dirty,setDirty]=useState(false);const roles=['admin','gestor','rt'];let last='';
+  return html`<div className="space-y-5"><${PageHead} title="Equipe e acessos" desc="Quem acessa a MedLink e o que cada perfil pode fazer."/>
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">${S.users.map(x=>html`<div key=${x.id} className="rounded-[24px] bg-panel p-4 shadow-[0_1px_0_rgb(var(--c-line))]"><${Avatar} name=${x.name} size=${44}/><p className="mt-3 font-bold">${x.name}${x.id===u.id?' (você)':''}</p><p className="text-[13px] text-soft">${ROLE[x.role]}</p><p className="mt-1 text-xs text-faint">${x.role==='prof'?'Minha área':x.units?'Unidade Taquaral':'Todas as unidades'}</p></div>`)}</div>
+    <${Card} title="Permissões por perfil" sub="A administradora sempre tem tudo. Tire uma permissão do gestor e entre como Marcos para ver o efeito." action=${dirty&&html`<${Btn} v="lime" size="sm" onClick=${()=>{let ok=true;['gestor','rt'].forEach(r=>{if(ok)ok=run((D,U)=>A.perms(D,U,r,st[r])).ok});if(ok){setDirty(false)}}}>Salvar permissões<//>`}>
+      <${Table} minW=${620} cols=${['Permissão',...roles.map(r=>ROLE[r])]} rows=${Object.entries(PERMS).flatMap(([k,[l,g]])=>{const head=g!==last?(last=g,html`<tr key=${'g'+g}><td colSpan="4" className="px-2 pb-1 pt-4 text-[11px] font-bold uppercase tracking-wider text-faint">${g}</td></tr>`):null;
+        return [head,html`<tr key=${k}><${TD}>${l}<//>${roles.map(r=>html`<${TD} key=${r} className="text-center"><input type="checkbox" className="h-4 w-4" aria-label=${l+': '+ROLE[r]} checked=${(st[r]||[]).includes(k)} disabled=${r==='admin'} onChange=${e=>{setSt({...st,[r]:e.target.checked?[...st[r],k]:st[r].filter(x=>x!==k)});setDirty(true)}}/><//>`)}</tr>`]})}/><//></div>`;
+}
+
+/* ------------------------------------------------------------------ minha área */
+function MinhaArea(){
+  const {S,u,run}=useApp();const p=profOf(S,u.prof);const [tab,setTab]=useState('escala');
+  if(!p)return html`<${Empty} title="Este perfil não tem cadastro profissional">Entre como Carla Mendes ou Paulo Santos para ver a área do profissional.<//>`;
+  const now=new Date(),T=today();const mine=S.asg.filter(a=>a.prof===p.id).map(a=>({a,s:shiftOf(S,a.shift)})).filter(x=>x.s.status!=='rascunho');
+  const active=mine.filter(x=>ACTIVE(x.a.status)&&x.s.status!=='cancelado');const up=active.filter(x=>new Date(x.s.end)>now).sort((a,b)=>a.s.start.localeCompare(b.s.start));
+  const next=up[0];const ws=weekStart(T);const week=[...Array(7)].map((_,i)=>addDays(ws,i));
+  const wh=active.filter(x=>dkey(x.s.start)>=ws&&dkey(x.s.start)<addDays(ws,7)).reduce((t,x)=>t+hours(x.s.start,x.s.end,x.s.brk),0);
+  const myIds=new Set(active.map(x=>x.s.id));const applied=new Set(S.reqs.filter(r=>r.prof===p.id&&r.kind==='candidatura'&&r.status==='pendente').map(r=>r.shift));
+  const opps=S.shifts.filter(s=>['descoberto','publicado'].includes(s.status)&&new Date(s.start)>now&&dkey(s.start)<addDays(T,30)&&!myIds.has(s.id)&&(!s.cat||s.cat===p.cat)).map(s=>({s,open:s.slots-S.asg.filter(a=>a.shift===s.id&&ACTIVE(a.status)).length})).filter(x=>x.open>0).sort((a,b)=>a.s.start.localeCompare(b.s.start));
+  const reqs=S.reqs.filter(r=>r.prof===p.id).sort((a,b)=>b.created.localeCompare(a.created));
+  const visits=S.visits.filter(v=>v.prof===p.id&&v.status!=='cancelado'&&v.date>=addDays(T,-1)).sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start));
+  const rel=k=>{const d=daysTo(k);return d===0?'Hoje':d===1?'Amanhã':cap(F(k,{weekday:'long',day:'numeric',month:'short'}))};
+  return html`<div className="space-y-5"><${PageHead} title=${'Olá, '+p.name.split(' ')[0]} desc=${`${CAT[p.cat]} em ${S.inst.name}.`}/>
+    <div className="grid gap-5 lg:grid-cols-[1.25fr_1fr]">
+      <section className="rounded-[30px] bg-navy p-6 text-onnavy">${next?html`<p className="text-[13px] opacity-70">Próximo plantão, ${rel(dkey(next.s.start)).toLowerCase()}</p><p className="thin mt-1 whitespace-nowrap text-[42px] leading-none sm:text-[56px]">${hm(next.s.start)}<span className="opacity-50">–${hm(next.s.end)}</span></p>
+        <p className="mt-3 font-bold">${unitOf(S,next.s.unit).name}${next.s.service?' / '+servOf(S,next.s.service).name:''}</p><p className="text-[13px] opacity-70">${unitOf(S,next.s.unit).addr}</p>
+        <div className="mt-4"><span className=${cx('rounded-full px-3 py-1 text-xs font-bold',next.a.status==='confirmado'?'bg-lime text-onlime':'bg-amberbg text-amber')}>${AST[next.a.status][0]}</span></div><${MyActions} a=${next.a} dark/>`
+        :html`<p className="thin text-[34px]">Sem plantões agendados</p><p className="mt-2 opacity-75">Quando a gestão publicar uma escala com você, ela aparece aqui.</p>`}</section>
+      <${Card} title="Esta semana" action=${html`<${Badge} tone="lime">${fmtH(wh)}<//>`}><ul className="space-y-1">${week.map(d=>{const it=active.filter(x=>dkey(x.s.start)===d);return html`<li key=${d} className=${cx('flex items-center gap-3 rounded-full px-3 py-1.5 text-sm',d===T&&'bg-lime text-onlime')}>
+        <span className="w-14 shrink-0 font-bold capitalize">${F(d,{weekday:'short',day:'2-digit'}).replace('.','')}</span><span className="flex-1 truncate">${it.length?it.map(x=>`${hm(x.s.start)}–${hm(x.s.end)} ${unitOf(S,x.s.unit).name}`).join(' · '):html`<span className="opacity-60">Folga</span>`}</span></li>`})}</ul><//></div>
+    <${Seg} items=${[['escala','Minha escala',up.length],['opps','Oportunidades',opps.length],['home','Atendimentos domiciliares',visits.length],['reqs','Solicitações',reqs.filter(r=>r.status==='pendente').length],['disp','Disponibilidade e férias']]} value=${tab} onChange=${setTab}/>
+    ${tab==='escala'&&html`<div className="grid gap-3 md:grid-cols-2">${up.length===0?html`<${Empty} title="Nenhum plantão futuro"/>`:up.map(x=>html`<article key=${x.a.id} className="min-w-0 rounded-[26px] bg-panel p-5 shadow-[0_1px_0_rgb(var(--c-line))]">
+      <div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-[13px] text-soft">${cap(F(x.s.start,{weekday:'long',day:'2-digit',month:'2-digit'}))}</p><p className="thin whitespace-nowrap text-[26px] leading-tight sm:text-[30px]">${hm(x.s.start)}–${hm(x.s.end)}</p><p className="text-[13px] text-soft">${unitOf(S,x.s.unit).name}${x.s.service?' / '+servOf(S,x.s.service).name:''}</p></div><${Badge} tone=${AST[x.a.status][1]}>${AST[x.a.status][0]}<//></div><${MyActions} a=${x.a}/></article>`)}</div>`}
+    ${tab==='opps'&&html`<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">${opps.length===0?html`<${Empty} title="Nenhuma vaga aberta para a sua categoria"/>`:opps.slice(0,12).map(({s,open})=>html`<article key=${s.id} className="rounded-[26px] bg-panel p-5 shadow-[0_1px_0_rgb(var(--c-line))]">
+      <p className="text-[13px] text-soft">${cap(F(s.start,{weekday:'long',day:'2-digit',month:'2-digit'}))}</p><p className="thin text-[30px] leading-tight">${hm(s.start)}–${hm(s.end)}</p><p className="text-[13px] text-soft">${unitOf(S,s.unit).name}${s.service?' / '+servOf(S,s.service).name:''}</p>
+      <div className="mt-4 flex items-center justify-between"><${Badge} tone="danger">${open} ${open===1?'vaga':'vagas'}<//>${applied.has(s.id)?html`<${Badge} tone="sky">Candidatura enviada<//>`:html`<${Btn} size="sm" v="lime" onClick=${()=>run((D,U)=>A.apply(D,U,s.id),'Candidatura enviada para a gestão.')}>Candidatar-me<//>`}</div></article>`)}</div>`}
+    ${tab==='home'&&html`<div className="grid gap-3 md:grid-cols-2">${visits.length===0?html`<${Empty} title="Nenhum atendimento domiciliar"/>`:visits.map(v=>{const pt=S.patients.find(x=>x.id===v.patient);return html`<article key=${v.id} className="rounded-[26px] bg-panel p-5 shadow-[0_1px_0_rgb(var(--c-line))]">
+      <div className="flex items-start justify-between gap-3"><div><p className="text-[13px] text-soft">${rel(v.date)}, ${v.start}–${v.end}</p><p className="mt-0.5 text-lg font-bold">${pt.name}</p><p className="text-[13px] text-soft">${v.service}</p><p className="mt-1 flex items-center gap-1 text-[13px] text-faint"><${Icon} n="pin" s=${13}/>${pt.addr}, ${pt.region}</p></div><${Badge} tone=${HVS[v.status][1]}>${HVS[v.status][0]}<//></div>
+      <div className="mt-4 flex gap-2">${v.status==='agendado'&&html`<${Btn} size="sm" v="lime" onClick=${()=>run((D,U)=>A.visitStatus(D,U,v.id,'em_andamento'),'Atendimento iniciado.')}>Iniciar atendimento<//>`}
+        ${v.status==='em_andamento'&&html`<${Btn} size="sm" v="lime" icon="check" onClick=${()=>run((D,U)=>A.visitStatus(D,U,v.id,'concluido','Atendimento realizado conforme agendado.'),'Atendimento concluído.')}>Concluir<//>`}</div></article>`})}</div>`}
+    ${tab==='reqs'&&html`<${Card}>${reqs.length===0?html`<${Empty} title="Nenhuma solicitação">Pedidos de troca e candidaturas aparecem aqui com a resposta da gestão.<//>`:html`<ul className="space-y-2">${reqs.map(r=>{const s=shiftOf(S,r.shift);return html`<li key=${r.id} className="flex flex-wrap items-center gap-3 rounded-[20px] bg-panel2 px-4 py-3 text-sm">
+      <span className="w-28 font-bold">${RK[r.kind]}</span><span className="min-w-0 flex-1 text-soft">${label(s)}${r.note&&html`<span className="block text-xs">Resposta: ${r.note}</span>`}</span><${Badge} tone=${RST[r.status][1]}>${RST[r.status][0]}<//>${r.status==='pendente'&&html`<${Btn} size="sm" className="bg-panel" onClick=${()=>run((D,U)=>A.withdraw(D,U,r.id),'Solicitação retirada.')}>Retirar<//>`}</li>`})}</ul>`}<//>`}
+    ${tab==='disp'&&html`<div className="grid gap-5 xl:grid-cols-2"><${Card} title="Minha disponibilidade"><${Avail} p=${p}/><//><${Card} title="Férias e afastamentos"><${Absences} p=${p}/><//></div>`}</div>`;
+}
+function MyActions({a,dark}){
+  const {run}=useApp();const [mode,setMode]=useState(null);const [r,setR]=useState('');const reset=()=>{setMode(null);setR('')};
+  if(a.status==='substituicao_solicitada')return html`<p className=${cx('mt-4 text-sm',dark?'opacity-75':'text-soft')}>Seu pedido de substituição está com a gestão. Até a aprovação, o plantão continua com você.</p>`;
+  return html`<div className="mt-4">${!mode&&html`<div className="flex flex-wrap gap-2">
+    ${a.status==='aguardando_confirmacao'&&html`<${Btn} size="sm" v="lime" icon="check" onClick=${()=>run((D,U)=>A.confirm(D,U,a.id),'Presença confirmada.')}>Confirmar presença<//><${Btn} size="sm" v=${dark?'glass':'soft'} onClick=${()=>setMode('recusar')}>Não posso<//>`}
+    ${a.status==='confirmado'&&html`<${Btn} size="sm" v=${dark?'glass':'soft'} onClick=${()=>setMode('substituicao')}>Pedir substituição<//><${Btn} size="sm" v=${dark?'glass':'ghost'} onClick=${()=>setMode('alteracao')}>Pedir alteração<//>`}</div>`}
+    ${mode&&html`<div className=${cx('space-y-2 rounded-[20px] p-3',dark?'bg-onnavy/10':'bg-panel2')}><p className="text-sm">${mode==='recusar'?'Recusar este plantão. A gestão é avisada para buscar outra pessoa.':mode==='substituicao'?'Plantão confirmado só muda com aprovação. Você continua escalado até a resposta.':'Descreva a alteração desejada.'}</p>
+      <textarea className=${inputCls+' min-h-[56px] bg-panel text-ink'} aria-label="Motivo" placeholder="Motivo" value=${r} onInput=${e=>setR(e.target.value)}></textarea>
+      <div className="flex justify-end gap-2"><${Btn} size="sm" onClick=${reset}>Voltar<//><${Btn} size="sm" v=${mode==='recusar'?'danger':'lime'} disabled=${!r.trim()} onClick=${()=>{const x=run((D,U)=>mode==='recusar'?A.decline(D,U,a.id,r):A.request(D,U,a.id,mode,r),mode==='recusar'?'Plantão recusado. A gestão foi avisada.':'Solicitação enviada para aprovação.');if(x.ok)reset()}}>${mode==='recusar'?'Recusar plantão':'Enviar solicitação'}<//></div></div>`}</div>`;
+}
+const HVS={agendado:['Agendado','sky'],em_andamento:['Em andamento','amber'],concluido:['Concluído','teal'],cancelado:['Cancelado','neutral']};
