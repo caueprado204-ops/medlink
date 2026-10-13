@@ -1,0 +1,1034 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>MedLink Demonstração</title>
+<meta name="description" content="Demonstração navegável da MedLink com perfis de teste e dados fictícios.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: app de gestão com barra lateral azul-marinho, área de trabalho clara e cartões de plantão com faixa de status. */
+:root{
+  --c-bg:245 247 250; --c-panel:255 255 255; --c-line:226 231 238; --c-ink:19 34 51; --c-soft:74 90 108; --c-faint:117 130 146;
+  --c-navy:22 50 79; --c-teal:15 118 110; --c-tealsoft:236 248 246; --c-mint:209 250 229; --c-sky:224 242 254; --c-skyink:7 89 133;
+  --c-amber:180 83 9; --c-amberbg:254 243 199; --c-danger:180 35 24; --c-dangerbg:254 228 226;
+  --c-side:22 50 79; --c-sideink:201 215 230; --c-onaccent:255 255 255; --c-onnavy:255 255 255;
+  --font-ui:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --c-bg:11 21 32; --c-panel:17 30 44; --c-line:38 55 74; --c-ink:226 233 241; --c-soft:165 180 197; --c-faint:122 139 158;
+  --c-navy:214 228 242; --c-teal:52 186 170; --c-tealsoft:14 50 50; --c-mint:18 66 55; --c-sky:16 45 66; --c-skyink:140 200 240;
+  --c-amber:245 176 76; --c-amberbg:58 40 12; --c-danger:248 120 108; --c-dangerbg:68 22 20;
+  --c-side:8 17 27; --c-sideink:170 190 210; --c-onaccent:5 30 28; --c-onnavy:11 21 32; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --c-bg:11 21 32; --c-panel:17 30 44; --c-line:38 55 74; --c-ink:226 233 241; --c-soft:165 180 197; --c-faint:122 139 158;
+  --c-navy:214 228 242; --c-teal:52 186 170; --c-tealsoft:14 50 50; --c-mint:18 66 55; --c-sky:16 45 66; --c-skyink:140 200 240;
+  --c-amber:245 176 76; --c-amberbg:58 40 12; --c-danger:248 120 108; --c-dangerbg:68 22 20;
+  --c-side:8 17 27; --c-sideink:170 190 210; --c-onaccent:5 30 28; --c-onnavy:11 21 32; color-scheme:dark;
+}
+html,body{height:100%}
+body{background:rgb(var(--c-bg));color:rgb(var(--c-ink));font-family:var(--font-ui);font-size:15px;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance}
+:focus-visible{outline:2px solid rgb(var(--c-teal));outline-offset:2px;border-radius:4px}
+dialog::backdrop{background:rgb(11 21 32 / .45)}
+@keyframes slidein{from{transform:translateY(6px);opacity:0}to{transform:none;opacity:1}}
+.anim{animation:slidein .16s ease-out}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+#root{min-height:100%}
+#boot{padding:48px 16px;color:rgb(var(--c-soft))}
+</style>
+<style>*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Hanken Grotesk,system-ui,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.inset-y-0{top:0;bottom:0}.inset-y-\[-3px\]{top:-3px;bottom:-3px}.bottom-4{bottom:1rem}.left-0{left:0}.right-1{right:.25rem}.right-4{right:1rem}.top-1{top:.25rem}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.z-\[60\]{z-index:60}.m-auto{margin:auto}.mx-5{margin-left:1.25rem;margin-right:1.25rem}.mx-auto{margin-left:auto;margin-right:auto}.-mb-px{margin-bottom:-1px}.mb-1{margin-bottom:.25rem}.mb-1\.5{margin-bottom:.375rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.ml-1\.5{margin-left:.375rem}.ml-4{margin-left:1rem}.ml-auto{margin-left:auto}.mr-auto{margin-right:auto}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.h-1\.5{height:.375rem}.h-10{height:2.5rem}.h-16{height:4rem}.h-2{height:.5rem}.h-3{height:.75rem}.h-4{height:1rem}.h-8{height:2rem}.h-9{height:2.25rem}.max-h-72{max-height:18rem}.max-h-\[86vh\]{max-height:86vh}.min-h-\[112px\]{min-height:112px}.min-h-\[200px\]{min-height:200px}.min-h-\[56px\]{min-height:56px}.min-h-\[60px\]{min-height:60px}.min-h-\[64px\]{min-height:64px}.min-h-full{min-height:100%}.min-h-screen{min-height:100vh}.w-1\.5{width:.375rem}.w-10{width:2.5rem}.w-16{width:4rem}.w-2{width:.5rem}.w-20{width:5rem}.w-24{width:6rem}.w-28{width:7rem}.w-4{width:1rem}.w-40{width:10rem}.w-44{width:11rem}.w-48{width:12rem}.w-5{width:1.25rem}.w-64{width:16rem}.w-\[5\.6rem\]{width:5.6rem}.w-\[calc\(100\%-2rem\)\]{width:calc(100% - 2rem)}.w-\[min\(24rem\2c calc\(100\%-2rem\)\)\]{width:min(24rem,calc(100% - 2rem))}.w-auto{width:auto}.w-full{width:100%}.w-px{width:1px}.min-w-0{min-width:0}.min-w-\[1\.1rem\]{min-width:1.1rem}.min-w-\[560px\]{min-width:560px}.min-w-\[620px\]{min-width:620px}.min-w-\[680px\]{min-width:680px}.min-w-\[720px\]{min-width:720px}.min-w-\[760px\]{min-width:760px}.max-w-2xl{max-width:42rem}.max-w-3xl{max-width:48rem}.max-w-\[1400px\]{max-width:1400px}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-x-full{--tw-translate-x:-100%}.-translate-x-full,.translate-x-0{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-0{--tw-translate-x:0px}.cursor-grab{cursor:grab}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.grid-cols-7{grid-template-columns:repeat(7,minmax(0,1fr))}.grid-cols-\[minmax\(0\2c 9rem\)_1fr_3rem\]{grid-template-columns:minmax(0,9rem) 1fr 3rem}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.place-items-center{place-items:center}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-0\.5{gap:.125rem}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-\[3px\]{gap:3px}.gap-x-4{-moz-column-gap:1rem;column-gap:1rem}.gap-x-6{-moz-column-gap:1.5rem;column-gap:1.5rem}.gap-y-1{row-gap:.25rem}.gap-y-2{row-gap:.5rem}.space-y-0\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.125rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.125rem*var(--tw-space-y-reverse))}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.space-y-1\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.375rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.375rem*var(--tw-space-y-reverse))}.space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem*var(--tw-space-y-reverse))}.space-y-2\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.625rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.625rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.space-y-5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem*var(--tw-space-y-reverse))}.space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem*var(--tw-space-y-reverse))}.divide-y>:not([hidden])~:not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px*(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px*var(--tw-divide-y-reverse))}.divide-line>:not([hidden])~:not([hidden]){--tw-divide-opacity:1;border-color:rgb(var(--c-line)/var(--tw-divide-opacity,1))}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:6px}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:12px}.rounded-md{border-radius:8px}.rounded-sm{border-radius:4px}.border{border-width:1px}.border-\[1\.5px\]{border-width:1.5px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-l{border-left-width:1px}.border-l-2{border-left-width:2px}.border-l-\[3px\]{border-left-width:3px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-amber\/30{border-color:rgb(var(--c-amber)/.3)}.border-amber\/40{border-color:rgb(var(--c-amber)/.4)}.border-danger{--tw-border-opacity:1;border-color:rgb(var(--c-danger)/var(--tw-border-opacity,1))}.border-danger\/30{border-color:rgb(var(--c-danger)/.3)}.border-danger\/40{border-color:rgb(var(--c-danger)/.4)}.border-faint{--tw-border-opacity:1;border-color:rgb(var(--c-faint)/var(--tw-border-opacity,1))}.border-line{--tw-border-opacity:1;border-color:rgb(var(--c-line)/var(--tw-border-opacity,1))}.border-navy\/20{border-color:rgb(var(--c-navy)/.2)}.border-skyink\/25{border-color:rgb(var(--c-skyink)/.25)}.border-teal{--tw-border-opacity:1;border-color:rgb(var(--c-teal)/var(--tw-border-opacity,1))}.border-teal\/30{border-color:rgb(var(--c-teal)/.3)}.border-teal\/40{border-color:rgb(var(--c-teal)/.4)}.border-transparent{border-color:transparent}.border-white\/10{border-color:hsla(0,0%,100%,.1)}.border-l-amber{--tw-border-opacity:1;border-left-color:rgb(var(--c-amber)/var(--tw-border-opacity,1))}.border-l-danger{--tw-border-opacity:1;border-left-color:rgb(var(--c-danger)/var(--tw-border-opacity,1))}.border-l-faint{--tw-border-opacity:1;border-left-color:rgb(var(--c-faint)/var(--tw-border-opacity,1))}.border-l-line{--tw-border-opacity:1;border-left-color:rgb(var(--c-line)/var(--tw-border-opacity,1))}.border-l-teal{--tw-border-opacity:1;border-left-color:rgb(var(--c-teal)/var(--tw-border-opacity,1))}.bg-\[\#D1FAE5\]{--tw-bg-opacity:1;background-color:rgb(209 250 229/var(--tw-bg-opacity,1))}.bg-amber{--tw-bg-opacity:1;background-color:rgb(var(--c-amber)/var(--tw-bg-opacity,1))}.bg-amberbg{--tw-bg-opacity:1;background-color:rgb(var(--c-amberbg)/var(--tw-bg-opacity,1))}.bg-amberbg\/60{background-color:rgb(var(--c-amberbg)/.6)}.bg-bg{--tw-bg-opacity:1;background-color:rgb(var(--c-bg)/var(--tw-bg-opacity,1))}.bg-bg\/50{background-color:rgb(var(--c-bg)/.5)}.bg-bg\/60{background-color:rgb(var(--c-bg)/.6)}.bg-bg\/70{background-color:rgb(var(--c-bg)/.7)}.bg-black\/40{background-color:rgba(0,0,0,.4)}.bg-danger{--tw-bg-opacity:1;background-color:rgb(var(--c-danger)/var(--tw-bg-opacity,1))}.bg-dangerbg{--tw-bg-opacity:1;background-color:rgb(var(--c-dangerbg)/var(--tw-bg-opacity,1))}.bg-dangerbg\/40{background-color:rgb(var(--c-dangerbg)/.4)}.bg-dangerbg\/60{background-color:rgb(var(--c-dangerbg)/.6)}.bg-faint{--tw-bg-opacity:1;background-color:rgb(var(--c-faint)/var(--tw-bg-opacity,1))}.bg-mint{--tw-bg-opacity:1;background-color:rgb(var(--c-mint)/var(--tw-bg-opacity,1))}.bg-navy{--tw-bg-opacity:1;background-color:rgb(var(--c-navy)/var(--tw-bg-opacity,1))}.bg-navy\/10{background-color:rgb(var(--c-navy)/.1)}.bg-panel{--tw-bg-opacity:1;background-color:rgb(var(--c-panel)/var(--tw-bg-opacity,1))}.bg-panel\/95{background-color:rgb(var(--c-panel)/.95)}.bg-side{--tw-bg-opacity:1;background-color:rgb(var(--c-side)/var(--tw-bg-opacity,1))}.bg-sky{--tw-bg-opacity:1;background-color:rgb(var(--c-sky)/var(--tw-bg-opacity,1))}.bg-teal{--tw-bg-opacity:1;background-color:rgb(var(--c-teal)/var(--tw-bg-opacity,1))}.bg-tealsoft{--tw-bg-opacity:1;background-color:rgb(var(--c-tealsoft)/var(--tw-bg-opacity,1))}.bg-tealsoft\/60{background-color:rgb(var(--c-tealsoft)/.6)}.bg-transparent{background-color:transparent}.bg-white\/10{background-color:hsla(0,0%,100%,.1)}.p-0{padding:0}.p-0\.5{padding:.125rem}.p-1{padding:.25rem}.p-1\.5{padding:.375rem}.p-10{padding:2.5rem}.p-2{padding:.5rem}.p-3{padding:.75rem}.p-4{padding:1rem}.px-0\.5{padding-left:.125rem;padding-right:.125rem}.px-1{padding-left:.25rem;padding-right:.25rem}.px-1\.5{padding-left:.375rem;padding-right:.375rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-3\.5{padding-left:.875rem;padding-right:.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-2{padding-bottom:.5rem}.pb-4{padding-bottom:1rem}.pl-3{padding-left:.75rem}.pt-1{padding-top:.25rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.align-top{vertical-align:top}.text-2xl{font-size:1.5rem;line-height:2rem}.text-\[0\.65rem\]{font-size:.65rem}.text-\[0\.7rem\]{font-size:.7rem}.text-\[1\.75rem\]{font-size:1.75rem}.text-\[15px\]{font-size:15px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.capitalize{text-transform:capitalize}.leading-\[1\.1rem\]{line-height:1.1rem}.leading-snug{line-height:1.375}.leading-tight{line-height:1.25}.tracking-\[-0\.01em\]{letter-spacing:-.01em}.tracking-\[-0\.02em\]{letter-spacing:-.02em}.text-\[\#16324F\]{--tw-text-opacity:1;color:rgb(22 50 79/var(--tw-text-opacity,1))}.text-\[\#D1FAE5\]{--tw-text-opacity:1;color:rgb(209 250 229/var(--tw-text-opacity,1))}.text-amber{--tw-text-opacity:1;color:rgb(var(--c-amber)/var(--tw-text-opacity,1))}.text-danger{--tw-text-opacity:1;color:rgb(var(--c-danger)/var(--tw-text-opacity,1))}.text-faint{--tw-text-opacity:1;color:rgb(var(--c-faint)/var(--tw-text-opacity,1))}.text-ink{--tw-text-opacity:1;color:rgb(var(--c-ink)/var(--tw-text-opacity,1))}.text-navy{--tw-text-opacity:1;color:rgb(var(--c-navy)/var(--tw-text-opacity,1))}.text-onaccent{--tw-text-opacity:1;color:rgb(var(--c-onaccent)/var(--tw-text-opacity,1))}.text-onnavy{--tw-text-opacity:1;color:rgb(var(--c-onnavy)/var(--tw-text-opacity,1))}.text-sideink{--tw-text-opacity:1;color:rgb(var(--c-sideink)/var(--tw-text-opacity,1))}.text-sideink\/70{color:rgb(var(--c-sideink)/.7)}.text-sideink\/80{color:rgb(var(--c-sideink)/.8)}.text-skyink{--tw-text-opacity:1;color:rgb(var(--c-skyink)/var(--tw-text-opacity,1))}.text-soft{--tw-text-opacity:1;color:rgb(var(--c-soft)/var(--tw-text-opacity,1))}.text-teal{--tw-text-opacity:1;color:rgb(var(--c-teal)/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.line-through{text-decoration-line:line-through}.accent-teal{accent-color:rgb(var(--c-teal)/1)}.opacity-50{opacity:.5}.opacity-55{opacity:.55}.shadow-pop{--tw-shadow:0 12px 32px -8px rgba(11,21,32,.3),0 2px 6px rgba(11,21,32,.08);--tw-shadow-colored:0 12px 32px -8px var(--tw-shadow-color),0 2px 6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.ring-inset{--tw-ring-inset:inset}.ring-teal{--tw-ring-opacity:1;--tw-ring-color:rgb(var(--c-teal)/var(--tw-ring-opacity,1))}.brightness-110{--tw-brightness:brightness(1.1)}.brightness-110,.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur{--tw-backdrop-blur:blur(8px);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}.first-letter\:uppercase:first-letter{text-transform:uppercase}.placeholder\:text-faint::-moz-placeholder{--tw-text-opacity:1;color:rgb(var(--c-faint)/var(--tw-text-opacity,1))}.placeholder\:text-faint::placeholder{--tw-text-opacity:1;color:rgb(var(--c-faint)/var(--tw-text-opacity,1))}.hover\:border-teal:hover{--tw-border-opacity:1;border-color:rgb(var(--c-teal)/var(--tw-border-opacity,1))}.hover\:border-teal\/50:hover{border-color:rgb(var(--c-teal)/.5)}.hover\:bg-bg:hover{--tw-bg-opacity:1;background-color:rgb(var(--c-bg)/var(--tw-bg-opacity,1))}.hover\:bg-dangerbg:hover{--tw-bg-opacity:1;background-color:rgb(var(--c-dangerbg)/var(--tw-bg-opacity,1))}.hover\:bg-navy\/10:hover{background-color:rgb(var(--c-navy)/.1)}.hover\:bg-tealsoft\/50:hover{background-color:rgb(var(--c-tealsoft)/.5)}.hover\:bg-white\/5:hover{background-color:hsla(0,0%,100%,.05)}.hover\:text-danger:hover{--tw-text-opacity:1;color:rgb(var(--c-danger)/var(--tw-text-opacity,1))}.hover\:text-ink:hover{--tw-text-opacity:1;color:rgb(var(--c-ink)/var(--tw-text-opacity,1))}.hover\:text-navy:hover{--tw-text-opacity:1;color:rgb(var(--c-navy)/var(--tw-text-opacity,1))}.hover\:text-teal:hover{--tw-text-opacity:1;color:rgb(var(--c-teal)/var(--tw-text-opacity,1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.hover\:underline:hover{text-decoration-line:underline}.hover\:brightness-110:hover{--tw-brightness:brightness(1.1);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.focus\:border-teal:focus{--tw-border-opacity:1;border-color:rgb(var(--c-teal)/var(--tw-border-opacity,1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus\:ring-teal\/20:focus{--tw-ring-color:rgb(var(--c-teal)/0.2)}.active\:cursor-grabbing:active{cursor:grabbing}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:.5}.disabled\:opacity-60:disabled{opacity:.6}.group:hover .group-hover\:text-teal{--tw-text-opacity:1;color:rgb(var(--c-teal)/var(--tw-text-opacity,1))}@media (min-width:640px){.sm\:col-span-1{grid-column:span 1/span 1}.sm\:col-span-2{grid-column:span 2/span 2}.sm\:col-span-3{grid-column:span 3/span 3}.sm\:col-span-4{grid-column:span 4/span 4}.sm\:col-span-6{grid-column:span 6/span 6}.sm\:inline{display:inline}.sm\:w-44{width:11rem}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.sm\:grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}.sm\:grid-cols-\[2fr_1fr_1fr\]{grid-template-columns:2fr 1fr 1fr}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:px-8{padding-left:2rem;padding-right:2rem}}@media (min-width:768px){.md\:inline{display:inline}.md\:grid-cols-7{grid-template-columns:repeat(7,minmax(0,1fr))}}@media (min-width:1024px){.lg\:flex{display:flex}.lg\:hidden{display:none}.lg\:translate-x-0{--tw-translate-x:0px;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:grid-cols-\[1\.2fr_1fr\]{grid-template-columns:1.2fr 1fr}.lg\:grid-cols-\[minmax\(0\2c 1fr\)_minmax\(420px\2c 560px\)\]{grid-template-columns:minmax(0,1fr) minmax(420px,560px)}.lg\:px-8{padding-left:2rem;padding-right:2rem}.lg\:py-8{padding-top:2rem;padding-bottom:2rem}.lg\:pl-64{padding-left:16rem}}@media (min-width:1280px){.xl\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.xl\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.xl\:grid-cols-\[1\.4fr_1fr\]{grid-template-columns:1.4fr 1fr}}</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
+
+</head>
+<body>
+<div id="root"><p id="boot">Carregando a demonstração da MedLink…</p></div>
+
+<script>
+(function(){
+const {useState,useEffect,useMemo,useRef,useContext,createContext,Fragment}=React;
+const html=htm.bind(React.createElement);
+
+/* ------------------------------------------------------------------ utilidades */
+const pad=n=>String(n).padStart(2,'0');
+const key=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseKey=k=>{const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(k,n)=>{const d=parseKey(k);d.setDate(d.getDate()+n);return key(d)};
+const wdOf=k=>parseKey(k).getDay();
+const weekStart=k=>addDays(k,wdOf(k)===0?-6:1-wdOf(k));
+const at=(k,t)=>{const[h,m]=t.split(':').map(Number);const d=parseKey(k);d.setHours(h,m,0,0);return d.toISOString()};
+const hm=iso=>{const d=new Date(iso);return pad(d.getHours())+':'+pad(d.getMinutes())};
+const dkey=iso=>key(new Date(iso));
+const F=(v,o)=>new Intl.DateTimeFormat('pt-BR',o).format(typeof v==='string'&&v.length===10?parseKey(v):new Date(v));
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const hours=(s,e,b)=>(new Date(e)-new Date(s))/36e5-(b||0)/60;
+const fmtH=h=>(Math.round(h*10)/10).toLocaleString('pt-BR')+'h';
+const uid=()=>Math.random().toString(36).slice(2,10);
+const today=()=>key(new Date());
+const nowIso=()=>new Date().toISOString();
+const cx=(...a)=>a.filter(Boolean).join(' ');
+
+/* ------------------------------------------------------------------ vocabulário */
+const CAT={medico:'Médico(a)',enfermeiro:'Enfermeiro(a)',tecnico_enfermagem:'Técnico(a) de enfermagem',auxiliar_enfermagem:'Auxiliar de enfermagem',farmaceutico:'Farmacêutico(a)'};
+const COUNCIL={medico:'CRM',enfermeiro:'COREN',tecnico_enfermagem:'COREN',auxiliar_enfermagem:'COREN',farmaceutico:'CRF'};
+const SST={rascunho:['Rascunho','neutral'],publicado:['Publicado','sky'],aguardando_confirmacao:['Aguardando confirmação','amber'],confirmado:['Confirmado','teal'],descoberto:['Descoberto','danger'],substituicao_solicitada:['Substituição solicitada','amber'],cancelado:['Cancelado','neutral']};
+const AST={aguardando_confirmacao:['Aguardando confirmação','amber'],confirmado:['Confirmado','teal'],substituicao_solicitada:['Pediu substituição','amber'],recusado:['Recusou','neutral'],removido:['Removido','neutral']};
+const VST={pendente:['Validação pendente','amber'],em_analise:['Em análise','sky'],validado:['Validado','teal'],rejeitado:['Rejeitado','danger']};
+const RK={substituicao:'Substituição',cancelamento:'Cancelamento',alteracao:'Alteração',candidatura:'Candidatura'};
+const RST={pendente:['Pendente','amber'],aprovada:['Aprovada','teal'],recusada:['Recusada','danger'],cancelada:['Retirada','neutral']};
+const ABS={indisponivel:'Indisponível',ferias:'Férias',afastamento:'Afastamento',licenca:'Licença'};
+const WD=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+const WDS=['dom','seg','ter','qua','qui','sex','sáb'];
+const ROLE={admin:'Administradora institucional',gestor:'Gestor operacional',rt:'Responsável técnica',prof:'Profissional de saúde'};
+const PERMS={
+ 'institution.manage':['Editar dados e regras da instituição','Instituição'],
+ 'members.manage':['Gerenciar equipe e permissões','Instituição'],
+ 'professionals.view':['Ver profissionais','Profissionais'],
+ 'professionals.manage':['Cadastrar e editar profissionais','Profissionais'],
+ 'documents.verify':['Validar cadastros profissionais','Profissionais'],
+ 'shifts.view':['Ver escalas','Escalas'],
+ 'shifts.manage':['Criar e editar plantões','Escalas'],
+ 'shifts.publish':['Publicar escalas','Escalas'],
+ 'requests.decide':['Aprovar solicitações','Escalas'],
+ 'audit.view':['Ver auditoria','Relatórios']};
+const ACT={create:'Criou plantão',update:'Editou plantão',move:'Moveu plantão',duplicate:'Duplicou plantão',publish:'Publicou',cancel:'Cancelou plantão',assign:'Escalou profissional',unassign:'Removeu profissional',confirm:'Confirmou presença',decline:'Recusou plantão',request:'Abriu solicitação',apply:'Candidatou-se',approve:'Aprovou solicitação',reject:'Recusou solicitação',withdraw:'Retirou solicitação',prof_create:'Cadastrou profissional',prof_update:'Editou profissional',validate:'Alterou validação',availability:'Alterou disponibilidade',absence:'Registrou ausência',absence_rm:'Removeu ausência',rules:'Alterou regras de escala',perms:'Alterou permissões',institution:'Criou a instituição'};
+const ENT={shift:'Plantão',asg:'Escala do profissional',req:'Solicitação',prof:'Profissional',inst:'Instituição'};
+const ACTIVE=s=>s==='aguardando_confirmacao'||s==='confirmado'||s==='substituicao_solicitada';
+
+/* ------------------------------------------------------------------ dados de demonstração */
+function seed(){
+  const T=today(), W0=weekStart(T);
+  const S={v:1,seededAt:T,inst:{name:'Clínica Vida Vacinas',type:'Clínica de vacinação',city:'Campinas/SP'},
+    rules:{rest:11,week:44,maxShift:24},
+    rolePerms:{
+      admin:Object.keys(PERMS),
+      gestor:['professionals.view','professionals.manage','shifts.view','shifts.manage','shifts.publish','requests.decide','audit.view'],
+      rt:['professionals.view','documents.verify','shifts.view','audit.view'],prof:[]},
+    units:[{id:'u1',name:'Matriz Centro',addr:'Rua Barão de Jaguara, 1200, Centro'},{id:'u2',name:'Unidade Taquaral',addr:'Av. Heitor Penteado, 450, Taquaral'}],
+    services:[{id:'s1',unit:'u1',name:'Sala de vacinação'},{id:'s2',unit:'u1',name:'Atendimento de enfermagem'},{id:'s3',unit:'u2',name:'Sala de vacinação'},{id:'s4',unit:'u2',name:'Coleta domiciliar'}],
+    users:[
+      {id:'ana',name:'Ana Ribeiro',role:'admin',email:'ana.ribeiro@vidavacinas.demo'},
+      {id:'marcos',name:'Marcos Lima',role:'gestor',units:['u2'],email:'marcos.lima@vidavacinas.demo'},
+      {id:'helena',name:'Helena Prado',role:'rt',email:'helena.prado@vidavacinas.demo'},
+      {id:'carla',name:'Carla Mendes',role:'prof',prof:'p1',email:'carla.mendes@email.demo'},
+      {id:'paulo',name:'Paulo Santos',role:'prof',prof:'p5',email:'paulo.santos@email.demo'}],
+    profs:[], shifts:[], asg:[], reqs:[], abs:[], notifs:[], audit:[]};
+  const P=(id,name,cat,num,comps,extra={})=>S.profs.push({id,name,cat,council:COUNCIL[cat],num,uf:'SP',comps,validation:'validado',active:true,email:'',phone:'(19) 9'+String(8000+num.length*137+id.charCodeAt(1)*31).slice(0,4)+'-'+String(1000+id.charCodeAt(1)*97).slice(-4),units:[],avail:[1,2,3,4,5,6].map(wd=>({wd,s:'07:00',e:'19:00'})),maxWeek:null,...extra});
+  P('p1','Carla Mendes','tecnico_enfermagem','482.117',['Sala de vacinação','Coleta'],{email:'carla.mendes@email.demo'});
+  P('p2','Fernanda Ribeiro','tecnico_enfermagem','503.882',['Sala de vacinação']);
+  P('p3','Mariana Costa','tecnico_enfermagem','517.240',['Sala de vacinação','Coleta']);
+  P('p4','Lucas Andrade','tecnico_enfermagem','498.031',['Sala de vacinação']);
+  P('p5','Paulo Santos','enfermeiro','301.554',['Sala de vacinação','Curativos','Supervisão de sala'],{email:'paulo.santos@email.demo'});
+  P('p6','Ana Beatriz Lima','enfermeiro','288.910',['Curativos','Supervisão de sala']);
+  P('p7','João Pedro Alves','enfermeiro','312.006',['Sala de vacinação','Supervisão de sala'],{units:['u1']});
+  P('p8','Bruno Tavares','tecnico_enfermagem','529.774',['Coleta'],{validation:'pendente'});
+  P('p9','Rafael Nogueira','medico','184.322',['Clínica geral','Pediatria'],{avail:[{wd:2,s:'08:00',e:'12:00'},{wd:4,s:'08:00',e:'12:00'}]});
+  S.abs.push({id:'ab1',prof:'p4',kind:'ferias',from:addDays(W0,7),to:addDays(W0,20),note:'Férias programadas'});
+  S.abs.push({id:'ab2',prof:'p3',kind:'indisponivel',from:addDays(W0,12),to:addDays(W0,12),note:'Prova da especialização'});
+
+  const tech=['p1','p2','p3','p4'], nurse=['p5','p6','p7'];
+  const mk=(o)=>{const s={id:'sh'+uid(),brk:15,comps:[],notes:'',status:'publicado',cancelReason:null,...o};S.shifts.push(s);return s};
+  const as=(s,p,st)=>S.asg.push({id:'a'+uid(),shift:s.id,prof:p,status:st,reason:null,warnings:[],ended:null});
+  const now=Date.now();
+  for(let d=0;d<14;d++){
+    const k=addDays(W0,d); if(wdOf(k)===0) continue;
+    const next=d>=7, past=t=>new Date(at(k,t)).getTime()<now;
+    // Matriz manhã
+    const a=mk({unit:'u1',service:'s1',start:at(k,'07:00'),end:at(k,'13:00'),cat:'tecnico_enfermagem',slots:1,comps:['Sala de vacinação']});
+    const ta=tech[d%4];
+    if(!(next&&ta==='p4')&&!(d===3)) as(a,ta, past('13:00')?'confirmado': (ta==='p1'?'aguardando_confirmacao':(next?'aguardando_confirmacao':'confirmado')));
+    // Matriz tarde (enfermagem)
+    const b=mk({unit:'u1',service:'s2',start:at(k,'13:00'),end:at(k,'19:00'),cat:'enfermeiro',slots:1,status:next&&d>=9?'rascunho':'publicado'});
+    as(b,nurse[d%3], past('19:00')?'confirmado':(nurse[d%3]==='p5'&&!next?'aguardando_confirmacao':'confirmado'));
+    // Taquaral
+    if(wdOf(k)!==6){
+      const c=mk({unit:'u2',service:'s3',start:at(k,'08:00'),end:at(k,'14:00'),cat:'tecnico_enfermagem',slots:2,comps:['Sala de vacinação'],status:next?'rascunho':'publicado'});
+      const t1=tech[(d+1)%4]; if(!(next&&t1==='p4')) as(c,t1,'confirmado');
+      if(d%3!==0){const t2=tech[(d+2)%4]; if(!(next&&t2==='p4')) as(c,t2,past('14:00')?'confirmado':'confirmado');}
+    }
+  }
+  S.shifts.forEach(s=>recompute(S,s.id));
+  // Solicitação de substituição da Fernanda
+  const fut=S.asg.filter(a=>a.prof==='p2'&&ACTIVE(a.status)).map(a=>({a,s:S.shifts.find(s=>s.id===a.shift)})).filter(x=>x.s.status!=='rascunho'&&new Date(x.s.start)>new Date(Date.now()+864e5)).sort((x,y)=>x.s.start.localeCompare(y.s.start))[0];
+  if(fut){S.reqs.push({id:'r'+uid(),shift:fut.s.id,asg:fut.a.id,prof:'p2',kind:'substituicao',reason:'Consulta médica marcada no mesmo horário.',status:'pendente',prev:fut.a.status,created:new Date(Date.now()-3*36e5).toISOString()});fut.a.status='substituicao_solicitada';recompute(S,fut.s.id);
+    note(S,null,'requests.decide','Solicitação de substituição',`Fernanda Ribeiro, plantão de ${F(fut.s.start,{day:'2-digit',month:'2-digit'})} ${hm(fut.s.start)}`,{page:'solicitacoes'});}
+  // Candidatura a uma vaga aberta
+  const open=S.shifts.filter(s=>s.status==='descoberto'&&s.cat==='tecnico_enfermagem'&&new Date(s.start)>new Date()).sort((x,y)=>x.start.localeCompare(y.start));
+  for(const s of open){const cand=['p3','p1','p2'].find(p=>!checks(S,s,p).blocking.length);if(cand){S.reqs.push({id:'r'+uid(),shift:s.id,asg:null,prof:cand,kind:'candidatura',reason:'Posso cobrir, moro perto da unidade.',status:'pendente',prev:null,created:new Date(Date.now()-50*6e4).toISOString()});break;}}
+  // Notificações iniciais
+  const carlaPend=S.asg.find(a=>a.prof==='p1'&&a.status==='aguardando_confirmacao');
+  if(carlaPend){const s=S.shifts.find(x=>x.id===carlaPend.shift);push(S,'carla','Novo plantão na sua escala',`${F(s.start,{weekday:'short',day:'2-digit',month:'2-digit'})} às ${hm(s.start)}. Confirme sua presença.`,{page:'meu'});}
+  push(S,'helena','Cadastro aguardando validação','Bruno Tavares enviou o cadastro profissional.',{page:'prof',id:'p8'});
+  // Auditoria inicial
+  const t0=new Date(Date.now()-2*864e5).toISOString();
+  S.audit.push({id:uid(),at:t0,actor:'Ana Ribeiro',action:'institution',entity:'inst',ref:null,reason:null,detail:'Clínica Vida Vacinas'});
+  S.audit.push({id:uid(),at:new Date(Date.now()-864e5).toISOString(),actor:'Marcos Lima',action:'publish',entity:'shift',ref:null,reason:null,detail:'Escala da semana publicada'});
+  return S;
+}
+
+/* ------------------------------------------------------------------ regras */
+class Stop{constructor(kind,msg,checks){this.kind=kind;this.msg=msg;this.checks=checks}}
+const shiftOf=(S,id)=>S.shifts.find(s=>s.id===id);
+const profOf=(S,id)=>S.profs.find(p=>p.id===id);
+const unitOf=(S,id)=>S.units.find(u=>u.id===id);
+const servOf=(S,id)=>S.services.find(u=>u.id===id);
+function recompute(S,sid){
+  const s=shiftOf(S,sid); if(!s||s.status==='rascunho'||s.status==='cancelado') return s&&s.status;
+  const a=S.asg.filter(x=>x.shift===sid);
+  const act=a.filter(x=>ACTIVE(x.status)).length, pend=a.filter(x=>x.status==='aguardando_confirmacao').length, sub=a.filter(x=>x.status==='substituicao_solicitada').length;
+  s.status= sub?'substituicao_solicitada': act<s.slots?'descoberto': pend?'aguardando_confirmacao':'confirmado';
+  return s.status;
+}
+function checks(S,sh,pid,o={}){
+  const B=[],W=[],p=profOf(S,pid); if(!p) return {blocking:['Profissional não encontrado.'],warnings:[]};
+  const start=o.start||sh.start,end=o.end||sh.end,s0=+new Date(start),e0=+new Date(end);
+  if(sh.status==='cancelado')B.push('Plantão cancelado.');
+  if(!p.active)B.push('Profissional inativo.');
+  if(p.validation==='rejeitado')B.push('Cadastro rejeitado na validação.');
+  if(sh.cat&&sh.cat!==p.cat)B.push(`Este plantão exige ${CAT[sh.cat].toLowerCase()}.`);
+  const act=S.asg.filter(a=>a.shift===sh.id&&ACTIVE(a.status));
+  if(act.some(a=>a.prof===pid&&a.id!==o.ignore))B.push('Profissional já está neste plantão.');
+  if(!o.ignore&&act.length>=sh.slots)B.push('Todas as vagas deste plantão já estão preenchidas.');
+  const mine=S.asg.filter(a=>a.prof===pid&&ACTIVE(a.status)&&a.id!==o.ignore).map(a=>shiftOf(S,a.shift)).filter(s=>s&&s.id!==sh.id&&s.status!=='cancelado');
+  const rest=S.rules.rest*36e5;
+  mine.forEach(s=>{const a=+new Date(s.start),b=+new Date(s.end);
+    if(a<e0&&b>s0)B.push(`Sobrepõe outro plantão em ${unitOf(S,s.unit).name} (${F(s.start,{day:'2-digit',month:'2-digit'})}, ${hm(s.start)}–${hm(s.end)}).`);
+    else if(b>s0-rest&&a<e0+rest)W.push(`Descanso menor que ${S.rules.rest}h em relação ao plantão de ${F(s.start,{day:'2-digit',month:'2-digit'})} às ${hm(s.start)}.`);});
+  S.abs.filter(x=>x.prof===pid&&x.from<=dkey(end)&&x.to>=dkey(start)).forEach(x=>{
+    const per=`${F(x.from,{day:'2-digit',month:'2-digit'})} a ${F(x.to,{day:'2-digit',month:'2-digit'})}`;
+    if(x.kind==='indisponivel')W.push(`Marcou indisponibilidade de ${per}.`); else B.push(`Em ${ABS[x.kind].toLowerCase()} de ${per}.`);});
+  const miss=(sh.comps||[]).filter(c=>!p.comps.includes(c));
+  if(miss.length)W.push('Competências não registradas: '+miss.join(', ')+'.');
+  if(p.validation==='pendente'||p.validation==='em_analise')W.push('Cadastro profissional ainda não validado.');
+  if(p.units.length&&!p.units.includes(sh.unit))W.push('Unidade fora das informadas pelo profissional.');
+  if(p.avail.length){const w=new Date(start).getDay(),hs=hm(start),he=hm(end);
+    const ok=p.avail.some(v=>v.wd===w&&v.s<=hs&&(v.e>v.s?(dkey(end)===dkey(start)&&v.e>=he):true));
+    if(!ok)W.push('Fora da disponibilidade informada pelo profissional.');}
+  const ws=weekStart(dkey(start)),we=addDays(ws,7);
+  let wh=mine.filter(s=>dkey(s.start)>=ws&&dkey(s.start)<we).reduce((t,s)=>t+hours(s.start,s.end,s.brk),0)+hours(start,end,sh.brk);
+  const lim=p.maxWeek||S.rules.week; if(wh>lim)W.push(`Carga na semana chegaria a ${fmtH(wh)} (referência: ${fmtH(lim)}).`);
+  return {blocking:B,warnings:W};
+}
+function enforce(c,reason){
+  if(c.blocking.length) throw new Stop('blocking',c.blocking[0],c);
+  if(c.warnings.length&&!(reason||'').trim()) throw new Stop('warning','Esta alteração gera alertas. Informe uma justificativa para autorizar a exceção.',c);
+}
+function push(S,userId,title,body,link){S.notifs.unshift({id:uid(),user:userId,title,body,link,read:false,at:nowIso()})}
+function permsOf(S,u){return S.rolePerms[u.role]||[]}
+function can(S,u,perm,unit){return permsOf(S,u).includes(perm)&&(!unit||!u.units||u.units.includes(unit))}
+function note(S,actor,perm,title,body,link,unit){S.users.filter(u=>u.id!==(actor&&actor.id)&&can(S,u,perm,unit)).forEach(u=>push(S,u.id,title,body,link))}
+function noteProf(S,actor,pid,title,body){const u=S.users.find(x=>x.prof===pid);if(u&&u.id!==(actor&&actor.id))push(S,u.id,title,body,{page:'meu'})}
+function log(S,u,action,entity,ref,reason,detail){S.audit.unshift({id:uid(),at:nowIso(),actor:u?u.name:'Sistema',action,entity,ref,reason:reason||null,detail:detail||null})}
+const label=(S,s)=>`${F(s.start,{weekday:'short',day:'2-digit',month:'2-digit'})}, ${hm(s.start)}–${hm(s.end)}`;
+function need(S,u,perm,unit){if(!can(S,u,perm,unit))throw new Stop('permission','Seu perfil não tem permissão para esta ação.')}
+
+const A={
+  saveShift(S,u,f){
+    const isNew=!f.id; const old=isNew?null:shiftOf(S,f.id);
+    need(S,u,'shifts.manage',f.unit); if(old) need(S,u,'shifts.manage',old.unit);
+    if(!f.date||!f.start||!f.end) throw new Stop('validation','Informe data e horários.');
+    const start=at(f.date,f.start); let end=at(f.date,f.end); if(f.end<=f.start) end=at(addDays(f.date,1),f.end);
+    const dur=hours(start,end,0); if(dur>S.rules.maxShift) throw new Stop('validation',`Duração acima do máximo configurado (${S.rules.maxShift}h).`);
+    const slots=Math.max(1,Math.min(50,+f.slots||1)), brk=Math.max(0,+f.brk||0);
+    if(brk/60>=dur) throw new Stop('validation','O intervalo não pode ser maior que o plantão.');
+    if(isNew){const s={id:'sh'+uid(),unit:f.unit,service:f.service||null,start,end,brk,cat:f.cat||null,slots,comps:f.comps,notes:f.notes,status:'rascunho',cancelReason:null};S.shifts.push(s);log(S,u,'create','shift',s.id,null,label(S,s));return s.id;}
+    const act=S.asg.filter(a=>a.shift===old.id&&ACTIVE(a.status));
+    if(slots<act.length) throw new Stop('validation',`Há ${act.length} profissionais escalados; remova atribuições antes de reduzir as vagas.`);
+    const changed=start!==old.start||end!==old.end||f.unit!==old.unit||(f.cat||null)!==old.cat;
+    if(changed){const tmp={...old,unit:f.unit,cat:f.cat||null,brk};let W=[];
+      act.forEach(a=>{const c=checks(S,tmp,a.prof,{ignore:a.id,start,end});if(c.blocking.length)enforce(c);W=W.concat(c.warnings.map(w=>profOf(S,a.prof).name.split(' ')[0]+': '+w))});
+      enforce({blocking:[],warnings:W},f.override);}
+    const moved=start!==old.start;
+    Object.assign(old,{unit:f.unit,service:f.service||null,start,end,brk,cat:f.cat||null,slots,comps:f.comps,notes:f.notes});
+    recompute(S,old.id); log(S,u,f.moved?'move':'update','shift',old.id,f.override,label(S,old));
+    if(moved&&old.status!=='rascunho') act.forEach(a=>noteProf(S,u,a.prof,'Plantão alterado','Novo horário: '+label(S,old)));
+    return old.id;
+  },
+  move(S,u,id,date,reason){const s=shiftOf(S,id);return A.saveShift(S,u,{id,unit:s.unit,service:s.service,date,start:hm(s.start),end:hm(s.end),brk:s.brk,cat:s.cat,slots:s.slots,comps:s.comps,notes:s.notes,override:reason,moved:true})},
+  duplicate(S,u,id,dates){const s=shiftOf(S,id);need(S,u,'shifts.manage',s.unit);let n=0;
+    dates.forEach(d=>{if(d===dkey(s.start))return;const st=at(d,hm(s.start));const en=new Date(+new Date(st)+(new Date(s.end)-new Date(s.start))).toISOString();
+      S.shifts.push({...s,id:'sh'+uid(),start:st,end:en,status:'rascunho',cancelReason:null});n++;});
+    log(S,u,'duplicate','shift',s.id,null,`${n} cópias de ${label(S,s)}`);return n;},
+  publish(S,u,ids){let n=0;ids.forEach(id=>{const s=shiftOf(S,id);if(!s||s.status!=='rascunho'||new Date(s.end)<new Date())return;need(S,u,'shifts.publish',s.unit);
+    s.status='publicado';recompute(S,id);n++;S.asg.filter(a=>a.shift===id&&ACTIVE(a.status)).forEach(a=>noteProf(S,u,a.prof,'Novo plantão na sua escala',label(S,s)+'. Confirme sua presença.'));});
+    log(S,u,'publish','shift',ids.length===1?ids[0]:null,null,`${n} ${n===1?'plantão':'plantões'}`);return n;},
+  cancel(S,u,id,reason){const s=shiftOf(S,id);need(S,u,'shifts.manage',s.unit);if(!reason.trim())throw new Stop('validation','Informe o motivo do cancelamento.');
+    const was=s.status;s.status='cancelado';s.cancelReason=reason;
+    S.asg.filter(a=>a.shift===id&&ACTIVE(a.status)).forEach(a=>{a.status='removido';a.ended='Plantão cancelado';if(was!=='rascunho')noteProf(S,u,a.prof,'Plantão cancelado',label(S,s)+'. '+reason)});
+    S.reqs.filter(r=>r.shift===id&&r.status==='pendente').forEach(r=>{r.status='cancelada';r.note='Plantão cancelado'});
+    log(S,u,'cancel','shift',id,reason,label(S,s));},
+  assign(S,u,sid,pid,reason,confirmed,skipPerm){const s=shiftOf(S,sid);if(!skipPerm)need(S,u,'shifts.manage',s.unit);
+    const c=checks(S,s,pid);enforce(c,reason);
+    const a={id:'a'+uid(),shift:sid,prof:pid,status:confirmed?'confirmado':'aguardando_confirmacao',reason:c.warnings.length?reason:null,warnings:c.warnings,ended:null};
+    S.asg.push(a);recompute(S,sid);log(S,u,'assign','asg',sid,a.reason,`${profOf(S,pid).name}, ${label(S,s)}`);
+    if(s.status!=='rascunho')noteProf(S,u,pid,'Novo plantão na sua escala',label(S,s)+(confirmed?'':'. Confirme sua presença.'));return a.id;},
+  unassign(S,u,aid,reason){const a=S.asg.find(x=>x.id===aid),s=shiftOf(S,a.shift);need(S,u,'shifts.manage',s.unit);
+    if(s.status!=='rascunho'&&!reason.trim())throw new Stop('validation','Informe o motivo para remover alguém de uma escala publicada.');
+    a.status='removido';a.ended=reason||null;S.reqs.filter(r=>r.asg===aid&&r.status==='pendente').forEach(r=>{r.status='cancelada';r.note='Profissional removido do plantão'});
+    recompute(S,s.id);log(S,u,'unassign','asg',s.id,reason,`${profOf(S,a.prof).name}, ${label(S,s)}`);
+    if(s.status!=='rascunho')noteProf(S,u,a.prof,'Você foi removido de um plantão',label(S,s));},
+  myAsg(S,u,aid){const a=S.asg.find(x=>x.id===aid);if(!a||a.prof!==u.prof)throw new Stop('permission','Atribuição não encontrada.');return a},
+  confirm(S,u,aid){const a=A.myAsg(S,u,aid);if(a.status!=='aguardando_confirmacao')throw new Stop('validation','Este plantão não está aguardando confirmação.');
+    a.status='confirmado';recompute(S,a.shift);log(S,u,'confirm','asg',a.shift,null,label(S,shiftOf(S,a.shift)));},
+  decline(S,u,aid,reason){const a=A.myAsg(S,u,aid),s=shiftOf(S,a.shift);
+    if(a.status!=='aguardando_confirmacao')throw new Stop('validation','Plantões confirmados só mudam com aprovação da gestão.');
+    if(!reason.trim())throw new Stop('validation','Informe o motivo.');
+    a.status='recusado';a.ended=reason;recompute(S,s.id);log(S,u,'decline','asg',s.id,reason,label(S,s));
+    note(S,u,'shifts.manage','Plantão recusado, vaga descoberta',`${u.name}: ${label(S,s)}. ${reason}`,{page:'escalas',shift:s.id},s.unit);},
+  request(S,u,aid,kind,reason){const a=A.myAsg(S,u,aid),s=shiftOf(S,a.shift);
+    if(!reason.trim())throw new Stop('validation','Explique o motivo da solicitação.');
+    if(S.reqs.some(r=>r.asg===aid&&r.status==='pendente'))throw new Stop('validation','Já existe uma solicitação pendente para este plantão.');
+    S.reqs.push({id:'r'+uid(),shift:s.id,asg:aid,prof:a.prof,kind,reason,status:'pendente',prev:a.status,created:nowIso()});
+    if(kind==='substituicao'){a.status='substituicao_solicitada';recompute(S,s.id);}
+    log(S,u,'request','req',s.id,reason,`${RK[kind]}, ${label(S,s)}`);
+    note(S,u,'requests.decide',`Solicitação de ${RK[kind].toLowerCase()}`,`${u.name}: ${label(S,s)}`,{page:'solicitacoes'},s.unit);},
+  apply(S,u,sid,msg){const s=shiftOf(S,sid),p=profOf(S,u.prof);
+    if(!['descoberto','publicado'].includes(s.status)||new Date(s.start)<new Date())throw new Stop('validation','Este plantão não está aberto para candidaturas.');
+    if(s.cat&&s.cat!==p.cat)throw new Stop('validation','Este plantão exige outra categoria profissional.');
+    if(S.reqs.some(r=>r.shift===sid&&r.prof===p.id&&r.kind==='candidatura'&&r.status==='pendente'))throw new Stop('validation','Você já se candidatou a este plantão.');
+    S.reqs.push({id:'r'+uid(),shift:sid,asg:null,prof:p.id,kind:'candidatura',reason:msg||null,status:'pendente',prev:null,created:nowIso()});
+    log(S,u,'apply','req',sid,null,label(S,s));note(S,u,'requests.decide','Nova candidatura a plantão',`${u.name}: ${label(S,s)}`,{page:'solicitacoes'},s.unit);},
+  withdraw(S,u,rid){const r=S.reqs.find(x=>x.id===rid);if(!r||r.prof!==u.prof||r.status!=='pendente')throw new Stop('validation','A solicitação já foi analisada.');
+    r.status='cancelada';if(r.kind==='substituicao'){const a=S.asg.find(x=>x.id===r.asg);if(a&&a.status==='substituicao_solicitada')a.status=r.prev||'confirmado';recompute(S,r.shift);}
+    log(S,u,'withdraw','req',r.shift,null,RK[r.kind]);},
+  decide(S,u,rid,approve,noteTxt,sub,reason){const r=S.reqs.find(x=>x.id===rid),s=shiftOf(S,r.shift);need(S,u,'requests.decide',s.unit);
+    if(r.status!=='pendente')throw new Stop('validation','A solicitação já foi analisada.');
+    if(!approve&&!noteTxt.trim())throw new Stop('validation','Informe o motivo da recusa.');
+    if(approve){
+      if(r.kind==='candidatura') A.assign(S,u,s.id,r.prof,reason,true,true);
+      else if(r.kind!=='alteracao'){const a=S.asg.find(x=>x.id===r.asg);const prev=a.status;a.status='removido';a.ended=r.kind==='substituicao'?'Substituição aprovada':'Cancelamento aprovado';
+        if(sub){try{A.assign(S,u,s.id,sub,reason,false,true)}catch(e){a.status=prev;throw e}}
+        if(recompute(S,s.id)==='descoberto')note(S,u,'shifts.manage','Plantão descoberto',label(S,s),{page:'escalas',shift:s.id},s.unit);}
+    }else if(r.kind==='substituicao'){const a=S.asg.find(x=>x.id===r.asg);if(a&&a.status==='substituicao_solicitada')a.status=r.prev||'confirmado';recompute(S,s.id);}
+    r.status=approve?'aprovada':'recusada';r.note=noteTxt||null;r.decided=nowIso();r.by=u.name;
+    log(S,u,approve?'approve':'reject','req',s.id,noteTxt,`${RK[r.kind]} de ${profOf(S,r.prof).name}`);
+    noteProf(S,u,r.prof,approve?'Solicitação aprovada':'Solicitação recusada',noteTxt||label(S,s));},
+  saveProf(S,u,f){need(S,u,'professionals.manage');if((f.name||'').trim().length<3)throw new Stop('validation','Informe o nome completo.');
+    if(!f.cat)throw new Stop('validation','Selecione a categoria profissional.');
+    if(f.id){const p=profOf(S,f.id);Object.assign(p,{name:f.name,cat:f.cat,council:f.council,num:f.num,uf:f.uf,email:f.email,phone:f.phone,comps:f.comps,units:f.units});log(S,u,'prof_update','prof',p.id,null,p.name);return p.id;}
+    const p={id:'p'+uid(),name:f.name.trim(),cat:f.cat,council:f.council||COUNCIL[f.cat],num:f.num,uf:f.uf||'SP',comps:f.comps,validation:'pendente',active:true,email:f.email,phone:f.phone,units:f.units||[],avail:[],maxWeek:null};
+    S.profs.push(p);log(S,u,'prof_create','prof',p.id,null,p.name);note(S,u,'documents.verify','Cadastro aguardando validação',p.name+' foi cadastrado(a).',{page:'prof',id:p.id});return p.id;},
+  setActive(S,u,pid,v){need(S,u,'professionals.manage');const p=profOf(S,pid);p.active=v;log(S,u,'prof_update','prof',pid,null,`${p.name}: ${v?'reativado':'desativado'}`);},
+  validate(S,u,pid,v){need(S,u,'documents.verify');const p=profOf(S,pid);const old=p.validation;p.validation=v;log(S,u,'validate','prof',pid,null,`${p.name}: ${VST[old][0]} → ${VST[v][0]}`);},
+  availability(S,u,pid,slots,maxWeek){if(!(u.prof===pid||can(S,u,'professionals.manage')))throw new Stop('permission','Sem permissão.');
+    const bad=slots.find(s=>s.s===s.e);if(bad)throw new Stop('validation','Início e término não podem ser iguais.');
+    const p=profOf(S,pid);p.avail=slots;p.maxWeek=maxWeek||null;log(S,u,'availability','prof',pid,null,p.name);},
+  absence(S,u,pid,kind,from,to,noteTxt){if(!(u.prof===pid||can(S,u,'professionals.manage')))throw new Stop('permission','Sem permissão.');
+    if(!from||!to)throw new Stop('validation','Informe as datas.');if(to<from)throw new Stop('validation','A data final deve ser igual ou posterior à inicial.');
+    S.abs.push({id:uid(),prof:pid,kind,from,to,note:noteTxt});log(S,u,'absence','prof',pid,null,`${ABS[kind]}: ${F(from,{day:'2-digit',month:'2-digit'})} a ${F(to,{day:'2-digit',month:'2-digit'})}`);},
+  absenceRm(S,u,id){const x=S.abs.find(a=>a.id===id);if(!(u.prof===x.prof||can(S,u,'professionals.manage')))throw new Stop('permission','Sem permissão.');S.abs=S.abs.filter(a=>a.id!==id);log(S,u,'absence_rm','prof',x.prof,null,ABS[x.kind]);},
+  rules(S,u,r){need(S,u,'institution.manage');S.rules={rest:+r.rest,week:+r.week,maxShift:+r.maxShift};log(S,u,'rules','inst',null,null,`Descanso ${r.rest}h, semana ${r.week}h, máximo ${r.maxShift}h`);},
+  perms(S,u,role,list){need(S,u,'members.manage');if(role==='admin')throw new Stop('permission','As permissões da administradora não podem ser alteradas.');S.rolePerms[role]=list;log(S,u,'perms','inst',null,null,ROLE[role]);},
+  readAll(S,u){S.notifs.forEach(n=>{if(n.user===u.id)n.read=true})},
+  read(S,u,id){const n=S.notifs.find(x=>x.id===id);if(n)n.read=true},
+};
+
+/* ------------------------------------------------------------------ armazenamento */
+const SKEY='medlink-demo-v1', UKEY='medlink-demo-user';
+const load=()=>{try{const s=JSON.parse(localStorage.getItem(SKEY));if(s&&s.v)return s}catch(e){}return null};
+const save=s=>{try{localStorage.setItem(SKEY,JSON.stringify(s))}catch(e){}};
+const loadUser=()=>{try{return localStorage.getItem(UKEY)}catch(e){return null}};
+const saveUser=v=>{try{v?localStorage.setItem(UKEY,v):localStorage.removeItem(UKEY)}catch(e){}};
+
+/* ------------------------------------------------------------------ ícones */
+const IP={
+ dash:'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', cal:'M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z',
+ inbox:'M22 12h-6l-2 3h-4l-2-3H2M5.5 5h13l3.5 7v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z', users:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+ user:'M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', shield:'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
+ hist:'M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l4 2', gear:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z',
+ bell:'M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0', plus:'M12 5v14M5 12h14', left:'M15 18l-6-6 6-6', right:'M9 18l6-6-6-6', x:'M18 6L6 18M6 6l12 12',
+ check:'M20 6L9 17l-5-5', alert:'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01', ban:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM4.9 4.9l14.2 14.2',
+ send:'M22 2L11 13M22 2l-7 20-4-9-9-4z', copy:'M20 9h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2zM5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1',
+ out:'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9', menu:'M3 6h18M3 12h18M3 18h18', search:'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3',
+ pencil:'M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z', reset:'M3 12a9 9 0 1 0 9-9 9.8 9.8 0 0 0-6.7 2.7L3 8M3 3v5h5', trash:'M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6'};
+const Icon=({n,s=16,className})=>html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className=${className}><path d=${IP[n]}/></svg>`;
+const Logo=({light})=>html`<span className=${cx('inline-flex items-center gap-2 font-semibold tracking-[-0.02em]',light?'text-white':'text-navy')}>
+  <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect x="1" y="6" width="12" height="12" rx="3" fill="none" stroke=${light?'#D1FAE5':'rgb(var(--c-teal))'} strokeWidth="2"/><rect x="9" y="2" width="12" height="12" rx="3" fill=${light?'#D1FAE5':'rgb(var(--c-teal))'}/></svg>
+  <span className="text-lg">MedLink</span></span>`;
+
+/* ------------------------------------------------------------------ primitivas */
+const Ctx=createContext(null);
+const useApp=()=>useContext(Ctx);
+const TONE={neutral:'bg-bg text-soft border-line',teal:'bg-tealsoft text-teal border-teal/30',sky:'bg-sky text-skyink border-skyink/25',amber:'bg-amberbg text-amber border-amber/30',danger:'bg-dangerbg text-danger border-danger/30',navy:'bg-navy/10 text-navy border-navy/20'};
+const Badge=({tone='neutral',children})=>html`<span className=${cx('inline-flex items-center whitespace-nowrap rounded-sm border px-1.5 py-0.5 text-xs font-medium',TONE[tone])}>${children}</span>`;
+function Button({variant='secondary',size='md',icon,className,children,...rest}){
+  const v={primary:'bg-teal text-onaccent border-transparent hover:brightness-110',navy:'bg-navy text-onnavy border-transparent hover:brightness-110',secondary:'bg-panel text-ink border-line hover:bg-bg',ghost:'bg-transparent text-soft border-transparent hover:bg-navy/10 hover:text-navy',danger:'bg-panel text-danger border-danger/40 hover:bg-dangerbg'}[variant];
+  return html`<button type="button" ...${rest} className=${cx('inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded border font-medium transition disabled:cursor-not-allowed disabled:opacity-50',size==='sm'?'h-8 px-2.5 text-sm':'h-10 px-4 text-sm',v,className)}>${icon&&html`<${Icon} n=${icon}/>`}${children}</button>`;
+}
+const inputCls='block w-full rounded border border-line bg-panel px-3 py-2 text-[15px] text-ink placeholder:text-faint focus:border-teal focus:outline-none focus:ring-2 focus:ring-teal/20 disabled:opacity-60';
+const Field=({label,id,hint,children,className})=>html`<div className=${className}><label htmlFor=${id} className="mb-1 block text-sm font-medium">${label}</label>${children}${hint&&html`<p className="mt-1 text-xs text-faint">${hint}</p>`}</div>`;
+const Panel=({title,action,children,className})=>html`<section className=${cx('rounded-md border border-line bg-panel',className)}>${title&&html`<div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3"><h2 className="text-base font-semibold text-navy">${title}</h2>${action}</div>`}${children}</section>`;
+const Empty=({title,children,action})=>html`<div className="px-4 py-8 sm:px-6"><p className="font-medium text-navy">${title}</p>${children&&html`<p className="mt-1 max-w-md text-sm text-soft">${children}</p>`}${action&&html`<div className="mt-3">${action}</div>`}</div>`;
+const PageHead=({title,desc,actions})=>html`<div className="mb-6 flex flex-wrap items-end justify-between gap-4"><div className="min-w-0"><h1 className="text-[1.75rem] font-semibold leading-tight tracking-[-0.01em] text-navy">${title}</h1>${desc&&html`<p className="mt-1 max-w-2xl text-soft">${desc}</p>`}</div>${actions&&html`<div className="flex flex-wrap gap-2">${actions}</div>`}</div>`;
+
+function Modal({open,onClose,title,desc,children,footer,wide}){
+  const ref=useRef(null);
+  useEffect(()=>{const d=ref.current;if(!d)return;if(open&&!d.open)d.showModal();if(!open&&d.open)d.close()},[open]);
+  return html`<dialog ref=${ref} onCancel=${e=>{e.preventDefault();onClose()}} onClick=${e=>{if(e.target===ref.current)onClose()}}
+    className=${cx('anim m-auto w-[calc(100%-2rem)] rounded-lg border border-line bg-panel p-0 text-ink shadow-pop',wide?'max-w-3xl':'max-w-lg')}>
+    ${open&&html`<div className="flex max-h-[86vh] flex-col">
+      <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-4"><div className="min-w-0"><h2 className="text-lg font-semibold text-navy first-letter:uppercase">${title}</h2>${desc&&html`<p className="mt-0.5 text-sm text-soft">${desc}</p>`}</div>
+        <button onClick=${onClose} className="rounded p-1 text-faint hover:bg-bg hover:text-ink" aria-label="Fechar"><${Icon} n="x" s=${20}/></button></div>
+      <div className="overflow-y-auto px-5 py-4">${children}</div>
+      ${footer&&html`<div className="flex flex-wrap justify-end gap-2 border-t border-line bg-bg/60 px-5 py-3">${footer}</div>`}
+    </div>`}</dialog>`;
+}
+
+const Checks=({c,compact})=>(!c.blocking.length&&!c.warnings.length)?null:html`<ul className=${compact?'mt-1 space-y-0.5':'space-y-1.5'}>
+  ${c.blocking.map((b,i)=>html`<li key=${'b'+i} className="flex items-start gap-1.5 text-sm text-danger"><${Icon} n="ban" s=${14} className="mt-0.5 shrink-0"/><span>${b}</span></li>`)}
+  ${c.warnings.map((w,i)=>html`<li key=${'w'+i} className="flex items-start gap-1.5 text-sm text-amber"><${Icon} n="alert" s=${14} className="mt-0.5 shrink-0"/><span>${w}</span></li>`)}</ul>`;
+const Override=({c,reason,setReason,blocking})=>html`<div className=${cx('rounded-md border px-3.5 py-3',blocking?'border-danger/40 bg-dangerbg/60':'border-amber/40 bg-amberbg/60')}>
+  <p className="mb-2 text-sm font-medium">${blocking?'Não é possível salvar: há restrições obrigatórias.':'Esta alteração gera alertas.'}</p>
+  <${Checks} c=${c}/>
+  ${!blocking&&html`<div className="mt-3"><label htmlFor="ovr" className="mb-1 block text-sm font-medium">Justificativa para autorizar a exceção</label>
+    <textarea id="ovr" className=${inputCls+' min-h-[64px]'} value=${reason} onInput=${e=>setReason(e.target.value)} placeholder="Ex.: cobertura emergencial autorizada pela coordenação"></textarea>
+    <p className="mt-1 text-xs text-faint">A justificativa fica registrada na auditoria.</p></div>`}</div>`;
+
+function Pips({S,s,sm}){
+  const act=S.asg.filter(a=>a.shift===s.id&&ACTIVE(a.status)),conf=act.filter(a=>a.status==='confirmado').length,pend=act.length-conf;
+  const n=Math.min(s.slots,8),pips=[];for(let i=0;i<n;i++)pips.push(i<conf?'c':i<conf+pend?'p':'o');
+  const lbl=`${act.length} de ${s.slots} vagas preenchidas`+(pend?`, ${pend} aguardando`:'');
+  return html`<span className="inline-flex items-center gap-[3px]" role="img" aria-label=${lbl} title=${lbl}>${pips.map((k,i)=>html`<span key=${i} className=${cx('rounded-full',sm?'h-1.5 w-1.5':'h-2 w-2',k==='c'&&'bg-teal',k==='p'&&'bg-amber',k==='o'&&(s.status==='rascunho'?'border border-faint':'border-[1.5px] border-danger'))}></span>`)}</span>`;
+}
+
+/* ------------------------------------------------------------------ app */
+function App(){
+  const [S,setS]=useState(()=>load()||seed());
+  const [uid_,setUid]=useState(()=>{const v=loadUser();return v&&['ana','marcos','helena','carla','paulo'].includes(v)?v:null});
+  const [page,setPage]=useState({page:'painel'});
+  const [toasts,setToasts]=useState([]);
+  const u=S.users.find(x=>x.id===uid_)||null;
+  useEffect(()=>save(S),[S]);
+  const toast=(msg,tone='success')=>{const id=uid();setToasts(t=>[...t,{id,msg,tone}]);setTimeout(()=>setToasts(t=>t.filter(x=>x.id!==id)),tone==='error'?6000:3500)};
+  const run=(fn,msg)=>{try{const D=structuredClone(S);const r=fn(D,u);setS(D);if(msg)toast(typeof msg==='function'?msg(r):msg);return {ok:true,data:r}}
+    catch(e){if(e instanceof Stop){if(!e.checks)toast(e.msg,'error');return {ok:false,kind:e.kind,msg:e.msg,checks:e.checks}}console.error(e);toast('Algo deu errado nesta ação.','error');return {ok:false}}};
+  const go=p=>{setPage(p);window.scrollTo(0,0)};
+  const login=id=>{saveUser(id);setUid(id);const usr=S.users.find(x=>x.id===id);setPage({page:usr.role==='prof'?'meu':'painel'})};
+  const logout=()=>{saveUser(null);setUid(null)};
+  const reset=()=>{const s=seed();setS(s);toast('Demonstração reiniciada com os dados originais.')};
+  const value={S,u,run,toast,go,page,login,logout,reset};
+  return html`<${Ctx.Provider} value=${value}>
+    ${u?html`<${Shell}/>`:html`<${Login}/>`}
+    <div aria-live="polite" className="pointer-events-none fixed bottom-4 right-4 z-[60] flex w-[min(24rem,calc(100%-2rem))] flex-col gap-2">
+      ${toasts.map(t=>html`<div key=${t.id} role=${t.tone==='error'?'alert':'status'} className=${cx('anim pointer-events-auto flex items-start gap-2.5 rounded-md border bg-panel px-3.5 py-3 text-sm shadow-pop',t.tone==='error'?'border-danger/40':'border-teal/40')}>
+        <${Icon} n=${t.tone==='error'?'ban':'check'} className=${cx('mt-0.5 shrink-0',t.tone==='error'?'text-danger':'text-teal')}/><span>${t.msg}</span></div>`)}
+    </div><//>`;
+}
+
+/* ------------------------------------------------------------------ login */
+const PROFILES=[
+  {id:'ana',what:'Vê tudo: escalas, profissionais, equipe, permissões, regras e auditoria.'},
+  {id:'marcos',what:'Monta e publica escalas da Unidade Taquaral e aprova solicitações.'},
+  {id:'helena',what:'Acompanha as escalas e valida o cadastro dos profissionais.'},
+  {id:'carla',what:'Confirma plantões, pede substituição e se candidata a vagas.'},
+  {id:'paulo',what:'Enfermeiro: vê a própria escala, informa disponibilidade e férias.'}];
+function Login(){
+  const {S,login,reset}=useApp();
+  const [confirm,setConfirm]=useState(false);
+  return html`<main className="grid min-h-screen lg:grid-cols-[minmax(0,1fr)_minmax(420px,560px)]">
+    <section className="hidden flex-col justify-between bg-side p-10 text-white lg:flex">
+      <${Logo} light/>
+      <div className="max-w-md">
+        <p className="text-2xl font-semibold leading-snug">Escalas, equipes e operação de clínicas de vacinação, clínicas e home care em um só lugar.</p>
+        <ul className="mt-6 space-y-2 text-sideink">
+          <li>Plantões validados antes de salvar: descanso, categoria, férias e disponibilidade.</li>
+          <li>Profissionais confirmam presença e pedem substituição pelo celular.</li>
+          <li>Toda alteração fica registrada na auditoria.</li>
+        </ul>
+      </div>
+      <p className="text-sm text-sideink/80">Instituição de demonstração: ${S.inst.name}, ${S.inst.city}.</p>
+    </section>
+    <section className="flex items-center justify-center bg-panel px-4 py-10 sm:px-8">
+      <div className="w-full max-w-md">
+        <div className="mb-6 lg:hidden"><${Logo}/></div>
+        <h1 className="text-xl font-semibold text-navy">Escolha um perfil para entrar</h1>
+        <p className="mt-1 text-sm text-soft">Demonstração com dados fictícios. Cada perfil vê e pode fazer coisas diferentes, e o que você faz em um aparece nos outros.</p>
+        <ul className="mt-6 space-y-2">
+          ${PROFILES.map(p=>{const usr=S.users.find(x=>x.id===p.id);return html`<li key=${p.id}>
+            <button onClick=${()=>login(p.id)} className="group flex w-full items-start gap-3 rounded-md border border-line bg-panel px-4 py-3 text-left transition hover:border-teal hover:bg-tealsoft/50">
+              <span className=${cx('grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-semibold',usr.role==='prof'?'bg-mint text-teal':'bg-navy/10 text-navy')}>${usr.name.split(' ').map(x=>x[0]).slice(0,2).join('')}</span>
+              <span className="min-w-0 flex-1"><span className="block font-semibold text-ink">${usr.name}</span>
+                <span className="block text-sm text-teal">${ROLE[usr.role]}${usr.units?', Unidade Taquaral':''}</span>
+                <span className="mt-0.5 block text-sm text-soft">${p.what}</span></span>
+              <${Icon} n="right" className="mt-3 text-faint group-hover:text-teal"/>
+            </button></li>`})}
+        </ul>
+        <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-line pt-4 text-sm text-soft">
+          ${confirm?html`<span>Apagar tudo que foi feito e voltar aos dados originais?</span><${Button} size="sm" variant="danger" onClick=${()=>{reset();setConfirm(false)}}>Reiniciar<//><${Button} size="sm" onClick=${()=>setConfirm(false)}>Manter<//>`
+            :html`<span>As alterações ficam salvas só neste navegador.</span><button className="font-medium text-teal hover:underline" onClick=${()=>setConfirm(true)}>Reiniciar demonstração</button>`}
+        </div>
+      </div>
+    </section></main>`;
+}
+
+/* ------------------------------------------------------------------ estrutura */
+function Shell(){
+  const {S,u,page,go,logout}=useApp();
+  const [menu,setMenu]=useState(false);
+  const p=permsOf(S,u);
+  const pendReq=S.reqs.filter(r=>r.status==='pendente'&&can(S,u,'requests.decide',shiftOf(S,r.shift).unit)).length;
+  const unread=S.notifs.filter(n=>n.user===u.id&&!n.read).length;
+  const groups=[];
+  const op=[];
+  if(p.includes('shifts.view')||p.includes('professionals.view'))op.push(['painel','Painel','dash']);
+  if(p.includes('shifts.view'))op.push(['escalas','Escalas','cal']);
+  if(p.includes('requests.decide'))op.push(['solicitacoes','Solicitações','inbox',pendReq]);
+  if(p.includes('professionals.view'))op.push(['profissionais','Profissionais','users']);
+  if(op.length)groups.push([null,op]);
+  if(u.prof)groups.push(['Profissional',[['meu','Minha área','user']]]);
+  const ad=[];
+  if(p.includes('members.manage'))ad.push(['equipe','Equipe e acessos','shield']);
+  if(p.includes('audit.view'))ad.push(['auditoria','Auditoria','hist']);
+  if(p.includes('institution.manage'))ad.push(['configuracoes','Configurações','gear']);
+  if(ad.length)groups.push(['Administração',ad]);
+  const active=page.page==='prof'?'profissionais':page.page;
+  const nav=html`<nav aria-label="Navegação principal" className="flex flex-1 flex-col gap-6 overflow-y-auto px-3 py-4">
+    ${groups.map(([t,items],i)=>html`<div key=${i}>${t&&html`<p className="mb-1.5 px-2.5 text-xs text-sideink/70">${t}</p>`}<ul className="space-y-0.5">
+      ${items.map(([id,lbl,ic,badge])=>html`<li key=${id}><button onClick=${()=>{go({page:id});setMenu(false)}} aria-current=${active===id?'page':undefined}
+        className=${cx('flex w-full items-center gap-2.5 rounded px-2.5 py-2 text-left text-sm transition',active===id?'bg-white/10 font-medium text-white':'text-sideink hover:bg-white/5 hover:text-white')}>
+        <${Icon} n=${ic} className=${active===id?'text-[#D1FAE5]':''}/><span className="flex-1">${lbl}</span>${!!badge&&html`<span className="rounded-sm bg-[#D1FAE5] px-1.5 text-xs font-semibold text-[#16324F]">${badge}</span>`}</button></li>`)}
+    </ul></div>`)}</nav>`;
+  return html`<div className="min-h-full">
+    ${menu&&html`<div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick=${()=>setMenu(false)}></div>`}
+    <aside className=${cx('fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-side transition-transform lg:translate-x-0',menu?'translate-x-0':'-translate-x-full')}>
+      <div className="flex items-center justify-between px-5 py-5"><${Logo} light/><button className="text-sideink lg:hidden" onClick=${()=>setMenu(false)} aria-label="Fechar menu"><${Icon} n="x" s=${20}/></button></div>
+      <p className="mx-5 truncate border-b border-white/10 pb-4 text-sm text-sideink">${S.inst.name}</p>
+      ${nav}
+      <div className="border-t border-white/10 px-5 py-4 text-xs text-sideink/80">Demonstração com dados fictícios.</div>
+    </aside>
+    <div className="lg:pl-64">
+      <header className="sticky z-30 flex h-16 items-center gap-2 border-b border-line bg-panel/95 px-4 backdrop-blur lg:px-8" style=${{top:'env(safe-area-inset-top, 0px)'}}>
+        <button className="rounded border border-line p-2 text-navy lg:hidden" onClick=${()=>setMenu(true)} aria-label="Abrir menu"><${Icon} n="menu" s=${18}/></button>
+        <span className="hidden text-sm text-soft sm:inline">Você está como <strong className="font-semibold text-ink">${u.name}</strong>, ${ROLE[u.role].toLowerCase()}</span>
+        <div className="ml-auto flex items-center gap-1">
+          <button onClick=${()=>go({page:'notificacoes'})} className="relative rounded p-2 text-soft hover:bg-bg hover:text-navy" aria-label=${'Notificações'+(unread?`, ${unread} não lidas`:'')}>
+            <${Icon} n="bell" s=${20}/>${unread>0&&html`<span className="absolute right-1 top-1 min-w-[1.1rem] rounded-full bg-danger px-1 text-center text-[0.65rem] font-semibold leading-[1.1rem] text-white">${unread>9?'9+':unread}</span>`}</button>
+          <${Button} size="sm" icon="out" onClick=${logout}>Trocar perfil<//>
+        </div>
+      </header>
+      <main className="mx-auto max-w-[1400px] px-4 py-6 lg:px-8 lg:py-8"><${Router}/></main>
+    </div></div>`;
+}
+function Router(){
+  const {page}=useApp();
+  switch(page.page){
+    case 'escalas':return html`<${Escalas}/>`;
+    case 'solicitacoes':return html`<${Solicitacoes}/>`;
+    case 'profissionais':return html`<${Profissionais}/>`;
+    case 'prof':return html`<${ProfDetail} id=${page.id}/>`;
+    case 'meu':return html`<${MinhaArea}/>`;
+    case 'equipe':return html`<${Equipe}/>`;
+    case 'auditoria':return html`<${Auditoria}/>`;
+    case 'configuracoes':return html`<${Config}/>`;
+    case 'notificacoes':return html`<${Notificacoes}/>`;
+    default:return html`<${Painel}/>`;
+  }
+}
+const visibleShifts=(S,u)=>S.shifts.filter(s=>can(S,u,'shifts.view',s.unit));
+
+/* ------------------------------------------------------------------ painel */
+function Painel(){
+  const {S,u,go}=useApp();
+  if(!can(S,u,'shifts.view')&&!can(S,u,'professionals.view'))return html`<${MinhaArea}/>`;
+  const now=new Date(),T=today(),lim=addDays(T,7);
+  const up=visibleShifts(S,u).filter(s=>s.status!=='cancelado'&&new Date(s.end)>now&&dkey(s.start)<lim);
+  const open=up.filter(s=>s.status==='descoberto').sort((a,b)=>a.start.localeCompare(b.start));
+  const waiting=up.filter(s=>s.status==='aguardando_confirmacao'||s.status==='substituicao_solicitada');
+  const drafts=visibleShifts(S,u).filter(s=>s.status==='rascunho'&&new Date(s.end)>now);
+  const toValidate=S.profs.filter(p=>p.active&&(p.validation==='pendente'||p.validation==='em_analise'));
+  const reqs=S.reqs.filter(r=>r.status==='pendente'&&can(S,u,'requests.decide',shiftOf(S,r.shift).unit));
+  const ws=weekStart(T),we=addDays(ws,7);
+  const load=S.profs.filter(p=>p.active).map(p=>({p,h:S.asg.filter(a=>a.prof===p.id&&ACTIVE(a.status)).map(a=>shiftOf(S,a.shift)).filter(s=>s.status!=='cancelado'&&dkey(s.start)>=ws&&dkey(s.start)<we).reduce((t,s)=>t+hours(s.start,s.end,s.brk),0)})).filter(x=>x.h>0).sort((a,b)=>b.h-a.h);
+  const maxH=Math.max(S.rules.week,...load.map(x=>x.h));
+  const Stat=({label,value,tone,onClick})=>html`<button onClick=${onClick} className="rounded-md border border-line bg-panel px-4 py-3 text-left transition hover:border-teal/50">
+    <p className="text-sm text-soft">${label}</p><p className=${cx('mt-1 text-[1.75rem] font-semibold leading-tight',tone==='danger'&&value?'text-danger':tone==='amber'&&value?'text-amber':'text-navy')}>${value}</p></button>`;
+  return html`<div>
+    <${PageHead} title="Painel" desc=${`Próximos 7 dias em ${S.inst.name}${u.units?', Unidade Taquaral':''}.`} actions=${can(S,u,'shifts.view')&&html`<${Button} variant="primary" icon="cal" onClick=${()=>go({page:'escalas'})}>Abrir escalas<//>`}/>
+    <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <${Stat} label="Plantões descobertos" value=${open.length} tone="danger" onClick=${()=>go({page:'escalas',view:'lista',st:'descoberto'})}/>
+      <${Stat} label="Com pendência de confirmação" value=${waiting.length} tone="amber" onClick=${()=>go({page:'escalas',view:'lista'})}/>
+      <${Stat} label="Rascunhos não publicados" value=${drafts.length} onClick=${()=>go({page:'escalas',view:'lista',st:'rascunho'})}/>
+      <${Stat} label="Cadastros a validar" value=${toValidate.length} tone="amber" onClick=${()=>go({page:'profissionais'})}/>
+    </div>
+    <div className="grid items-start gap-6 xl:grid-cols-[1.4fr_1fr]">
+      <${Panel} title="Vagas em aberto">
+        ${open.length===0?html`<${Empty} title="Nenhuma vaga descoberta nos próximos 7 dias">Plantões publicados sem profissional suficiente aparecem aqui.<//>`:html`<ul className="divide-y divide-line">
+          ${open.slice(0,8).map(s=>{const f=s.slots-S.asg.filter(a=>a.shift===s.id&&ACTIVE(a.status)).length;return html`<li key=${s.id}><button onClick=${()=>go({page:'escalas',shift:s.id,d:dkey(s.start)})} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-bg">
+            <div className="w-28 shrink-0"><p className="text-sm font-medium">${cap(F(s.start,{weekday:'short',day:'2-digit',month:'2-digit'}))}</p><p className="text-xs text-soft">${hm(s.start)}–${hm(s.end)}</p></div>
+            <div className="min-w-0 flex-1"><p className="truncate text-sm">${unitOf(S,s.unit).name}${s.service?' / '+servOf(S,s.service).name:''}</p><p className="text-xs text-faint">${s.cat?CAT[s.cat]:'Qualquer categoria'}</p></div>
+            <${Badge} tone="danger">${f} ${f===1?'vaga':'vagas'}<//></button></li>`})}</ul>`}
+      <//>
+      <div className="space-y-6">
+        ${can(S,u,'requests.decide')&&html`<${Panel} title="Solicitações pendentes" action=${html`<button className="text-sm text-teal hover:underline" onClick=${()=>go({page:'solicitacoes'})}>Ver todas</button>`}>
+          ${reqs.length===0?html`<${Empty} title="Nada para aprovar"/>`:html`<ul className="divide-y divide-line">${reqs.map(r=>{const s=shiftOf(S,r.shift);return html`<li key=${r.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
+            <span className="min-w-0"><span className="block truncate font-medium">${profOf(S,r.prof).name}</span><span className="text-xs text-soft">${RK[r.kind]}, ${label(S,s)}</span></span>
+            <button className="shrink-0 text-teal hover:underline" onClick=${()=>go({page:'solicitacoes'})}>Analisar</button></li>`})}</ul>`}<//>`}
+        <${Panel} title="Horas escaladas nesta semana">
+          ${load.length===0?html`<${Empty} title="Ninguém escalado nesta semana"/>`:html`<ul className="space-y-2.5 px-4 py-4">${load.map(({p,h})=>html`<li key=${p.id} className="grid grid-cols-[minmax(0,9rem)_1fr_3rem] items-center gap-3 text-sm">
+            <span className="truncate">${p.name}</span>
+            <span className="relative h-2 rounded-full bg-bg"><span className=${cx('absolute inset-y-0 left-0 rounded-full',h>(p.maxWeek||S.rules.week)?'bg-amber':'bg-teal')} style=${{width:(h/maxH*100)+'%'}}></span>
+              <span className="absolute inset-y-[-3px] w-px bg-faint" style=${{left:(S.rules.week/maxH*100)+'%'}} title=${'Referência de '+S.rules.week+'h'}></span></span>
+            <span className="text-right text-soft">${fmtH(h)}</span></li>`)}
+            <li className="pt-1 text-xs text-faint">A linha vertical marca a referência de ${S.rules.week}h semanais configurada.</li></ul>`}
+        <//>
+      </div>
+    </div></div>`;
+}
+
+/* ------------------------------------------------------------------ escalas */
+function Escalas(){
+  const {S,u,run,go,page,toast}=useApp();
+  const [view,setView]=useState(page.view||'semana');
+  const [anchor,setAnchor]=useState(page.d||today());
+  const [fUnit,setFUnit]=useState(u.units?u.units[0]:'');
+  const [fSt,setFSt]=useState(page.st||'');
+  const [openId,setOpenId]=useState(page.shift||null);
+  const [form,setForm]=useState(null);
+  const [drag,setDrag]=useState(null);
+  const [pm,setPm]=useState(null);const [pmReason,setPmReason]=useState('');
+  useEffect(()=>{if(page.shift){setOpenId(page.shift);if(page.d)setAnchor(page.d)}},[page]);
+  const T=today();
+  let days=[];
+  if(view==='dia')days=[anchor];
+  else if(view==='semana'){const w=weekStart(anchor);for(let i=0;i<7;i++)days.push(addDays(w,i))}
+  else if(view==='mes'){const m1=anchor.slice(0,8)+'01';let d=weekStart(m1);const nm=parseKey(m1);nm.setMonth(nm.getMonth()+1);const end=weekStart(addDays(key(nm),6));while(d<end){days.push(d);d=addDays(d,1)}}
+  else {for(let i=0;i<14;i++)days.push(addDays(anchor,i))}
+  const from=days[0],to=addDays(days[days.length-1],1);
+  const list=visibleShifts(S,u).filter(s=>dkey(s.start)>=from&&dkey(s.start)<to&&(!fUnit||s.unit===fUnit)&&(!fSt||s.status===fSt)).sort((a,b)=>a.start.localeCompare(b.start));
+  const byDay={};list.forEach(s=>{(byDay[dkey(s.start)]=byDay[dkey(s.start)]||[]).push(s)});
+  const drafts=list.filter(s=>s.status==='rascunho'&&new Date(s.end)>new Date()&&can(S,u,'shifts.publish',s.unit));
+  const canManage=can(S,u,'shifts.manage');
+  const step=dir=>{if(view==='dia')setAnchor(addDays(anchor,dir));else if(view==='semana')setAnchor(addDays(anchor,7*dir));else if(view==='lista')setAnchor(addDays(anchor,14*dir));else{const d=parseKey(anchor.slice(0,8)+'01');d.setMonth(d.getMonth()+dir);setAnchor(key(d))}};
+  const title=view==='dia'?cap(F(anchor,{weekday:'long',day:'numeric',month:'long'})):view==='mes'?cap(F(anchor,{month:'long',year:'numeric'})):`${F(from,{day:'numeric',month:'short'})} a ${F(days[days.length-1],{day:'numeric',month:'short',year:'numeric'})}`;
+  const doMove=(s,date,reason)=>{if(dkey(s.start)===date)return;const r=run((D,U)=>A.move(D,U,s.id,date,reason),'Plantão movido.');
+    if(r.ok){setPm(null);setPmReason('')}else if(r.checks)setPm({s,date,c:r.checks,blocking:r.kind==='blocking'})};
+  const dnd=date=>canManage&&view!=='lista'?{onDragOver:e=>{e.preventDefault();setDrag(date)},onDragLeave:()=>setDrag(d=>d===date?null:d),
+    onDrop:e=>{e.preventDefault();setDrag(null);const s=shiftOf(S,e.dataTransfer.getData('text/plain'));if(!s)return;if(s.status==='cancelado')return toast('Plantão cancelado não pode ser movido.','error');if(!can(S,u,'shifts.manage',s.unit))return toast('Seu perfil não gerencia esta unidade.','error');doMove(s,date)}}:{};
+  const card=(s,compact)=>html`<${ShiftCard} key=${s.id} S=${S} s=${s} compact=${compact} onOpen=${()=>setOpenId(s.id)} draggable=${canManage&&s.status!=='cancelado'&&can(S,u,'shifts.manage',s.unit)}/>`;
+  const open=openId&&shiftOf(S,openId);
+  return html`<div>
+    <div className="mb-5 flex flex-wrap items-center gap-3">
+      <h1 className="mr-auto text-[1.75rem] font-semibold leading-tight text-navy">${title}</h1>
+      ${drafts.length>0&&html`<${Button} variant="navy" icon="send" onClick=${()=>run((D,U)=>A.publish(D,U,drafts.map(d=>d.id)),n=>`${n} ${n===1?'plantão publicado':'plantões publicados'}. Os profissionais escalados foram avisados.`)}>Publicar ${drafts.length} ${drafts.length===1?'rascunho':'rascunhos'}<//>`}
+      ${canManage&&html`<${Button} variant="primary" icon="plus" onClick=${()=>setForm({date:view==='dia'?anchor:(T>=from&&T<to?T:from)})}>Novo plantão<//>`}
+    </div>
+    <div className="mb-4 flex flex-wrap items-center gap-2">
+      <div className="inline-flex rounded border border-line bg-panel p-0.5" role="group" aria-label="Visualização">
+        ${[['dia','Dia'],['semana','Semana'],['mes','Mês'],['lista','Lista']].map(([v,l])=>html`<button key=${v} onClick=${()=>setView(v)} aria-pressed=${view===v} className=${cx('rounded-sm px-3 py-1.5 text-sm',view===v?'bg-navy text-onnavy':'text-soft hover:text-navy')}>${l}</button>`)}
+      </div>
+      <${Button} size="sm" variant="ghost" onClick=${()=>step(-1)} aria-label="Período anterior"><${Icon} n="left"/><//>
+      <${Button} size="sm" onClick=${()=>setAnchor(T)}>Hoje<//>
+      <${Button} size="sm" variant="ghost" onClick=${()=>step(1)} aria-label="Próximo período"><${Icon} n="right"/><//>
+      <div className="ml-auto flex flex-wrap gap-2">
+        ${!u.units&&html`<select id="f-unit" aria-label="Unidade" className=${inputCls+' h-9 w-auto py-1 text-sm'} value=${fUnit} onChange=${e=>setFUnit(e.target.value)}><option value="">Todas as unidades</option>${S.units.map(x=>html`<option key=${x.id} value=${x.id}>${x.name}</option>`)}</select>`}
+        <select id="f-st" aria-label="Situação" className=${inputCls+' h-9 w-auto py-1 text-sm'} value=${fSt} onChange=${e=>setFSt(e.target.value)}><option value="">Todas as situações</option>${Object.entries(SST).map(([k,v])=>html`<option key=${k} value=${k}>${v[0]}</option>`)}</select>
+      </div>
+    </div>
+    <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-soft">
+      <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-teal"></span>Confirmado</span>
+      <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-amber"></span>Aguardando</span>
+      <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full border-[1.5px] border-danger"></span>Vaga aberta</span>
+      <span className="inline-flex items-center gap-1.5"><span className="h-3 w-5 rounded-sm border border-dashed border-faint"></span>Rascunho</span>
+      ${canManage&&view!=='lista'&&html`<span className="hidden text-faint md:inline">Arraste um plantão para outro dia para movê-lo.</span>`}
+    </div>
+
+    ${view==='semana'&&html`<div className="grid gap-2 md:grid-cols-7">${days.map(d=>html`<section key=${d} ...${dnd(d)} className=${cx('flex min-h-[200px] flex-col rounded-md border bg-panel',d===T?'border-teal':'border-line',drag===d&&'bg-tealsoft ring-2 ring-teal')}>
+      <header className="flex items-center justify-between border-b border-line px-2.5 py-2"><span className="text-sm"><span className="capitalize text-soft">${F(d,{weekday:'short'}).replace('.','')}</span> <span className=${cx('font-semibold',d===T?'text-teal':'text-navy')}>${F(d,{day:'2-digit',month:'2-digit'})}</span></span>
+        ${canManage&&html`<button onClick=${()=>setForm({date:d})} className="rounded p-1 text-faint hover:bg-bg hover:text-teal" aria-label=${'Novo plantão em '+d}><${Icon} n="plus"/></button>`}</header>
+      <div className="flex-1 space-y-1.5 p-1.5">${(byDay[d]||[]).map(s=>card(s))}</div></section>`)}</div>`}
+
+    ${view==='dia'&&html`<section className="rounded-md border border-line bg-panel p-3"><div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">${(byDay[anchor]||[]).map(s=>card(s))}</div>
+      ${!(byDay[anchor]||[]).length&&html`<${Empty} title="Nenhum plantão neste dia"/>`}</section>`}
+
+    ${view==='mes'&&html`<div className="overflow-x-auto"><div className="grid min-w-[720px] grid-cols-7 border-l border-t border-line bg-panel">
+      ${[1,2,3,4,5,6,0].map(d=>html`<div key=${'h'+d} className="border-b border-r border-line px-2 py-1.5 text-xs text-soft">${WDS[d]}</div>`)}
+      ${days.map(d=>{const l=byDay[d]||[];const inM=d.slice(0,7)===anchor.slice(0,7);return html`<div key=${d} ...${dnd(d)} className=${cx('min-h-[112px] border-b border-r border-line p-1.5',!inM&&'bg-bg/70',drag===d&&'bg-tealsoft ring-2 ring-inset ring-teal')}>
+        <button onClick=${()=>{setView('dia');setAnchor(d)}} className=${cx('mb-1 rounded-sm px-1 text-xs',d===T?'bg-navy font-semibold text-onnavy':inM?'text-ink hover:bg-navy/10':'text-faint')}>${+d.slice(8)}</button>
+        <div className="space-y-1">${l.slice(0,4).map(s=>card(s,true))}${l.length>4&&html`<button className="text-xs text-teal hover:underline" onClick=${()=>{setView('dia');setAnchor(d)}}>+${l.length-4} plantões</button>`}</div></div>`})}
+    </div></div>`}
+
+    ${view==='lista'&&html`<div className="overflow-x-auto rounded-md border border-line bg-panel">${list.length===0?html`<${Empty} title="Nenhum plantão com estes filtros"/>`:html`<table className="w-full min-w-[760px] text-sm">
+      <thead><tr className="text-left text-xs text-soft">${['Data','Horário','Local','Categoria','Escalados','Situação'].map(h=>html`<th key=${h} className="border-b border-line px-4 py-2.5 font-medium">${h}</th>`)}</tr></thead>
+      <tbody>${list.map(s=>{const act=S.asg.filter(a=>a.shift===s.id&&ACTIVE(a.status));return html`<tr key=${s.id} className="cursor-pointer hover:bg-bg" onClick=${()=>setOpenId(s.id)}>
+        <td className="border-b border-line px-4 py-3 whitespace-nowrap">${cap(F(s.start,{weekday:'short',day:'2-digit',month:'2-digit'}))}</td>
+        <td className="border-b border-line px-4 py-3 font-medium text-navy">${hm(s.start)}–${hm(s.end)}</td>
+        <td className="border-b border-line px-4 py-3">${unitOf(S,s.unit).name}${s.service&&html`<span className="text-faint"> / ${servOf(S,s.service).name}</span>`}</td>
+        <td className="border-b border-line px-4 py-3">${s.cat?CAT[s.cat]:'Qualquer'}</td>
+        <td className="border-b border-line px-4 py-3"><div className="flex items-center gap-2"><${Pips} S=${S} s=${s}/><span className="truncate text-soft">${act.map(a=>profOf(S,a.prof).name.split(' ')[0]).join(', ')||'Ninguém'}</span></div></td>
+        <td className="border-b border-line px-4 py-3"><${Badge} tone=${SST[s.status][1]}>${SST[s.status][0]}<//></td></tr>`})}</tbody></table>`}</div>`}
+
+    ${open&&html`<${ShiftDetail} key=${open.id} s=${open} onClose=${()=>setOpenId(null)} onEdit=${()=>{setForm({shift:open});setOpenId(null)}}/>`}
+    ${form&&html`<${ShiftForm} init=${form} onClose=${()=>setForm(null)} onSaved=${id=>setOpenId(id)}/>`}
+    ${pm&&html`<${Modal} open onClose=${()=>{setPm(null);setPmReason('')}} title=${pm.blocking?'Não foi possível mover':'Confirmar mudança de data'} desc=${`Plantão das ${hm(pm.s.start)} para ${F(pm.date,{weekday:'long',day:'numeric',month:'long'})}.`}
+      footer=${html`<${Button} onClick=${()=>{setPm(null);setPmReason('')}}>${pm.blocking?'Fechar':'Cancelar'}<//>${!pm.blocking&&html`<${Button} variant="primary" disabled=${!pmReason.trim()} onClick=${()=>doMove(pm.s,pm.date,pmReason)}>Autorizar exceção e mover<//>`}`}>
+      <${Override} c=${pm.c} reason=${pmReason} setReason=${setPmReason} blocking=${pm.blocking}/><//>`}
+  </div>`;
+}
+
+function ShiftCard({S,s,compact,onOpen,draggable}){
+  const act=S.asg.filter(a=>a.shift===s.id&&ACTIVE(a.status));
+  const draft=s.status==='rascunho',canc=s.status==='cancelado',flag=act.some(a=>a.reason);
+  const edge=canc?'border-l-line':draft?'border-l-faint':s.status==='confirmado'?'border-l-teal':s.status==='descoberto'?'border-l-danger':'border-l-amber';
+  const ds=e=>{e.dataTransfer.setData('text/plain',s.id);e.dataTransfer.effectAllowed='move'};
+  if(compact)return html`<button type="button" onClick=${onOpen} draggable=${draggable} onDragStart=${ds} className=${cx('flex w-full items-center gap-1.5 rounded-sm border border-l-[3px] border-line bg-panel px-1.5 py-0.5 text-left text-xs hover:bg-bg',edge,draft&&'border-dashed',canc&&'line-through opacity-50')}>
+    <span className="font-medium">${hm(s.start)}</span><span className="min-w-0 flex-1 truncate text-soft">${s.service?servOf(S,s.service).name:unitOf(S,s.unit).name}</span><${Pips} S=${S} s=${s} sm/></button>`;
+  return html`<button type="button" onClick=${onOpen} draggable=${draggable} onDragStart=${ds} className=${cx('w-full rounded border border-l-[3px] border-line bg-panel px-2.5 py-2 text-left transition hover:bg-bg',edge,draft&&'border-dashed bg-bg/50',canc&&'opacity-55',draggable&&'cursor-grab active:cursor-grabbing')}>
+    <div className="flex items-center justify-between gap-2"><span className=${cx('text-sm font-semibold text-navy',canc&&'line-through')}>${hm(s.start)}–${hm(s.end)}</span><${Pips} S=${S} s=${s}/></div>
+    <p className="mt-0.5 truncate text-xs text-soft">${unitOf(S,s.unit).name}${s.service?' / '+servOf(S,s.service).name:''}</p>
+    ${s.cat&&html`<p className="truncate text-xs text-faint">${CAT[s.cat]}</p>`}
+    ${act.length>0&&html`<ul className="mt-1.5 space-y-0.5">${act.slice(0,3).map(a=>html`<li key=${a.id} className="flex items-center gap-1.5 truncate text-xs"><span className=${cx('h-1.5 w-1.5 shrink-0 rounded-full',a.status==='confirmado'?'bg-teal':'bg-amber')}></span><span className="truncate">${profOf(S,a.prof).name}</span></li>`)}</ul>`}
+    ${(draft||canc||s.status==='substituicao_solicitada'||flag)&&html`<div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[0.7rem]">
+      ${(draft||canc||s.status==='substituicao_solicitada')&&html`<span className="font-medium text-soft">${SST[s.status][0]}</span>`}
+      ${flag&&html`<span className="inline-flex items-center gap-0.5 text-amber" title="Escala com exceção autorizada"><${Icon} n="alert" s=${12}/>exceção</span>`}</div>`}
+  </button>`;
+}
+
+function ShiftForm({init,onClose,onSaved}){
+  const {S,u,run}=useApp();
+  const sh=init.shift;
+  const units=S.units.filter(x=>can(S,u,'shifts.manage',x.id));
+  const [f,setF]=useState(()=>sh?{id:sh.id,unit:sh.unit,service:sh.service||'',date:dkey(sh.start),start:hm(sh.start),end:hm(sh.end),brk:sh.brk,cat:sh.cat||'',slots:sh.slots,comps:sh.comps.join(', '),notes:sh.notes||''}
+    :{unit:units[0]&&units[0].id,service:'',date:init.date,start:'07:00',end:'13:00',brk:15,cat:'tecnico_enfermagem',slots:1,comps:'Sala de vacinação',notes:''});
+  const [c,setC]=useState(null);const [blocking,setBlocking]=useState(false);const [reason,setReason]=useState('');const [err,setErr]=useState(null);
+  const set=k=>e=>{setF({...f,[k]:e.target.value});if(blocking){setC(null);setBlocking(false)}};
+  const submit=e=>{e.preventDefault();setErr(null);
+    const r=run((D,U)=>A.saveShift(D,U,{...f,comps:f.comps.split(',').map(x=>x.trim()).filter(Boolean),override:reason}),sh?'Plantão atualizado.':'Plantão criado como rascunho.');
+    if(r.ok){onSaved&&onSaved(r.data);onClose()}else if(r.checks){setC(r.checks);setBlocking(r.kind==='blocking')}else setErr(r.msg)};
+  return html`<${Modal} open wide onClose=${onClose} title=${sh?'Editar plantão':'Novo plantão'} desc=${sh?'Ao mudar horário, unidade ou categoria, os profissionais escalados são revalidados.':'O plantão nasce como rascunho. Publique quando a escala estiver pronta.'}
+    footer=${html`<${Button} onClick=${onClose}>Cancelar<//><${Button} type="submit" form="shift-form" variant="primary" disabled=${blocking}>${c&&!blocking?'Autorizar exceção e salvar':sh?'Salvar alterações':'Criar plantão'}<//>`}>
+    <form id="shift-form" onSubmit=${submit} className="grid gap-4 sm:grid-cols-6">
+      <${Field} label="Unidade" id="sf-unit" className="sm:col-span-3"><select id="sf-unit" className=${inputCls} value=${f.unit} onChange=${e=>setF({...f,unit:e.target.value,service:''})}>${units.map(x=>html`<option key=${x.id} value=${x.id}>${x.name}</option>`)}</select><//>
+      <${Field} label="Serviço ou setor" id="sf-serv" className="sm:col-span-3"><select id="sf-serv" className=${inputCls} value=${f.service} onChange=${set('service')}><option value="">Sem serviço específico</option>${S.services.filter(x=>x.unit===f.unit).map(x=>html`<option key=${x.id} value=${x.id}>${x.name}</option>`)}</select><//>
+      <${Field} label="Data" id="sf-date" className="sm:col-span-2"><input id="sf-date" type="date" required className=${inputCls} value=${f.date} onChange=${set('date')}/><//>
+      <${Field} label="Início" id="sf-start" className="sm:col-span-1"><input id="sf-start" type="time" required className=${inputCls} value=${f.start} onChange=${set('start')}/><//>
+      <${Field} label="Término" id="sf-end" hint="Antes do início = dia seguinte" className="sm:col-span-1"><input id="sf-end" type="time" required className=${inputCls} value=${f.end} onChange=${set('end')}/><//>
+      <${Field} label="Intervalo (min)" id="sf-brk" className="sm:col-span-2"><input id="sf-brk" type="number" min="0" max="240" step="5" className=${inputCls} value=${f.brk} onChange=${set('brk')}/><//>
+      <${Field} label="Categoria profissional" id="sf-cat" className="sm:col-span-4"><select id="sf-cat" className=${inputCls} value=${f.cat} onChange=${set('cat')}><option value="">Qualquer categoria</option>${Object.entries(CAT).map(([k,v])=>html`<option key=${k} value=${k}>${v}</option>`)}</select><//>
+      <${Field} label="Vagas" id="sf-slots" className="sm:col-span-2"><input id="sf-slots" type="number" min="1" max="50" className=${inputCls} value=${f.slots} onChange=${set('slots')}/><//>
+      <${Field} label="Competências exigidas" id="sf-comps" hint="Separe por vírgula." className="sm:col-span-6"><input id="sf-comps" className=${inputCls} value=${f.comps} onChange=${set('comps')}/><//>
+      <${Field} label="Observações" id="sf-notes" className="sm:col-span-6"><textarea id="sf-notes" className=${inputCls+' min-h-[64px]'} value=${f.notes} onChange=${set('notes')}></textarea><//>
+      ${c&&html`<div className="sm:col-span-6"><${Override} c=${c} reason=${reason} setReason=${setReason} blocking=${blocking}/></div>`}
+      ${err&&html`<p role="alert" className="rounded border border-danger/40 bg-dangerbg px-3 py-2 text-sm text-danger sm:col-span-6">${err}</p>`}
+    </form><//>`;
+}
+
+function ShiftDetail({s,onClose,onEdit}){
+  const {S,u,run}=useApp();
+  const [tab,setTab]=useState('det');const [panel,setPanel]=useState(null);
+  const act=S.asg.filter(a=>a.shift===s.id&&ACTIVE(a.status)),past=S.asg.filter(a=>a.shift===s.id&&!ACTIVE(a.status));
+  const canc=s.status==='cancelado',manage=can(S,u,'shifts.manage',s.unit)&&!canc;
+  const hist=S.audit.filter(h=>h.ref===s.id);
+  return html`<${Modal} open wide onClose=${onClose} title=${F(s.start,{weekday:'long',day:'numeric',month:'long'})}
+    desc=${`${hm(s.start)}–${hm(s.end)}${dkey(s.end)!==dkey(s.start)?' (dia seguinte)':''}, ${unitOf(S,s.unit).name}${s.service?' / '+servOf(S,s.service).name:''}`}>
+    <div className="mb-4 flex flex-wrap items-center gap-2"><${Badge} tone=${SST[s.status][1]}>${SST[s.status][0]}<//><span className="text-sm text-soft">${fmtH(hours(s.start,s.end,s.brk))} de trabalho${s.brk?`, ${s.brk} min de intervalo`:''}</span></div>
+    ${can(S,u,'audit.view')&&html`<div role="tablist" className="mb-4 flex gap-4 border-b border-line text-sm">${[['det','Detalhes'],['hist','Histórico']].map(([k,l])=>html`<button key=${k} role="tab" aria-selected=${tab===k} onClick=${()=>setTab(k)} className=${cx('-mb-px border-b-2 px-0.5 pb-2',tab===k?'border-teal font-medium text-navy':'border-transparent text-soft hover:text-navy')}>${l}</button>`)}</div>`}
+    ${tab==='hist'?(hist.length?html`<ol className="space-y-3">${hist.map(h=>html`<li key=${h.id} className="border-l-2 border-line pl-3"><p className="text-sm"><span className="font-medium">${h.actor}</span> <span className="text-soft">${(ACT[h.action]||h.action).toLowerCase()}</span>${h.detail&&html`<span className="text-faint">: ${h.detail}</span>`}</p><p className="text-xs text-faint">${F(h.at,{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}${h.reason?'. Motivo: '+h.reason:''}</p></li>`)}</ol>`:html`<p className="text-sm text-soft">Sem registros para este plantão nesta demonstração.</p>`)
+    :html`<div className="space-y-5">
+      <dl className="grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+        <div><dt className="text-faint">Categoria</dt><dd>${s.cat?CAT[s.cat]:'Qualquer categoria'}</dd></div>
+        <div><dt className="text-faint">Vagas</dt><dd>${act.length} de ${s.slots} preenchidas</dd></div>
+        ${s.comps.length>0&&html`<div className="sm:col-span-2"><dt className="text-faint">Competências exigidas</dt><dd>${s.comps.join(', ')}</dd></div>`}
+        ${s.notes&&html`<div className="sm:col-span-2"><dt className="text-faint">Observações</dt><dd>${s.notes}</dd></div>`}
+        ${canc&&html`<div className="sm:col-span-2"><dt className="text-faint">Motivo do cancelamento</dt><dd>${s.cancelReason}</dd></div>`}
+      </dl>
+      <section><h3 className="mb-2 text-sm font-semibold text-navy">Profissionais escalados</h3>
+        ${act.length===0?html`<p className="text-sm text-soft">Ninguém escalado ainda.</p>`:html`<ul className="divide-y divide-line rounded border border-line">${act.map(a=>html`<${Assigned} key=${a.id} a=${a} s=${s} manage=${manage}/>`)}</ul>`}
+        ${past.length>0&&html`<p className="mt-2 text-xs text-faint">Saíram da escala: ${past.map(a=>`${profOf(S,a.prof).name} (${AST[a.status][0].toLowerCase()})`).join(', ')}</p>`}
+      </section>
+      ${manage&&act.length<s.slots&&html`<${Picker} s=${s}/>`}
+      ${manage&&html`<div className="flex flex-wrap gap-2 border-t border-line pt-4">
+        <${Button} size="sm" icon="pencil" onClick=${onEdit}>Editar<//>
+        <${Button} size="sm" icon="copy" onClick=${()=>setPanel(panel==='dup'?null:'dup')}>Duplicar ou repetir<//>
+        ${s.status==='rascunho'&&can(S,u,'shifts.publish',s.unit)&&html`<${Button} size="sm" variant="navy" icon="send" onClick=${()=>run((D,U)=>A.publish(D,U,[s.id]),'Plantão publicado. Os profissionais escalados foram avisados.')}>Publicar<//>`}
+        <${Button} size="sm" variant="danger" icon="ban" className="ml-auto" onClick=${()=>setPanel(panel==='can'?null:'can')}>Cancelar plantão<//>
+      </div>`}
+      ${panel==='dup'&&html`<${Duplicate} s=${s} onDone=${()=>setPanel(null)}/>`}
+      ${panel==='can'&&html`<${CancelPanel} s=${s} onDone=${onClose}/>`}
+    </div>`}<//>`;
+}
+function Assigned({a,s,manage}){
+  const {S,run}=useApp();const [rm,setRm]=useState(false);const [r,setR]=useState('');const p=profOf(S,a.prof);
+  return html`<li className="px-3 py-2.5"><div className="flex flex-wrap items-center gap-2"><span className="font-medium">${p.name}</span><span className="text-xs text-faint">${CAT[p.cat]}</span><${Badge} tone=${AST[a.status][1]}>${AST[a.status][0]}<//>
+    ${manage&&!rm&&html`<button className="ml-auto text-sm text-soft hover:text-danger hover:underline" onClick=${()=>setRm(true)}>Remover</button>`}</div>
+    ${a.reason&&html`<div className="mt-1.5 text-xs text-amber"><p className="flex items-center gap-1"><${Icon} n="alert" s=${12}/>Exceção autorizada: ${a.reason}</p>${a.warnings.length>0&&html`<p className="ml-4 text-faint">${a.warnings.join(' ')}</p>`}</div>`}
+    ${rm&&html`<div className="mt-2 flex flex-wrap items-end gap-2">${s.status!=='rascunho'&&html`<input className=${inputCls+' h-9 flex-1 py-1'} placeholder="Motivo (obrigatório em escala publicada)" value=${r} onInput=${e=>setR(e.target.value)} aria-label="Motivo da remoção"/>`}
+      <${Button} size="sm" onClick=${()=>setRm(false)}>Voltar<//><${Button} size="sm" variant="danger" disabled=${s.status!=='rascunho'&&!r.trim()} onClick=${()=>run((D,U)=>A.unassign(D,U,a.id,r),'Profissional removido do plantão.')}>Remover do plantão<//></div>`}</li>`;
+}
+function Picker({s}){
+  const {S,run}=useApp();
+  const [q,setQ]=useState('');const [sel,setSel]=useState(null);const [reason,setReason]=useState('');const [conf,setConf]=useState(false);
+  const assigned=new Set(S.asg.filter(a=>a.shift===s.id&&ACTIVE(a.status)).map(a=>a.prof));
+  const rank=c=>c.blocking.length?3:c.warnings.length?2:0;
+  const pool=S.profs.filter(p=>p.active&&!assigned.has(p.id)&&(!s.cat||p.cat===s.cat)).map(p=>({p,c:checks(S,s,p.id)}))
+    .filter(x=>x.p.name.toLowerCase().includes(q.toLowerCase())).sort((a,b)=>rank(a.c)-rank(b.c)||a.p.name.localeCompare(b.p.name));
+  const cur=sel&&pool.find(x=>x.p.id===sel);
+  return html`<section className="rounded-md border border-line">
+    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-3 py-2.5"><h3 className="text-sm font-semibold text-navy">Escalar profissional</h3>
+      <input className=${inputCls+' h-8 w-48 py-1 text-sm'} placeholder="Buscar" aria-label="Buscar profissional" value=${q} onInput=${e=>setQ(e.target.value)}/></div>
+    ${pool.length===0?html`<p className="px-3 py-4 text-sm text-soft">Nenhum profissional ${s.cat?'da categoria '+CAT[s.cat].toLowerCase():''} disponível.</p>`:html`<ul className="max-h-72 divide-y divide-line overflow-y-auto">
+      ${pool.map(({p,c})=>{const bl=c.blocking.length>0,is=sel===p.id;return html`<li key=${p.id} className=${cx('px-3 py-2',is&&'bg-bg')}>
+        <div className="flex items-center gap-2"><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">${p.name}</p><p className="text-xs text-faint">${CAT[p.cat]}</p></div>
+          ${bl?html`<span className="text-xs text-danger">Indisponível</span>`:c.warnings.length?html`<span className="text-xs text-amber">${c.warnings.length} ${c.warnings.length===1?'alerta':'alertas'}</span>`:html`<span className="inline-flex items-center gap-1 text-xs text-teal"><${Icon} n="check" s=${14}/>Sem restrições</span>`}
+          <${Button} size="sm" variant=${is?'navy':'secondary'} disabled=${bl} onClick=${()=>{setSel(is?null:p.id);setReason('')}}>${is?'Selecionado':'Selecionar'}<//></div>
+        ${(bl||is)&&html`<${Checks} c=${c} compact/>`}</li>`})}</ul>`}
+    ${cur&&html`<div className="space-y-3 border-t border-line px-3 py-3">
+      ${cur.c.warnings.length>0&&html`<${Override} c=${{blocking:[],warnings:cur.c.warnings}} reason=${reason} setReason=${setReason}/>`}
+      <label className="flex items-center gap-2 text-sm"><input type="checkbox" className="accent-teal" checked=${conf} onChange=${e=>setConf(e.target.checked)}/>Presença já combinada (registrar como confirmado)</label>
+      <div className="flex justify-end"><${Button} size="sm" variant="primary" disabled=${cur.c.warnings.length>0&&!reason.trim()} onClick=${()=>{const r=run((D,U)=>A.assign(D,U,s.id,cur.p.id,reason,conf),'Profissional escalado.');if(r.ok){setSel(null);setReason('')}}}>${cur.c.warnings.length?'Autorizar exceção e escalar':'Escalar'}<//></div></div>`}
+  </section>`;
+}
+function Duplicate({s,onDone}){
+  const {run}=useApp();const base=dkey(s.start);
+  const [from,setFrom]=useState(addDays(base,1));const [to,setTo]=useState(addDays(base,7));const [days,setDays]=useState([wdOf(base)]);
+  const dates=[];if(from&&to&&to>=from)for(let d=from;d<=to&&dates.length<61;d=addDays(d,1))if(days.includes(wdOf(d))&&d!==base)dates.push(d);
+  return html`<div className="rounded-md border border-line bg-bg/60 p-3"><p className="mb-3 text-sm text-soft">Cria cópias em rascunho, no mesmo horário, sem profissionais escalados.</p>
+    <div className="grid gap-3 sm:grid-cols-2"><${Field} label="De" id="dup-from"><input id="dup-from" type="date" className=${inputCls} value=${from} onChange=${e=>setFrom(e.target.value)}/><//><${Field} label="Até" id="dup-to"><input id="dup-to" type="date" className=${inputCls} value=${to} onChange=${e=>setTo(e.target.value)}/><//></div>
+    <div className="mt-3 flex flex-wrap gap-1.5">${[1,2,3,4,5,6,0].map(d=>html`<label key=${d} className=${cx('cursor-pointer rounded border px-2.5 py-1 text-sm',days.includes(d)?'border-teal bg-tealsoft text-teal':'border-line bg-panel')}>
+      <input type="checkbox" className="sr-only" checked=${days.includes(d)} onChange=${e=>setDays(e.target.checked?[...days,d]:days.filter(x=>x!==d))}/>${WDS[d]}</label>`)}</div>
+    <div className="mt-3 flex items-center justify-between gap-2"><span className="text-sm text-soft">${dates.length} ${dates.length===1?'cópia':'cópias'}</span>
+      <${Button} size="sm" variant="primary" disabled=${!dates.length||dates.length>60} onClick=${()=>{const r=run((D,U)=>A.duplicate(D,U,s.id,dates),n=>`${n} ${n===1?'cópia criada':'cópias criadas'} como rascunho.`);if(r.ok)onDone()}}>Criar cópias<//></div></div>`;
+}
+function CancelPanel({s,onDone}){
+  const {S,run}=useApp();const [r,setR]=useState('');const n=S.asg.filter(a=>a.shift===s.id&&ACTIVE(a.status)).length;
+  return html`<div className="rounded-md border border-danger/40 bg-dangerbg/40 p-3"><p className="text-sm">O plantão fica no histórico como cancelado${n?`, e ${n===1?'o profissional escalado é liberado e avisado':`os ${n} profissionais escalados são liberados e avisados`}`:''}.</p>
+    <${Field} label="Motivo do cancelamento" id="can-r" className="mt-3"><textarea id="can-r" className=${inputCls+' min-h-[60px]'} value=${r} onInput=${e=>setR(e.target.value)}></textarea><//>
+    <div className="mt-3 flex justify-end"><${Button} size="sm" variant="danger" disabled=${!r.trim()} onClick=${()=>{const x=run((D,U)=>A.cancel(D,U,s.id,r),'Plantão cancelado.');if(x.ok)onDone()}}>Confirmar cancelamento<//></div></div>`;
+}
+
+/* ------------------------------------------------------------------ solicitações */
+function Solicitacoes(){
+  const {S,u}=useApp();
+  const mine=S.reqs.filter(r=>can(S,u,'requests.decide',shiftOf(S,r.shift).unit));
+  const pend=mine.filter(r=>r.status==='pendente').sort((a,b)=>a.created.localeCompare(b.created));
+  const done=mine.filter(r=>r.status!=='pendente').sort((a,b)=>(b.decided||b.created).localeCompare(a.decided||a.created)).slice(0,15);
+  return html`<div><${PageHead} title="Solicitações" desc="Pedidos de substituição, cancelamento e alteração dos profissionais, e candidaturas a vagas abertas."/>
+    <${Panel} className="mb-6">${pend.length===0?html`<${Empty} title="Nenhuma solicitação pendente">Entre como Carla Mendes e peça uma substituição para ver o pedido chegar aqui.<//>`:html`<ul className="divide-y divide-line">${pend.map(r=>html`<${ReqItem} key=${r.id} r=${r} decide/>`)}</ul>`}<//>
+    ${done.length>0&&html`<h2 className="mb-3 text-lg font-semibold text-navy">Analisadas recentemente</h2><${Panel}><ul className="divide-y divide-line">${done.map(r=>html`<${ReqItem} key=${r.id} r=${r}/>`)}</ul><//>`}</div>`;
+}
+function ReqItem({r,decide}){
+  const {S,run}=useApp();const s=shiftOf(S,r.shift),p=profOf(S,r.prof);
+  const [mode,setMode]=useState(null);const [n,setN]=useState('');const [sub,setSub]=useState('');const [c,setC]=useState(null);const [bl,setBl]=useState(false);const [reason,setReason]=useState('');
+  const cands=S.profs.filter(x=>x.active&&x.id!==r.prof&&(!s.cat||x.cat===s.cat));
+  const freed=useMemo(()=>{if(r.kind==='candidatura'||!r.asg)return S;const D=structuredClone(S);const a=D.asg.find(x=>x.id===r.asg);if(a)a.status='removido';return D},[S,r]);
+  const subStatus=pid=>{const k=checks(freed,shiftOf(freed,s.id),pid);return k.blocking.length?'b':k.warnings.length?'w':''};
+  const subCheck=sub&&r.kind!=='candidatura'?(()=>{const D=structuredClone(S);const a=D.asg.find(x=>x.id===r.asg);if(a)a.status='removido';return checks(D,shiftOf(D,s.id),sub)})():null;
+  const go=ok=>{const x=run((D,U)=>A.decide(D,U,r.id,ok,n,ok?sub||null:null,reason),ok?'Solicitação aprovada.':'Solicitação recusada.');if(!x.ok&&x.checks){setC(x.checks);setBl(x.kind==='blocking')}};
+  return html`<li className="px-4 py-4"><div className="flex flex-wrap items-start gap-3"><div className="min-w-0 flex-1">
+      <p className="font-medium">${p.name} <span className="font-normal text-soft">pediu ${RK[r.kind].toLowerCase()}</span></p>
+      <p className="mt-0.5 text-sm text-soft">${cap(F(s.start,{weekday:'long',day:'2-digit',month:'2-digit'}))}, ${hm(s.start)}–${hm(s.end)}, ${unitOf(S,s.unit).name}</p>
+      ${r.reason&&html`<p className="mt-1.5 rounded bg-bg px-2.5 py-1.5 text-sm">“${r.reason}”</p>`}
+      ${r.note&&html`<p className="mt-1.5 text-sm text-soft">Resposta${r.by?' de '+r.by:''}: ${r.note}</p>`}
+      <p className="mt-1 text-xs text-faint">Enviada em ${F(r.created,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</p></div>
+    <${Badge} tone=${RST[r.status][1]}>${RST[r.status][0]}<//></div>
+    ${decide&&!mode&&html`<div className="mt-3 flex gap-2"><${Button} size="sm" variant="primary" onClick=${()=>setMode('ok')}>Aprovar<//><${Button} size="sm" onClick=${()=>setMode('no')}>Recusar<//></div>`}
+    ${decide&&mode&&html`<div className="mt-3 space-y-3 rounded-md border border-line bg-bg/50 p-3">
+      ${mode==='ok'&&(r.kind==='substituicao'||r.kind==='cancelamento')&&html`<${Field} label="Substituto" id=${'sub'+r.id} hint="O substituto passa pelas mesmas regras da escala.">
+        <select id=${'sub'+r.id} className=${inputCls} value=${sub} onChange=${e=>{setSub(e.target.value);setC(null);setReason('')}}><option value="">Sem substituto agora (a vaga fica descoberta)</option>${cands.map(x=>{const k=subStatus(x.id);return html`<option key=${x.id} value=${x.id} disabled=${k==='b'}>${x.name}${k==='b'?' (indisponível)':k==='w'?' (com alertas)':''}</option>`})}</select><//>`}
+      ${subCheck&&!c&&html`<${Checks} c=${subCheck}/>`}
+      ${mode==='ok'&&r.kind==='alteracao'&&html`<p className="text-sm text-soft">Aprovar registra a decisão. Faça a alteração do plantão na tela de Escalas.</p>`}
+      <${Field} label=${mode==='no'?'Motivo da recusa':'Mensagem ao profissional (opcional)'} id=${'n'+r.id}><textarea id=${'n'+r.id} className=${inputCls+' min-h-[56px]'} value=${n} onInput=${e=>setN(e.target.value)}></textarea><//>
+      ${c&&html`<${Override} c=${c} reason=${reason} setReason=${setReason} blocking=${bl}/>`}
+      <div className="flex justify-end gap-2"><${Button} size="sm" onClick=${()=>{setMode(null);setC(null)}}>Voltar<//>
+        ${mode==='ok'?html`<${Button} size="sm" variant="primary" disabled=${bl||(c&&!reason.trim())||(subCheck&&subCheck.blocking.length>0)} onClick=${()=>go(true)}>${c?'Autorizar exceção e aprovar':'Confirmar aprovação'}<//>`:html`<${Button} size="sm" variant="danger" disabled=${!n.trim()} onClick=${()=>go(false)}>Confirmar recusa<//>`}</div></div>`}
+  </li>`;
+}
+
+/* ------------------------------------------------------------------ profissionais */
+function Profissionais(){
+  const {S,u,go}=useApp();const [q,setQ]=useState('');const [cat,setCat]=useState('');const [v,setV]=useState('');const [nw,setNw]=useState(false);
+  const rows=S.profs.filter(p=>(!q||(p.name+' '+p.num).toLowerCase().includes(q.toLowerCase()))&&(!cat||p.cat===cat)&&(!v||p.validation===v)).sort((a,b)=>a.name.localeCompare(b.name));
+  return html`<div><${PageHead} title="Profissionais" desc="Equipe assistencial, situação de validação e disponibilidade." actions=${can(S,u,'professionals.manage')&&html`<${Button} variant="primary" icon="plus" onClick=${()=>setNw(true)}>Novo profissional<//>`}/>
+    <div className="mb-4 grid gap-3 rounded-md border border-line bg-panel p-3 sm:grid-cols-[2fr_1fr_1fr]">
+      <input id="pq" className=${inputCls} placeholder="Nome ou número do registro" aria-label="Buscar" value=${q} onInput=${e=>setQ(e.target.value)}/>
+      <select id="pc" className=${inputCls} aria-label="Categoria" value=${cat} onChange=${e=>setCat(e.target.value)}><option value="">Todas as categorias</option>${Object.entries(CAT).map(([k,l])=>html`<option key=${k} value=${k}>${l}</option>`)}</select>
+      <select id="pv" className=${inputCls} aria-label="Validação" value=${v} onChange=${e=>setV(e.target.value)}><option value="">Qualquer validação</option>${Object.entries(VST).map(([k,l])=>html`<option key=${k} value=${k}>${l[0]}</option>`)}</select></div>
+    <div className="overflow-x-auto rounded-md border border-line bg-panel">${rows.length===0?html`<${Empty} title="Nenhum profissional encontrado"/>`:html`<table className="w-full min-w-[680px] text-sm">
+      <thead><tr className="text-left text-xs text-soft">${['Nome','Categoria','Registro','Validação','Acesso'].map(h=>html`<th key=${h} className="border-b border-line px-4 py-2.5 font-medium">${h}</th>`)}</tr></thead>
+      <tbody>${rows.map(p=>html`<tr key=${p.id} className="cursor-pointer hover:bg-bg" onClick=${()=>go({page:'prof',id:p.id})}>
+        <td className="border-b border-line px-4 py-3"><span className="font-medium text-navy">${p.name}</span>${!p.active&&html` <${Badge}>Inativo<//>`}</td>
+        <td className="border-b border-line px-4 py-3">${CAT[p.cat]}</td>
+        <td className="border-b border-line px-4 py-3">${p.num?`${p.council} ${p.num}/${p.uf}`:html`<span className="text-faint">Não informado</span>`}</td>
+        <td className="border-b border-line px-4 py-3"><${Badge} tone=${VST[p.validation][1]}>${VST[p.validation][0]}<//></td>
+        <td className="border-b border-line px-4 py-3">${S.users.some(x=>x.prof===p.id)?html`<span className="text-teal">Usa a Minha área</span>`:html`<span className="text-faint">Sem acesso</span>`}</td></tr>`)}</tbody></table>`}</div>
+    ${nw&&html`<${Modal} open wide onClose=${()=>setNw(false)} title="Novo profissional" desc="O cadastro começa com validação pendente até a verificação dos documentos."><${ProfForm} onDone=${id=>{setNw(false);if(id)go({page:'prof',id})}}/><//>`}</div>`;
+}
+function ProfForm({p,onDone}){
+  const {S,run}=useApp();
+  const [f,setF]=useState(()=>p?{...p,comps:p.comps.join(', ')}:{name:'',cat:'',council:'',num:'',uf:'SP',email:'',phone:'',comps:'',units:[]});
+  const [err,setErr]=useState(null);const set=k=>e=>setF({...f,[k]:e.target.value});
+  const submit=e=>{e.preventDefault();const r=run((D,U)=>A.saveProf(D,U,{...f,comps:f.comps.split(',').map(x=>x.trim()).filter(Boolean)}),p?'Cadastro atualizado.':'Profissional cadastrado.');if(r.ok)onDone&&onDone(r.data);else setErr(r.msg)};
+  return html`<form onSubmit=${submit} className="grid gap-4 sm:grid-cols-6">
+    <${Field} label="Nome completo" id="pf-n" className="sm:col-span-4"><input id="pf-n" required className=${inputCls} value=${f.name} onInput=${set('name')}/><//>
+    <${Field} label="Categoria" id="pf-c" className="sm:col-span-2"><select id="pf-c" required className=${inputCls} value=${f.cat} onChange=${e=>setF({...f,cat:e.target.value,council:COUNCIL[e.target.value]||''})}><option value="" disabled>Selecione</option>${Object.entries(CAT).map(([k,l])=>html`<option key=${k} value=${k}>${l}</option>`)}</select><//>
+    <${Field} label="E-mail" id="pf-e" className="sm:col-span-3"><input id="pf-e" type="email" className=${inputCls} value=${f.email} onInput=${set('email')}/><//>
+    <${Field} label="Telefone" id="pf-t" className="sm:col-span-3"><input id="pf-t" className=${inputCls} value=${f.phone} onInput=${set('phone')}/><//>
+    <${Field} label="Conselho" id="pf-co" className="sm:col-span-2"><input id="pf-co" className=${inputCls} value=${f.council} onInput=${set('council')}/><//>
+    <${Field} label="Número do registro" id="pf-nu" className="sm:col-span-3"><input id="pf-nu" className=${inputCls} value=${f.num} onInput=${set('num')}/><//>
+    <${Field} label="UF" id="pf-uf" className="sm:col-span-1"><input id="pf-uf" maxLength="2" className=${inputCls+' uppercase'} value=${f.uf} onInput=${set('uf')}/><//>
+    <${Field} label="Competências" id="pf-cp" hint="Separe por vírgula. São comparadas com as exigidas em cada plantão." className="sm:col-span-6"><input id="pf-cp" className=${inputCls} value=${f.comps} onInput=${set('comps')}/><//>
+    <fieldset className="sm:col-span-6"><legend className="mb-1 text-sm font-medium">Unidades em que atua</legend><p className="mb-2 text-xs text-faint">Sem seleção = qualquer unidade.</p>
+      <div className="flex flex-wrap gap-2">${S.units.map(x=>html`<label key=${x.id} className="flex items-center gap-2 rounded border border-line px-2.5 py-1.5 text-sm"><input type="checkbox" className="accent-teal" checked=${f.units.includes(x.id)} onChange=${e=>setF({...f,units:e.target.checked?[...f.units,x.id]:f.units.filter(y=>y!==x.id)})}/>${x.name}</label>`)}</div></fieldset>
+    ${err&&html`<p role="alert" className="rounded border border-danger/40 bg-dangerbg px-3 py-2 text-sm text-danger sm:col-span-6">${err}</p>`}
+    <div className="flex justify-end gap-2 sm:col-span-6"><${Button} type="submit" variant="primary">${p?'Salvar alterações':'Cadastrar profissional'}<//></div></form>`;
+}
+function ProfDetail({id}){
+  const {S,u,run,go}=useApp();const p=profOf(S,id);const [edit,setEdit]=useState(false);
+  if(!p)return html`<${Empty} title="Profissional não encontrado"/>`;
+  const manage=can(S,u,'professionals.manage');
+  const asg=S.asg.filter(a=>a.prof===id).map(a=>({a,s:shiftOf(S,a.shift)})).sort((x,y)=>y.s.start.localeCompare(x.s.start)).slice(0,12);
+  return html`<div className="space-y-6">
+    <div><button className="text-sm text-soft hover:text-navy" onClick=${()=>go({page:'profissionais'})}>Profissionais</button>
+      <div className="mt-2 flex flex-wrap items-start justify-between gap-4"><div><h1 className="text-[1.75rem] font-semibold text-navy">${p.name}</h1>
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-soft"><span>${CAT[p.cat]}</span>${p.num&&html`<span>${p.council} ${p.num}/${p.uf}</span>`}<${Badge} tone=${VST[p.validation][1]}>${VST[p.validation][0]}<//>${!p.active&&html`<${Badge}>Inativo<//>`}</div></div>
+      <div className="flex flex-wrap items-center gap-2">
+        ${can(S,u,'documents.verify')&&html`<label className="flex items-center gap-2 text-sm"><span className="text-soft">Validação</span><select id="val" className=${inputCls+' h-9 w-44 py-1'} value=${p.validation} onChange=${e=>run((D,U)=>A.validate(D,U,id,e.target.value),'Situação de validação atualizada.')}>${Object.entries(VST).map(([k,l])=>html`<option key=${k} value=${k}>${l[0]}</option>`)}</select></label>`}
+        ${manage&&html`<${Button} icon="pencil" onClick=${()=>setEdit(true)}>Editar cadastro<//><${Button} variant=${p.active?'danger':'secondary'} onClick=${()=>run((D,U)=>A.setActive(D,U,id,!p.active),p.active?'Profissional desativado. Plantões já publicados não mudam.':'Profissional reativado.')}>${p.active?'Desativar':'Reativar'}<//>`}
+      </div></div></div>
+    <${Panel} title="Dados profissionais"><dl className="grid gap-3 px-4 py-4 text-sm sm:grid-cols-3">
+      <div><dt className="text-faint">E-mail</dt><dd>${p.email||'Não informado'}</dd></div><div><dt className="text-faint">Telefone</dt><dd>${p.phone||'Não informado'}</dd></div>
+      <div><dt className="text-faint">Unidades</dt><dd>${p.units.length?p.units.map(x=>unitOf(S,x).name).join(', '):'Qualquer unidade'}</dd></div>
+      <div className="sm:col-span-3"><dt className="text-faint">Competências</dt><dd className="mt-1 flex flex-wrap gap-1.5">${p.comps.length?p.comps.map(c=>html`<${Badge} key=${c} tone="navy">${c}<//>`):'Não informadas'}</dd></div></dl><//>
+    <div className="grid gap-6 xl:grid-cols-2">
+      <${Panel} title="Disponibilidade"><div className="p-4"><${Avail} p=${p} readOnly=${!manage}/></div><//>
+      <div className="space-y-6"><${Panel} title="Férias e afastamentos"><div className="p-4"><${Absences} p=${p} readOnly=${!manage}/></div><//>
+        <${Panel} title="Plantões recentes">${asg.length===0?html`<p className="px-4 py-6 text-sm text-soft">Nenhum plantão atribuído.</p>`:html`<ul className="divide-y divide-line">${asg.map(({a,s})=>html`<li key=${a.id}><button onClick=${()=>go({page:'escalas',shift:s.id,d:dkey(s.start)})} className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm hover:bg-bg">
+          <span className="w-40 shrink-0 font-medium text-navy">${cap(F(s.start,{weekday:'short',day:'2-digit',month:'2-digit'}))} ${hm(s.start)}</span><span className="min-w-0 flex-1 truncate text-soft">${unitOf(S,s.unit).name}</span><${Badge} tone=${AST[a.status][1]}>${AST[a.status][0]}<//></button></li>`)}</ul>`}<//></div>
+    </div>
+    ${edit&&html`<${Modal} open wide onClose=${()=>setEdit(false)} title="Editar cadastro"><${ProfForm} p=${p} onDone=${()=>setEdit(false)}/><//>`}</div>`;
+}
+function Avail({p,readOnly}){
+  const {run}=useApp();
+  const [slots,setSlots]=useState(p.avail.map(x=>({...x})));const [max,setMax]=useState(p.maxWeek||'');const [dirty,setDirty]=useState(false);
+  const upd=fn=>{setSlots(fn);setDirty(true)};
+  return html`<div className="space-y-4"><p className="text-sm text-soft">Disponibilidade não é escala: alterar aqui não muda plantões já publicados.</p>
+    <div className="divide-y divide-line rounded border border-line">${[1,2,3,4,5,6,0].map(w=>{const ds=slots.map((s,i)=>({s,i})).filter(x=>x.s.wd===w);return html`<div key=${w} className="flex flex-wrap items-center gap-2 px-3 py-2.5">
+      <span className="w-20 text-sm font-medium">${WD[w]}</span>${!ds.length&&html`<span className="text-sm text-faint">Indisponível</span>`}
+      ${ds.map(({s,i})=>html`<span key=${i} className="inline-flex items-center gap-1 rounded border border-line bg-bg px-1.5 py-1">
+        <input type="time" aria-label="Início" className="w-[5.6rem] bg-transparent text-sm" disabled=${readOnly} value=${s.s} onChange=${e=>upd(xs=>xs.map((x,j)=>j===i?{...x,s:e.target.value}:x))}/><span className="text-faint">às</span>
+        <input type="time" aria-label="Término" className="w-[5.6rem] bg-transparent text-sm" disabled=${readOnly} value=${s.e} onChange=${e=>upd(xs=>xs.map((x,j)=>j===i?{...x,e:e.target.value}:x))}/>
+        ${!readOnly&&html`<button className="p-0.5 text-faint hover:text-danger" aria-label="Remover faixa" onClick=${()=>upd(xs=>xs.filter((_,j)=>j!==i))}><${Icon} n="x" s=${14}/></button>`}</span>`)}
+      ${!readOnly&&html`<button className="ml-auto inline-flex items-center gap-1 text-sm text-teal hover:underline" onClick=${()=>upd(xs=>[...xs,{wd:w,s:'07:00',e:'19:00'}])}><${Icon} n="plus" s=${14}/>Faixa</button>`}</div>`})}</div>
+    <div className="flex flex-wrap items-end gap-3"><${Field} label="Carga semanal máxima (h)" id=${'mx'+p.id} hint="Vazio = referência da instituição."><input id=${'mx'+p.id} type="number" min="1" max="168" disabled=${readOnly} className=${inputCls+' w-40'} value=${max} onInput=${e=>{setMax(e.target.value);setDirty(true)}}/><//>
+      ${!readOnly&&html`<${Button} variant="primary" className="ml-auto" disabled=${!dirty} onClick=${()=>{const r=run((D,U)=>A.availability(D,U,p.id,slots,+max||null),'Disponibilidade salva. Plantões já publicados não foram alterados.');if(r.ok)setDirty(false)}}>Salvar disponibilidade<//>`}</div></div>`;
+}
+function Absences({p,readOnly}){
+  const {S,run}=useApp();const list=S.abs.filter(a=>a.prof===p.id).sort((a,b)=>b.from.localeCompare(a.from));
+  const [k,setK]=useState('ferias');const [from,setFrom]=useState('');const [to,setTo]=useState('');const [n,setN]=useState('');
+  return html`<div className="space-y-4">${list.length===0?html`<p className="text-sm text-soft">Nenhum período registrado.</p>`:html`<ul className="divide-y divide-line rounded border border-line">${list.map(a=>html`<li key=${a.id} className="flex items-center gap-3 px-3 py-2.5 text-sm">
+      <span className="w-24 font-medium">${ABS[a.kind]}</span><span>${F(a.from,{day:'2-digit',month:'2-digit'})} a ${F(a.to,{day:'2-digit',month:'2-digit',year:'numeric'})}</span>${a.note&&html`<span className="hidden truncate text-faint sm:inline">${a.note}</span>`}
+      ${!readOnly&&html`<button className="ml-auto p-1 text-faint hover:text-danger" aria-label="Remover período" onClick=${()=>run((D,U)=>A.absenceRm(D,U,a.id),'Período removido.')}><${Icon} n="trash"/></button>`}</li>`)}</ul>`}
+    ${!readOnly&&html`<div className="grid gap-3 rounded border border-line bg-bg/50 p-3 sm:grid-cols-3">
+      <${Field} label="Tipo" id=${'ak'+p.id}><select id=${'ak'+p.id} className=${inputCls} value=${k} onChange=${e=>setK(e.target.value)}>${Object.entries(ABS).map(([x,l])=>html`<option key=${x} value=${x}>${l}</option>`)}</select><//>
+      <${Field} label="De" id=${'af'+p.id}><input id=${'af'+p.id} type="date" className=${inputCls} value=${from} onChange=${e=>{setFrom(e.target.value);if(!to)setTo(e.target.value)}}/><//>
+      <${Field} label="Até" id=${'at'+p.id}><input id=${'at'+p.id} type="date" className=${inputCls} value=${to} onChange=${e=>setTo(e.target.value)}/><//>
+      <${Field} label="Observação" id=${'an'+p.id} className="sm:col-span-2"><input id=${'an'+p.id} className=${inputCls} value=${n} onInput=${e=>setN(e.target.value)}/><//>
+      <div className="flex items-end"><${Button} variant="primary" className="w-full" disabled=${!from||!to} onClick=${()=>{const r=run((D,U)=>A.absence(D,U,p.id,k,from,to,n),'Período registrado. Plantões já publicados não mudam: peça substituição se precisar.');if(r.ok){setFrom('');setTo('');setN('')}}}>Registrar<//></div></div>`}
+    <p className="text-xs text-faint">Férias, licenças e afastamentos impedem novas escalas no período. “Indisponível” gera só um alerta para a gestão.</p></div>`;
+}
+
+/* ------------------------------------------------------------------ minha área */
+function MinhaArea(){
+  const {S,u,run}=useApp();const p=profOf(S,u.prof);
+  if(!p)return html`<${Empty} title="Este perfil não tem cadastro profissional"/>`;
+  const now=new Date(),T=today();
+  const mine=S.asg.filter(a=>a.prof===p.id).map(a=>({a,s:shiftOf(S,a.shift)})).filter(x=>x.s.status!=='rascunho');
+  const active=mine.filter(x=>ACTIVE(x.a.status)&&x.s.status!=='cancelado');
+  const up=active.filter(x=>new Date(x.s.end)>now).sort((a,b)=>a.s.start.localeCompare(b.s.start));
+  const next=up[0];const ws=weekStart(T);const week=[...Array(7)].map((_,i)=>addDays(ws,i));
+  const wh=active.filter(x=>dkey(x.s.start)>=ws&&dkey(x.s.start)<addDays(ws,7)).reduce((t,x)=>t+hours(x.s.start,x.s.end,x.s.brk),0);
+  const myIds=new Set(active.map(x=>x.s.id));
+  const applied=new Set(S.reqs.filter(r=>r.prof===p.id&&r.kind==='candidatura'&&r.status==='pendente').map(r=>r.shift));
+  const opps=S.shifts.filter(s=>['descoberto','publicado'].includes(s.status)&&new Date(s.start)>now&&dkey(s.start)<addDays(T,30)&&!myIds.has(s.id)&&(!s.cat||s.cat===p.cat))
+    .map(s=>({s,open:s.slots-S.asg.filter(a=>a.shift===s.id&&ACTIVE(a.status)).length})).filter(x=>x.open>0).sort((a,b)=>a.s.start.localeCompare(b.s.start));
+  const reqs=S.reqs.filter(r=>r.prof===p.id).sort((a,b)=>b.created.localeCompare(a.created));
+  const hist=mine.filter(x=>new Date(x.s.end)<=now||!ACTIVE(x.a.status)||x.s.status==='cancelado').sort((a,b)=>b.s.start.localeCompare(a.s.start)).slice(0,10);
+  const rel=k=>{const d=Math.round((parseKey(k)-parseKey(T))/864e5);return d===0?'Hoje':d===1?'Amanhã':cap(F(k,{weekday:'long',day:'numeric',month:'short'}))};
+  return html`<div className="space-y-6"><${PageHead} title=${'Olá, '+p.name.split(' ')[0]} desc=${`${CAT[p.cat]} em ${S.inst.name}.`}/>
+    <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+      <${Panel} title="Próximo plantão">${next?html`<div className="p-4"><p className="text-sm text-soft">${rel(dkey(next.s.start))}</p>
+        <p className="mt-0.5 text-[1.75rem] font-semibold text-navy">${hm(next.s.start)}–${hm(next.s.end)}</p><p className="mt-1">${unitOf(S,next.s.unit).name}${next.s.service?' / '+servOf(S,next.s.service).name:''}</p>
+        <p className="text-sm text-faint">${unitOf(S,next.s.unit).addr}</p><div className="mt-3"><${Badge} tone=${AST[next.a.status][1]}>${AST[next.a.status][0]}<//></div><${MyActions} a=${next.a}/></div>`
+        :html`<${Empty} title="Nenhum plantão agendado">Quando a gestão publicar uma escala com você, ela aparece aqui.<//>`}<//>
+      <${Panel} title="Esta semana" action=${html`<span className="text-sm text-soft">${fmtH(wh)} na semana</span>`}><ul className="divide-y divide-line">${week.map(d=>{const it=active.filter(x=>dkey(x.s.start)===d);return html`<li key=${d} className=${cx('flex items-start gap-3 px-4 py-2 text-sm',d===T&&'bg-tealsoft/60')}>
+        <span className=${cx('w-16 shrink-0 capitalize',d===T?'font-semibold text-teal':'text-soft')}>${F(d,{weekday:'short',day:'2-digit'}).replace('.','')}</span>
+        <span className="flex-1">${it.length?it.map(x=>html`<span key=${x.a.id} className="block">${hm(x.s.start)}–${hm(x.s.end)} <span className="text-soft">${unitOf(S,x.s.unit).name}</span>${x.a.status!=='confirmado'&&html`<span className="ml-1.5 text-xs text-amber">${AST[x.a.status][0].toLowerCase()}</span>`}</span>`):html`<span className="text-faint">Folga</span>`}</span></li>`})}</ul><//>
+    </div>
+    ${up.length>0&&html`<${Panel} title="Minha escala" action=${up.some(x=>x.a.status==='aguardando_confirmacao')&&html`<${Badge} tone="amber">${up.filter(x=>x.a.status==='aguardando_confirmacao').length} para confirmar<//>`}><ul className="divide-y divide-line">${up.map(x=>html`<li key=${x.a.id} className="px-4 py-3">
+      <div className="flex flex-wrap items-center gap-3"><span className="w-full text-sm font-medium sm:w-44">${cap(F(x.s.start,{weekday:'short',day:'2-digit',month:'2-digit'}))}, ${hm(x.s.start)}–${hm(x.s.end)}</span>
+        <span className="min-w-0 flex-1 truncate text-sm text-soft">${unitOf(S,x.s.unit).name}${x.s.service?' / '+servOf(S,x.s.service).name:''}</span><${Badge} tone=${AST[x.a.status][1]}>${AST[x.a.status][0]}<//></div><${MyActions} a=${x.a} compact/></li>`)}</ul><//>`}
+    <${Panel} title="Oportunidades nos próximos 30 dias">${opps.length===0?html`<${Empty} title="Nenhuma vaga aberta para a sua categoria"/>`:html`<ul className="divide-y divide-line">${opps.slice(0,10).map(({s,open})=>html`<li key=${s.id} className="flex flex-wrap items-center gap-3 px-4 py-3 text-sm">
+      <span className="w-full font-medium sm:w-44">${cap(F(s.start,{weekday:'short',day:'2-digit',month:'2-digit'}))}, ${hm(s.start)}–${hm(s.end)}</span><span className="min-w-0 flex-1 truncate text-soft">${unitOf(S,s.unit).name}${s.service?' / '+servOf(S,s.service).name:''}</span>
+      <span className="text-xs text-faint">${open} ${open===1?'vaga':'vagas'}</span>${applied.has(s.id)?html`<${Badge} tone="sky">Candidatura enviada<//>`:html`<${Button} size="sm" onClick=${()=>run((D,U)=>A.apply(D,U,s.id,null),'Candidatura enviada para a gestão.')}>Candidatar-me<//>`}</li>`)}</ul>`}<//>
+    <${Panel} title="Minhas solicitações">${reqs.length===0?html`<${Empty} title="Nenhuma solicitação">Pedidos de substituição e candidaturas aparecem aqui com a resposta da gestão.<//>`:html`<ul className="divide-y divide-line">${reqs.map(r=>{const s=shiftOf(S,r.shift);return html`<li key=${r.id} className="flex flex-wrap items-center gap-3 px-4 py-3 text-sm">
+      <span className="w-28 font-medium">${RK[r.kind]}</span><span className="min-w-0 flex-1 text-soft">Plantão de ${label(S,s)}${r.note&&html`<span className="block text-xs">Resposta: ${r.note}</span>`}</span>
+      <${Badge} tone=${RST[r.status][1]}>${RST[r.status][0]}<//>${r.status==='pendente'&&html`<${Button} size="sm" variant="ghost" onClick=${()=>run((D,U)=>A.withdraw(D,U,r.id),'Solicitação retirada.')}>Retirar<//>`}</li>`})}</ul>`}<//>
+    <div className="grid gap-6 xl:grid-cols-2"><${Panel} title="Minha disponibilidade"><div className="p-4"><${Avail} p=${p}/></div><//>
+      <div className="space-y-6"><${Panel} title="Férias e afastamentos"><div className="p-4"><${Absences} p=${p}/></div><//>
+        <${Panel} title="Histórico">${hist.length===0?html`<p className="px-4 py-6 text-sm text-soft">Sem plantões anteriores.</p>`:html`<ul className="divide-y divide-line">${hist.map(x=>html`<li key=${x.a.id} className="flex items-center gap-3 px-4 py-2.5 text-sm"><span className="w-28">${cap(F(x.s.start,{weekday:'short',day:'2-digit',month:'2-digit'}))}</span><span className="min-w-0 flex-1 truncate text-soft">${unitOf(S,x.s.unit).name}</span><span className="text-xs text-faint">${x.s.status==='cancelado'?'Cancelado':new Date(x.s.end)<=now&&x.a.status==='confirmado'?'Realizado':AST[x.a.status][0]}</span></li>`)}</ul>`}<//></div></div>
+  </div>`;
+}
+function MyActions({a,compact}){
+  const {run}=useApp();const [mode,setMode]=useState(null);const [r,setR]=useState('');const reset=()=>{setMode(null);setR('')};
+  if(a.status==='substituicao_solicitada')return html`<p className="mt-2 text-sm text-soft">Seu pedido de substituição está com a gestão. Até a aprovação, o plantão continua sob sua responsabilidade.</p>`;
+  return html`<div className=${compact?'mt-2':'mt-4'}>${!mode&&html`<div className="flex flex-wrap gap-2">
+    ${a.status==='aguardando_confirmacao'&&html`<${Button} size="sm" variant="primary" icon="check" onClick=${()=>run((D,U)=>A.confirm(D,U,a.id),'Presença confirmada.')}>Confirmar presença<//><${Button} size="sm" onClick=${()=>setMode('recusar')}>Não posso<//>`}
+    ${a.status==='confirmado'&&html`<${Button} size="sm" onClick=${()=>setMode('substituicao')}>Pedir substituição<//><${Button} size="sm" variant="ghost" onClick=${()=>setMode('alteracao')}>Pedir alteração<//>`}</div>`}
+    ${mode&&html`<div className="space-y-2 rounded-md border border-line bg-bg/60 p-3"><p className="text-sm">${mode==='recusar'?'Recusar este plantão. A gestão é avisada para buscar outra pessoa.':mode==='substituicao'?'Plantões confirmados só mudam com aprovação. Você continua escalado até a resposta.':'Descreva a alteração desejada. A gestão analisa e responde.'}</p>
+      <textarea className=${inputCls+' min-h-[56px]'} aria-label="Motivo" placeholder="Motivo" value=${r} onInput=${e=>setR(e.target.value)}></textarea>
+      <div className="flex justify-end gap-2"><${Button} size="sm" onClick=${reset}>Voltar<//><${Button} size="sm" variant=${mode==='recusar'?'danger':'primary'} disabled=${!r.trim()} onClick=${()=>{const x=run((D,U)=>mode==='recusar'?A.decline(D,U,a.id,r):A.request(D,U,a.id,mode,r),mode==='recusar'?'Plantão recusado. A gestão foi avisada.':'Solicitação enviada para aprovação.');if(x.ok)reset()}}>${mode==='recusar'?'Recusar plantão':'Enviar solicitação'}<//></div></div>`}</div>`;
+}
+
+/* ------------------------------------------------------------------ administração */
+function Equipe(){
+  const {S,u,run}=useApp();const [st,setSt]=useState(S.rolePerms);const [dirty,setDirty]=useState(false);
+  const roles=['admin','gestor','rt'];let last='';
+  return html`<div className="space-y-6"><${PageHead} title="Equipe e acessos" desc="Quem acessa a MedLink nesta instituição e o que cada perfil pode fazer."/>
+    <${Panel} title="Pessoas com acesso"><div className="overflow-x-auto"><table className="w-full min-w-[560px] text-sm"><thead><tr className="text-left text-xs text-soft">${['Pessoa','Perfil','Unidades'].map(h=>html`<th key=${h} className="border-b border-line px-4 py-2.5 font-medium">${h}</th>`)}</tr></thead>
+      <tbody>${S.users.map(x=>html`<tr key=${x.id}><td className="border-b border-line px-4 py-3"><span className="block font-medium">${x.name}${x.id===u.id&&html`<span className="ml-1.5 text-xs font-normal text-faint">(você)</span>`}</span><span className="text-xs text-faint">${x.email}</span></td>
+        <td className="border-b border-line px-4 py-3">${ROLE[x.role]}</td><td className="border-b border-line px-4 py-3">${x.role==='prof'?'Minha área':x.units?x.units.map(id=>unitOf(S,id).name).join(', '):'Todas as unidades'}</td></tr>`)}</tbody></table></div><//>
+    <${Panel} title="Permissões por perfil" action=${dirty&&html`<${Button} size="sm" variant="primary" onClick=${()=>{let ok=true;['gestor','rt'].forEach(r=>{if(ok)ok=run((D,U)=>A.perms(D,U,r,st[r])).ok});if(ok){setDirty(false)}}}>Salvar permissões<//>`}>
+      <div className="overflow-x-auto"><table className="w-full min-w-[620px] text-sm"><thead><tr className="text-left text-xs text-soft"><th className="border-b border-line px-4 py-2.5 font-medium">Permissão</th>${roles.map(r=>html`<th key=${r} className="border-b border-line px-4 py-2.5 text-center font-medium">${ROLE[r]}</th>`)}</tr></thead>
+      <tbody>${Object.entries(PERMS).map(([k,[l,g]])=>{const head=g!==last?(last=g,html`<tr key=${'g'+g}><td colSpan="4" className="bg-bg px-4 py-1.5 text-xs font-medium text-soft">${g}</td></tr>`):null;
+        return [head,html`<tr key=${k}><td className="border-b border-line px-4 py-2.5">${l}</td>${roles.map(r=>html`<td key=${r} className="border-b border-line px-4 py-2.5 text-center">
+          <input type="checkbox" className="h-4 w-4 accent-teal" aria-label=${l+': '+ROLE[r]} checked=${(st[r]||[]).includes(k)} disabled=${r==='admin'}
+            onChange=${e=>{setSt({...st,[r]:e.target.checked?[...st[r],k]:st[r].filter(x=>x!==k)});setDirty(true)}}/></td>`)}</tr>`]})}</tbody></table></div>
+      <p className="px-4 py-3 text-xs text-faint">A administradora sempre tem todas as permissões. Experimente tirar “Publicar escalas” do gestor e entrar como Marcos.</p><//></div>`;
+}
+function Auditoria(){
+  const {S}=useApp();const [ent,setEnt]=useState('');const rows=S.audit.filter(a=>!ent||a.entity===ent);
+  return html`<div><${PageHead} title="Auditoria" desc="Registro permanente das ações: quem fez, quando, o que mudou e o motivo informado."/>
+    <div className="mb-4"><select id="aud" aria-label="Tipo de registro" className=${inputCls+' w-auto'} value=${ent} onChange=${e=>setEnt(e.target.value)}><option value="">Todos os registros</option>${Object.entries(ENT).map(([k,l])=>html`<option key=${k} value=${k}>${l}</option>`)}</select></div>
+    <div className="overflow-x-auto rounded-md border border-line bg-panel">${rows.length===0?html`<${Empty} title="Nenhum registro"/>`:html`<table className="w-full min-w-[760px] text-sm"><thead><tr className="text-left text-xs text-soft">${['Quando','Quem','Ação','Registro','Detalhes'].map(h=>html`<th key=${h} className="border-b border-line px-4 py-2.5 font-medium">${h}</th>`)}</tr></thead>
+      <tbody>${rows.slice(0,200).map(a=>html`<tr key=${a.id} className="align-top"><td className="whitespace-nowrap border-b border-line px-4 py-3">${F(a.at,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</td>
+        <td className="border-b border-line px-4 py-3">${a.actor}</td><td className="border-b border-line px-4 py-3">${ACT[a.action]||a.action}</td><td className="border-b border-line px-4 py-3">${ENT[a.entity]||a.entity}</td>
+        <td className="max-w-md border-b border-line px-4 py-3 text-soft">${a.reason&&html`<span className="block text-ink">Motivo: ${a.reason}</span>`}${a.detail}</td></tr>`)}</tbody></table>`}</div></div>`;
+}
+function Config(){
+  const {S,run}=useApp();const [r,setR]=useState(S.rules);
+  return html`<div><${PageHead} title="Configurações" desc="Regras usadas na validação das escalas. Mude e veja os alertas mudarem ao escalar alguém."/>
+    <${Panel} title="Regras de escala"><div className="grid gap-4 p-4 sm:grid-cols-3">
+      <${Field} label="Descanso mínimo entre plantões (h)" id="r1" hint="Abaixo disso, gera alerta e exige justificativa."><input id="r1" type="number" min="0" max="48" className=${inputCls} value=${r.rest} onInput=${e=>setR({...r,rest:e.target.value})}/><//>
+      <${Field} label="Carga semanal de referência (h)" id="r2" hint="O profissional pode informar um limite menor."><input id="r2" type="number" min="1" max="168" className=${inputCls} value=${r.week} onInput=${e=>setR({...r,week:e.target.value})}/><//>
+      <${Field} label="Duração máxima de um plantão (h)" id="r3" hint="Restrição obrigatória."><input id="r3" type="number" min="1" max="36" className=${inputCls} value=${r.maxShift} onInput=${e=>setR({...r,maxShift:e.target.value})}/><//></div>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3"><p className="text-xs text-faint">Valores padrão configuráveis. Confirme as regras de jornada dos seus contratos e convenções.</p><${Button} variant="primary" onClick=${()=>run((D,U)=>A.rules(D,U,r),'Regras salvas.')}>Salvar regras<//></div><//>
+    <${Panel} title="Instituição" className="mt-6"><dl className="grid gap-3 px-4 py-4 text-sm sm:grid-cols-3"><div><dt className="text-faint">Nome</dt><dd>${S.inst.name}</dd></div><div><dt className="text-faint">Tipo</dt><dd>${S.inst.type}</dd></div><div><dt className="text-faint">Unidades</dt><dd>${S.units.map(x=>x.name).join(', ')}</dd></div></dl><//></div>`;
+}
+function Notificacoes(){
+  const {S,u,run,go}=useApp();const list=S.notifs.filter(n=>n.user===u.id);const unread=list.filter(n=>!n.read).length;
+  return html`<div><${PageHead} title="Notificações" desc="Alterações de escala, solicitações e pendências deste perfil." actions=${unread>0&&html`<${Button} size="sm" onClick=${()=>run((D,U)=>A.readAll(D,U),'Notificações marcadas como lidas.')}>Marcar todas como lidas<//>`}/>
+    <${Panel}>${list.length===0?html`<${Empty} title="Nenhuma notificação">Avisos sobre escalas e solicitações deste perfil aparecem aqui.<//>`:html`<ul className="divide-y divide-line">${list.map(n=>html`<li key=${n.id}><button className="flex w-full gap-3 px-4 py-3 text-left hover:bg-bg" onClick=${()=>{run((D,U)=>A.read(D,U,n.id));n.link&&go(n.link)}}>
+      <span className=${cx('mt-1.5 h-2 w-2 shrink-0 rounded-full',n.read?'bg-transparent':'bg-teal')}></span><span className="min-w-0 flex-1"><span className=${cx('block text-sm',!n.read&&'font-semibold')}>${n.title}</span>${n.body&&html`<span className="block text-sm text-soft">${n.body}</span>`}<span className="mt-0.5 block text-xs text-faint">${F(n.at,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></span></button></li>`)}</ul>`}<//></div>`;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
+})();
+</script>
+
+</body>
+</html>

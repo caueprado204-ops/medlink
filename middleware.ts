@@ -7,9 +7,10 @@ export async function middleware(req: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const path = req.nextUrl.pathname;
+  // Sem banco configurado: serve a demonstração navegável (dados fictícios, salvos no navegador).
   if (!url || !key) {
-    if (path.startsWith("/configurar") || path.startsWith("/_next")) return NextResponse.next();
-    return NextResponse.redirect(new URL("/configurar", req.url));
+    if (path === "/demo.html" || path.startsWith("/_next") || path.startsWith("/configurar")) return NextResponse.next();
+    return NextResponse.rewrite(new URL("/demo.html", req.url));
   }
 
   let res = NextResponse.next({ request: req });
