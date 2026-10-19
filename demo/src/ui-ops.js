@@ -1,55 +1,17 @@
-/* ------------------------------------------------------------------ vacinação */
-function Vacinacao(){
-  const {S,u,run}=useApp();const T=today();const manage=can(S,u,'vaccines.manage');
-  const vaccines=S.items.filter(i=>i.cat==='Vacina');
-  const usable=S.lots.filter(l=>itemOf(S,l.item).cat==='Vacina'&&l.status==='disponivel'&&l.exp>=T&&l.qty>0);
-  const [f,setF]=useState({patient:'',item:usable[0]?usable[0].item:'',lot:'',dose:'1ª dose',via:'Intramuscular',site:'Deltoide direito',prof:'p1'});
-  const lotsFor=usable.filter(l=>l.item===f.item);
-  const [cancel,setCancel]=useState(null);const [cr,setCr]=useState('');
-  const todayList=S.imm.filter(i=>dkey(i.at)===T&&i.status==='registrado');const week=S.imm.filter(i=>dkey(i.at)>=addDays(T,-6)&&i.status==='registrado');
-  const submit=()=>{const r=run((D,U)=>A.immunize(D,U,{...f,lot:f.lot||(lotsFor[0]&&lotsFor[0].id)}),'Aplicação registrada. Uma dose foi baixada do lote.');if(r.ok)setF({...f,patient:''})};
-  return html`<div className="space-y-5"><${PageHead} title="Vacinação" desc="Registro de aplicação ligado ao lote. Cada registro baixa uma dose do estoque; o cancelamento gera estorno auditável."/>
-    <div className="grid gap-3 sm:grid-cols-4"><${Stat} label="Aplicações hoje" value=${todayList.length}/><${Stat} label="Últimos 7 dias" value=${week.length}/>
-      <${Stat} label="Lotes vencendo em 30 dias" value=${S.lots.filter(l=>itemOf(S,l.item).cat==='Vacina'&&lotStatus(S,l)==='vencendo'&&l.qty>0).length} tone="amber"/><${Stat} label="Lotes bloqueados" value=${S.lots.filter(l=>itemOf(S,l.item).cat==='Vacina'&&(l.status!=='disponivel'||l.exp<T)&&l.qty>0).length} tone="danger"/></div>
-    <div className="grid gap-5 xl:grid-cols-[1fr_1.4fr]">
-      ${manage?html`<${Card} title="Registrar aplicação" sub="Só aparecem lotes válidos e liberados.">
-        <div className="grid gap-3"><${Field} label="Paciente" id="im-p"><input id="im-p" className=${inputCls} placeholder="Nome do paciente (use nomes fictícios na demo)" value=${f.patient} onInput=${e=>setF({...f,patient:e.target.value})}/><//>
-          <div className="grid gap-3 sm:grid-cols-2"><${Field} label="Vacina" id="im-v"><select id="im-v" className=${inputCls} value=${f.item} onChange=${e=>setF({...f,item:e.target.value,lot:''})}>${vaccines.map(v=>html`<option key=${v.id} value=${v.id} disabled=${!usable.some(l=>l.item===v.id)}>${v.name}${usable.some(l=>l.item===v.id)?'':' (sem lote liberado)'}</option>`)}</select><//>
-            <${Field} label="Lote" id="im-l"><select id="im-l" className=${inputCls} value=${f.lot||(lotsFor[0]&&lotsFor[0].id)||''} onChange=${e=>setF({...f,lot:e.target.value})}>${lotsFor.map(l=>html`<option key=${l.id} value=${l.id}>${l.lot}, val. ${D2(l.exp)}, ${l.qty} doses</option>`)}</select><//>
-            <${Field} label="Dose" id="im-d"><select id="im-d" className=${inputCls} value=${f.dose} onChange=${e=>setF({...f,dose:e.target.value})}>${['1ª dose','2ª dose','3ª dose','Dose única','Reforço'].map(x=>html`<option key=${x}>${x}</option>`)}</select><//>
-            <${Field} label="Via" id="im-via"><select id="im-via" className=${inputCls} value=${f.via} onChange=${e=>setF({...f,via:e.target.value})}>${['Intramuscular','Subcutânea','Intradérmica','Oral'].map(x=>html`<option key=${x}>${x}</option>`)}</select><//>
-            <${Field} label="Local" id="im-s"><select id="im-s" className=${inputCls} value=${f.site} onChange=${e=>setF({...f,site:e.target.value})}>${['Deltoide direito','Deltoide esquerdo','Vasto lateral direito','Vasto lateral esquerdo','Oral'].map(x=>html`<option key=${x}>${x}</option>`)}</select><//>
-            <${Field} label="Profissional" id="im-pr"><select id="im-pr" className=${inputCls} value=${f.prof} onChange=${e=>setF({...f,prof:e.target.value})}>${S.profs.filter(p=>p.active&&p.cat!=='medico').map(p=>html`<option key=${p.id} value=${p.id}>${p.name}</option>`)}</select><//></div>
-          <${Btn} v="lime" size="lg" icon="syringe" onClick=${submit} disabled=${!f.patient.trim()||!lotsFor.length}>Registrar aplicação<//>
-          <p className="text-xs text-faint">A MedLink registra o que foi aplicado. Indicação e esquema vacinal são decisão do profissional, com base no histórico do paciente e em fontes oficiais.</p></div><//>`
-        :html`<${Card} title="Registro de aplicação"><p className="text-sm text-soft">Seu perfil pode consultar, mas não registrar aplicações. Entre como Ana Ribeiro ou Helena Prado para registrar.</p><//>`}
-      <${Card} title="Aplicações recentes"><${Table} minW=${640} cols=${['Quando','Paciente','Vacina e lote','Dose','Profissional','']} empty="Nenhuma aplicação registrada"
-        rows=${S.imm.slice(0,12).map(i=>{const l=lotOf(S,i.lot);return html`<tr key=${i.id} className=${i.status==='cancelado'?'opacity-50':''}>
-          <${TD} className="whitespace-nowrap">${F(i.at,{day:'2-digit',month:'2-digit'})} ${hm(i.at)}<//><${TD} className="font-semibold">${i.patient}<//><${TD}>${itemOf(S,i.item).name}<span className="block text-xs text-faint">Lote ${l.lot}</span><//>
-          <${TD}>${i.dose}<span className="block text-xs text-faint">${i.via}, ${i.site}</span><//><${TD}>${profOf(S,i.prof).name.split(' ')[0]}<//>
-          <${TD} className="text-right">${i.status==='cancelado'?html`<${Badge}>Estornado<//>`:manage&&html`<${Btn} size="sm" v="ghost" onClick=${()=>{setCancel(i);setCr('')}}>Cancelar<//>`}<//></tr>`})}/><//></div>
-    <${Card} title="Catálogo de vacinas" sub="Fichas técnicas exigem fonte oficial e revisão técnica antes do uso real. A demonstração não exibe conteúdo clínico.">
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">${vaccines.map(v=>{const q=itemQty(S,v.id);return html`<div key=${v.id} className="rounded-[24px] bg-panel2 p-4"><div className="flex items-start justify-between gap-2"><p className="font-bold">${v.name}</p><${Badge} tone=${q<v.min?'amber':'teal'}>${q} doses<//></div>
-        <p className="mt-1 text-[13px] text-soft">${v.maker}</p><p className="mt-3 flex items-center gap-1.5 text-[12px] text-amber"><${Icon} n="alert" s=${12}/>Ficha técnica aguardando revisão técnica</p></div>`})}</div><//>
-    ${cancel&&html`<${Modal} open onClose=${()=>setCancel(null)} title="Cancelar aplicação" desc=${`${cancel.patient}, ${itemOf(S,cancel.item).name}. A dose volta ao lote como estorno, e o registro fica no histórico.`}
-      footer=${html`<${Btn} onClick=${()=>setCancel(null)}>Voltar<//><${Btn} v="danger" disabled=${!cr.trim()} onClick=${()=>{const r=run((D,U)=>A.immunizeCancel(D,U,cancel.id,cr),'Aplicação cancelada e estoque estornado.');if(r.ok)setCancel(null)}}>Cancelar aplicação<//>`}>
-      <${Field} label="Motivo" id="imc"><textarea id="imc" className=${inputCls+' min-h-[64px]'} value=${cr} onInput=${e=>setCr(e.target.value)} placeholder="Ex.: registro feito no paciente errado"></textarea><//><//>`}</div>`;
-}
-
 /* ------------------------------------------------------------------ estoque */
 const LST={ok:['Válido','teal'],vencendo:['Vence em breve','amber'],vencido:['Vencido','danger'],em_avaliacao:['Em avaliação','amber'],bloqueado:['Bloqueado','danger']};
 const MVT={entrada:['Entrada','teal'],saida:['Saída','neutral'],perda:['Perda','danger'],ajuste:['Ajuste','sky'],estorno:['Estorno','sky']};
 function Estoque(){
   const {S,u,run}=useApp();const manage=can(S,u,'stock.manage');const [cat,setCat]=useState('');const [open,setOpen]=useState(null);const [mv,setMv]=useState(null);
-  const items=S.items.filter(i=>!cat||i.cat===cat);
-  return html`<div className="space-y-5"><${PageHead} title="Estoque" desc="Itens, lotes e validades. Toda movimentação registra quem fez, quando e por quê." actions=${manage&&html`<${Btn} v="lime" icon="plus" onClick=${()=>setMv({type:'entrada',item:S.items[0].id})}>Nova movimentação<//>`}/>
-    <div className="grid gap-3 sm:grid-cols-4"><${Stat} label="Itens abaixo do mínimo" value=${S.items.filter(i=>itemQty(S,i.id)<i.min).length} tone="amber"/><${Stat} label="Lotes vencendo em 30 dias" value=${S.lots.filter(l=>lotStatus(S,l)==='vencendo'&&l.qty>0).length} tone="amber"/>
+  const items=S.items.filter(i=>!i.archived&&(!cat||i.cat===cat));const {go}=useApp();
+  return html`<div className="space-y-5"><${PageHead} title="Estoque" desc="Itens, lotes e validades. Toda movimentação registra quem fez, quando e por quê." actions=${html`${can(S,u,'org.manage')&&html`<${Btn} icon="pencil" onClick=${()=>go({page:'organizacao'})}>Editar itens<//>`}${manage&&html`<${Btn} v="lime" icon="plus" onClick=${()=>setMv({type:'entrada',item:S.items[0].id})}>Nova movimentação<//>`}`}/>
+    <div className="grid gap-3 sm:grid-cols-4"><${Stat} label="Itens abaixo do mínimo" value=${S.items.filter(i=>!i.archived&&itemQty(S,i.id)<i.min).length} tone="amber"/><${Stat} label="Lotes vencendo em 30 dias" value=${S.lots.filter(l=>lotStatus(S,l)==='vencendo'&&l.qty>0).length} tone="amber"/>
       <${Stat} label="Lotes vencidos com saldo" value=${S.lots.filter(l=>lotStatus(S,l)==='vencido'&&l.qty>0).length} tone="danger"/><${Stat} label="Em avaliação" value=${S.lots.filter(l=>l.status==='em_avaliacao').length} tone="danger"/></div>
     <div className="grid gap-5 xl:grid-cols-[1.5fr_1fr]">
       <${Card} title="Itens" action=${html`<${Seg} size="sm" items=${[['','Todos'],['Vacina','Vacinas'],['Insumo','Insumos'],['EPI','EPI']]} value=${cat} onChange=${setCat}/>`}>
         <ul className="space-y-2">${items.map(i=>{const q=itemQty(S,i.id),low=q<i.min,lots=S.lots.filter(l=>l.item===i.id);const isO=open===i.id;return html`<li key=${i.id} className="rounded-[22px] bg-panel2">
           <button onClick=${()=>setOpen(isO?null:i.id)} className="flex w-full items-center gap-3 p-3.5 text-left" aria-expanded=${isO}>
-            <span className=${cx('grid h-10 w-10 shrink-0 place-items-center rounded-full',low?'bg-amberbg text-amber':'bg-panel')}><${Icon} n=${i.cat==='Vacina'?'syringe':'box'} s=${16}/></span>
+            <span className=${cx('grid h-10 w-10 shrink-0 place-items-center rounded-xl text-onp',low?'bg-p5':i.vac?PASTEL[VAC[i.vac].c]:'bg-p3')}><${Icon} n=${i.cat==='Vacina'?'syringe':'box'} s=${16}/></span>
             <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">${i.name}</span><span className="mt-1 block h-1.5 max-w-[220px] rounded-full bg-panel"><span className=${cx('block h-full rounded-full',low?'bg-amber':'bg-lime')} style=${{width:Math.min(100,q/(i.min*2)*100)+'%'}}></span></span></span>
             <span className="text-right"><span className="thin block text-[22px] leading-none">${q}</span><span className="text-[11px] text-faint">${i.unit} · mín. ${i.min}</span></span><${Icon} n="down" className=${cx('text-faint transition',isO&&'rotate-180')}/></button>
           ${isO&&html`<div className="px-3.5 pb-3.5"><ul className="space-y-1">${lots.map(l=>{const st=lotStatus(S,l);return html`<li key=${l.id} className="flex flex-wrap items-center gap-2 rounded-2xl bg-panel px-3 py-2 text-[13px]">
@@ -61,12 +23,12 @@ function Estoque(){
     ${mv&&html`<${MoveForm} init=${mv} onClose=${()=>setMv(null)}/>`}</div>`;
 }
 function MoveForm({init,onClose}){
-  const {S,run}=useApp();const [f,setF]=useState({type:init.type,item:init.item,lot:init.lot||'',newLot:'',exp:'',unit:'u1',qty:'',reason:''});
+  const {S,run}=useApp();const [f,setF]=useState({type:init.type,item:init.item,lot:init.lot||'',newLot:'',exp:'',unit:S.units[0].id,qty:'',reason:''});
   const it=itemOf(S,f.item);const lots=S.lots.filter(l=>l.item===f.item);
   return html`<${Modal} open onClose=${onClose} title="Movimentar estoque" desc="Movimentações não podem ser apagadas. Correções viram um novo ajuste."
     footer=${html`<${Btn} onClick=${onClose}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const r=run((D,U)=>A.stockMove(D,U,f),'Movimentação registrada.');if(r.ok)onClose()}}>Registrar<//>`}>
     <div className="grid gap-4"><${Seg} size="sm" items=${[['entrada','Entrada'],['saida','Saída'],['perda','Perda'],['ajuste','Ajuste']]} value=${f.type} onChange=${t=>setF({...f,type:t})}/>
-      <${Field} label="Item" id="mv-i"><select id="mv-i" className=${inputCls} value=${f.item} onChange=${e=>setF({...f,item:e.target.value,lot:''})}>${S.items.map(i=>html`<option key=${i.id} value=${i.id}>${i.name}</option>`)}</select><//>
+      <${Field} label="Item" id="mv-i"><select id="mv-i" className=${inputCls} value=${f.item} onChange=${e=>setF({...f,item:e.target.value,lot:''})}>${S.items.filter(i=>!i.archived).map(i=>html`<option key=${i.id} value=${i.id}>${i.name}</option>`)}</select><//>
       ${f.type==='entrada'&&it.lotc?html`<div className="grid gap-4 sm:grid-cols-3"><${Field} label="Novo lote" id="mv-nl"><input id="mv-nl" className=${inputCls} value=${f.newLot} onInput=${e=>setF({...f,newLot:e.target.value})}/><//>
           <${Field} label="Validade" id="mv-ex"><input id="mv-ex" type="date" className=${inputCls} value=${f.exp} onChange=${e=>setF({...f,exp:e.target.value})}/><//>
           <${Field} label="Unidade" id="mv-u"><select id="mv-u" className=${inputCls} value=${f.unit} onChange=${e=>setF({...f,unit:e.target.value})}>${S.units.map(x=>html`<option key=${x.id} value=${x.id}>${x.name}</option>`)}</select><//></div>`
@@ -80,9 +42,9 @@ const OST={aberta:['Aberta','danger'],em_avaliacao:['Em avaliação técnica','a
 function Temperatura(){
   const {S,u,run}=useApp();const manage=can(S,u,'coldchain.manage');const [vals,setVals]=useState({});const [occ,setOcc]=useState(null);const [txt,setTxt]=useState('');
   return html`<div className="space-y-5"><${PageHead} title="Temperatura" desc="Leituras da rede de frio. Fora da faixa configurada, a ocorrência é aberta e os lotes ficam em avaliação. Nada é liberado automaticamente."/>
-    <div className="grid gap-4 lg:grid-cols-3">${S.equip.map(e=>{const rs=S.readings.filter(r=>r.eq===e.id).sort((a,b)=>a.at.localeCompare(b.at));const last=rs[rs.length-1];const out=last&&(last.temp<e.min||last.temp>e.max);
-      return html`<article key=${e.id} className=${cx('rounded-[28px] p-5',out?'bg-dangerbg':'bg-panel shadow-[0_1px_0_rgb(var(--c-line))]')}>
-        <div className="flex items-start justify-between"><div><p className="font-bold">${e.name}</p><p className="text-[13px] text-soft">${unitOf(S,e.unit).name} · faixa ${e.min} a ${e.max} °C</p></div><span className=${cx('grid h-10 w-10 place-items-center rounded-full',out?'bg-danger text-white':'bg-lime text-onlime')}><${Icon} n="thermo" s=${18}/></span></div>
+    <div className="grid gap-4 lg:grid-cols-3">${S.equip.filter(e=>!e.archived).map(e=>{const rs=S.readings.filter(r=>r.eq===e.id).sort((a,b)=>a.at.localeCompare(b.at));const last=rs[rs.length-1];const out=last&&(last.temp<e.min||last.temp>e.max);
+      return html`<article key=${e.id} className=${cx('rounded-[24px] p-5',out?'bg-dangerbg':'bg-panel card-sh')}>
+        <div className="flex items-start justify-between"><div><p className="font-bold">${e.name}</p><p className="text-[13px] text-soft">${unitOf(S,e.unit).name} · faixa ${e.min} a ${e.max} °C</p></div><span className=${cx('grid h-10 w-10 place-items-center rounded-xl',out?'bg-danger text-white':'bg-p3 text-onp')}><${Icon} n="thermo" s=${18}/></span></div>
         <p className=${cx('thin mt-3 text-[52px] leading-none',out&&'text-danger')}>${last?last.temp.toLocaleString('pt-BR'):'—'}<span className="text-xl text-faint"> °C</span></p>
         <p className="text-[12px] text-faint">${last?`Última leitura ${F(last.at,{day:'2-digit',month:'2-digit'})} ${hm(last.at)}, ${last.user}`:'Sem leituras'}</p>
         <div className="mt-3"><${Spark} vals=${rs.slice(-10).map(r=>r.temp)} min=${e.min-1} max=${e.max+1} lo=${e.min} hi=${e.max}/></div>
@@ -101,7 +63,7 @@ function Temperatura(){
 
 /* ------------------------------------------------------------------ home care */
 function HomeCare(){
-  const {S,u,run}=useApp();const T=today();const manage=can(S,u,'homecare.manage');
+  const {S,u,run,go}=useApp();const T=today();const manage=can(S,u,'homecare.manage');
   const [day,setDay]=useState(T);const [by,setBy]=useState('hora');const [nw,setNw]=useState(false);
   const [f,setF]=useState({patient:'hp1',prof:'p6',date:T,start:'09:00',end:'10:00',service:'Curativo'});
   const days=[...Array(7)].map((_,i)=>addDays(T,i-1));
@@ -113,14 +75,14 @@ function HomeCare(){
     <div className="flex flex-wrap items-center justify-between gap-3"><${Seg} size="sm" items=${[['hora','Por horário'],['prof','Por profissional'],['reg','Por região']]} value=${by} onChange=${setBy}/>
       <span className="text-sm text-soft">${list.filter(v=>v.status==='concluido').length} de ${list.length} concluídas</span></div>
     ${list.length===0?html`<${Empty} title="Nenhum atendimento neste dia" action=${manage&&html`<${Btn} v="lime" size="sm" onClick=${()=>{setF({...f,date:day});setNw(true)}}>Agendar<//>`}/>`:groups.map(([g,vs])=>html`<section key=${g||'all'}>${g&&html`<h3 className="mb-2 mt-2 text-sm font-bold text-soft">${g}</h3>`}
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">${vs.map(v=>{const pt=S.patients.find(x=>x.id===v.patient),pr=profOf(S,v.prof);return html`<article key=${v.id} className="rounded-[26px] bg-panel p-5 shadow-[0_1px_0_rgb(var(--c-line))]">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">${vs.map(v=>{const pt=S.patients.find(x=>x.id===v.patient),pr=profOf(S,v.prof);return html`<article key=${v.id} className="rounded-[26px] bg-panel p-5 card-sh">
         <div className="flex items-start justify-between"><p className="thin text-[28px] leading-none">${v.start}<span className="text-base text-faint">–${v.end}</span></p><${Badge} tone=${HVS[v.status][1]}>${HVS[v.status][0]}<//></div>
-        <p className="mt-3 font-bold">${pt.name}</p><p className="text-[13px] text-soft">${v.service}</p><p className="mt-1 flex items-center gap-1 text-[13px] text-faint"><${Icon} n="pin" s=${13}/>${pt.addr}, ${pt.region}</p>
+        <button className="mt-3 block text-left font-bold hover:underline" onClick=${()=>can(S,u,'records.view')&&go({page:'paciente',id:pt.id})}>${pt.name}</button><p className="text-[13px] text-soft">${v.service}</p><p className="mt-1 flex items-center gap-1 text-[13px] text-faint"><${Icon} n="pin" s=${13}/>${pt.addr}, ${pt.region}</p>
         <div className="mt-4 flex items-center gap-2"><${Avatar} name=${pr.name} size=${28}/><span className="text-sm font-semibold">${pr.name}</span>
           ${manage&&v.status==='agendado'&&html`<button className="ml-auto text-[13px] font-semibold text-soft hover:text-danger" onClick=${()=>run((D,U)=>A.visitStatus(D,U,v.id,'cancelado'),'Atendimento cancelado.')}>Cancelar</button>`}</div></article>`})}</div></section>`)}
     ${nw&&html`<${Modal} open onClose=${()=>setNw(false)} title="Agendar atendimento" desc="O sistema impede dois atendimentos do mesmo profissional no mesmo horário."
       footer=${html`<${Btn} onClick=${()=>setNw(false)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const r=run((D,U)=>A.visit(D,U,f),'Atendimento agendado e profissional avisado.');if(r.ok){setNw(false);setDay(f.date)}}}>Agendar<//>`}>
-      <div className="grid gap-4 sm:grid-cols-2"><${Field} label="Paciente" id="hv-p"><select id="hv-p" className=${inputCls} value=${f.patient} onChange=${e=>setF({...f,patient:e.target.value})}>${S.patients.map(p=>html`<option key=${p.id} value=${p.id}>${p.name} (${p.region})</option>`)}</select><//>
+      <div className="grid gap-4 sm:grid-cols-2"><${Field} label="Paciente" id="hv-p"><select id="hv-p" className=${inputCls} value=${f.patient} onChange=${e=>setF({...f,patient:e.target.value})}>${S.patients.filter(p=>p.active&&p.homecare).map(p=>html`<option key=${p.id} value=${p.id}>${p.name} (${p.region})</option>`)}</select><//>
         <${Field} label="Profissional" id="hv-pr"><select id="hv-pr" className=${inputCls} value=${f.prof} onChange=${e=>setF({...f,prof:e.target.value})}>${S.profs.filter(p=>p.active&&p.cat!=='medico').map(p=>html`<option key=${p.id} value=${p.id}>${p.name}</option>`)}</select><//>
         <${Field} label="Serviço" id="hv-s"><select id="hv-s" className=${inputCls} value=${f.service} onChange=${e=>setF({...f,service:e.target.value})}>${['Curativo','Vacinação domiciliar','Coleta domiciliar','Sinais vitais e orientação','Administração de medicação prescrita'].map(x=>html`<option key=${x}>${x}</option>`)}</select><//>
         <${Field} label="Data" id="hv-d"><input id="hv-d" type="date" className=${inputCls} value=${f.date} onChange=${e=>setF({...f,date:e.target.value})}/><//>
@@ -132,18 +94,19 @@ function HomeCare(){
 const finStatus=(x,kind)=>{const done=kind==='pay'?x.paid:x.received;if(done)return['Pago','teal'];const d=daysTo(x.due);return d<0?['Vencido','danger']:d<=7?['Vence em breve','amber']:['A vencer','neutral']};
 function FinPage({kind}){
   const {S,u,run}=useApp();const manage=can(S,u,'finance.manage');const list=(kind==='pay'?S.pay:S.rec).slice().sort((a,b)=>a.due.localeCompare(b.due));
-  const [fl,setFl]=useState('aberto');const [nw,setNw]=useState(false);const [f,setF]=useState({who:'',what:'',cat:'Vacinas e insumos',value:'',due:addDays(today(),15)});
+  const [fl,setFl]=useState('aberto');const [nw,setNw]=useState(false);const [del,setDel]=useState(null);const [f,setF]=useState({who:'',what:'',cat:'Vacinas e insumos',value:'',due:addDays(today(),15)});
   const done=x=>kind==='pay'?x.paid:x.received;const T=today();
   const rows=list.filter(x=>fl==='todos'||(fl==='aberto'?!done(x):fl==='vencido'?!done(x)&&x.due<T:done(x)));
   const sum=l=>l.reduce((t,x)=>t+x.value,0);const m0=T.slice(0,7);
   const word=kind==='pay'?{t:'Contas a pagar',who:'Fornecedor',what:'Descrição',done:'Pago no mês',btn:'Baixar pagamento',ok:'Pagamento registrado.'}:{t:'Contas a receber',who:'Cliente ou pagador',what:'Serviço',done:'Recebido no mês',btn:'Registrar recebimento',ok:'Recebimento registrado.'};
   return html`<div className="space-y-5"><${PageHead} title=${word.t} desc="Valores previstos, vencidos e efetivamente pagos ficam separados. Sem simulação de pagamento ou conciliação bancária." actions=${manage&&html`<${Btn} v="lime" icon="plus" onClick=${()=>setNw(true)}>Novo lançamento<//>`}/>
-    <section className="grid gap-3 rounded-[30px] bg-navy p-5 text-onnavy sm:grid-cols-3">${[['Em aberto',sum(list.filter(x=>!done(x)))],['Vencido',sum(list.filter(x=>!done(x)&&x.due<T))],[word.done,sum(list.filter(x=>done(x)&&done(x).slice(0,7)===m0))]].map(([l,v],i)=>html`<div key=${l} className=${cx('rounded-[22px] p-4',i===0?'bg-lime text-onlime':'bg-onnavy/10')}>
+    <section className="grid gap-3 rounded-[24px] bg-navy p-5 text-onnavy sm:grid-cols-3">${[['Em aberto',sum(list.filter(x=>!done(x)))],['Vencido',sum(list.filter(x=>!done(x)&&x.due<T))],[word.done,sum(list.filter(x=>done(x)&&done(x).slice(0,7)===m0))]].map(([l,v],i)=>html`<div key=${l} className=${cx('rounded-[22px] p-4',i===0?'bg-lime text-onlime':'bg-onnavy/10')}>
       <p className="text-[13px] font-semibold opacity-80">${l}</p><p className="thin mt-1 text-[34px] leading-none"><span className="text-base opacity-70">R$ </span>${v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</p></div>`)}</section>
     <${Card} action=${html`<${Seg} size="sm" items=${[['aberto','Em aberto'],['vencido','Vencidos'],['pago',kind==='pay'?'Pagos':'Recebidos'],['todos','Todos']]} value=${fl} onChange=${setFl}/>`} title="Lançamentos">
       <${Table} minW=${680} cols=${[word.who,word.what,'Vencimento','Valor','Situação','']} empty="Nenhum lançamento neste filtro" rows=${rows.map(x=>{const st=finStatus(x,kind);return html`<tr key=${x.id}>
         <${TD} className="font-semibold">${x.supplier||x.payer}<//><${TD}>${x.desc||x.service}${x.cat&&html`<span className="block text-xs text-faint">${x.cat}</span>`}<//><${TD} className="whitespace-nowrap">${F(x.due,{day:'2-digit',month:'2-digit',year:'numeric'})}<//>
-        <${TD} className="whitespace-nowrap font-bold">${BRL(x.value)}<//><${TD}><${Badge} tone=${st[1]}>${st[0]}<//><//><${TD} className="text-right">${manage&&!done(x)&&html`<${Btn} size="sm" v="lime" onClick=${()=>run((D,U)=>A.pay(D,U,kind,x.id),word.ok)}>${word.btn}<//>`}<//></tr>`})}/><//>
+        <${TD} className="whitespace-nowrap font-bold">${BRL(x.value)}<//><${TD}><${Badge} tone=${st[1]}>${st[0]}<//><//><${TD} className="text-right">${manage&&!done(x)&&html`<span className="inline-flex items-center gap-1"><${Btn} size="sm" v="lime" onClick=${()=>run((D,U)=>A.pay(D,U,kind,x.id),word.ok)}>${word.btn}<//><button className="grid h-8 w-8 place-items-center rounded-full text-faint hover:bg-dangerbg hover:text-danger" aria-label="Excluir lançamento" onClick=${()=>setDel(x)}><${Icon} n="trash" s=${15}/></button></span>`}<//></tr>`})}/><//>
+    <${Confirm} open=${!!del} title="Excluir lançamento" desc=${del?`${del.supplier||del.payer}: ${del.desc||del.service}, ${BRL(del.value)}. Só lançamentos em aberto podem ser excluídos.`:''} needReason onClose=${()=>setDel(null)} onOk=${r=>{const x=run((D,U)=>A.billDelete(D,U,kind,del.id,r),'Lançamento excluído.');if(x.ok)setDel(null)}}/>
     ${nw&&html`<${Modal} open onClose=${()=>setNw(false)} title="Novo lançamento" footer=${html`<${Btn} onClick=${()=>setNw(false)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const r=run((D,U)=>A.bill(D,U,kind,f),'Lançamento registrado.');if(r.ok)setNw(false)}}>Salvar<//>`}>
       <div className="grid gap-4 sm:grid-cols-2"><${Field} label=${word.who} id="fn-w"><input id="fn-w" className=${inputCls} value=${f.who} onInput=${e=>setF({...f,who:e.target.value})}/><//><${Field} label=${word.what} id="fn-d"><input id="fn-d" className=${inputCls} value=${f.what} onInput=${e=>setF({...f,what:e.target.value})}/><//>
         ${kind==='pay'&&html`<${Field} label="Categoria" id="fn-c"><select id="fn-c" className=${inputCls} value=${f.cat} onChange=${e=>setF({...f,cat:e.target.value})}>${['Vacinas e insumos','Pessoal','Estrutura','Manutenção','Outros'].map(x=>html`<option key=${x}>${x}</option>`)}</select><//>`}
@@ -187,19 +150,10 @@ function Auditoria(){
       <${TD} className="whitespace-nowrap">${F(a.at,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}<//><${TD}><span className="flex items-center gap-2"><${Avatar} name=${a.actor} size=${26}/>${a.actor}</span><//><${TD} className="font-semibold">${ACT[a.action]||a.action}<//>
       <${TD}><${Badge}>${ENT[a.entity]||a.entity}<//><//><${TD} className="max-w-md text-soft">${a.reason&&html`<span className="block text-ink">Motivo: ${a.reason}</span>`}${a.detail}<//></tr>`)}/><//></div>`;
 }
-function Config(){
-  const {S,run}=useApp();const [r,setR]=useState(S.rules);
-  return html`<div className="space-y-5"><${PageHead} title="Configurações" desc="Regras usadas em todas as validações de escala e na geração automática."/>
-    <div className="grid gap-4 md:grid-cols-3">${[['rest','Descanso mínimo entre plantões','h','Abaixo disso, gera alerta e exige justificativa.',0,48],['week','Carga semanal de referência','h','O profissional pode informar um limite menor.',1,168],['maxShift','Duração máxima de um plantão','h','Restrição obrigatória.',1,36]].map(([k,l,un,h,mi,ma])=>html`<div key=${k} className="rounded-[28px] bg-panel p-5 shadow-[0_1px_0_rgb(var(--c-line))]">
-      <label htmlFor=${'r-'+k} className="text-[13px] font-semibold text-soft">${l}</label><div className="mt-2 flex items-end gap-2"><input id=${'r-'+k} type="number" min=${mi} max=${ma} className="thin w-28 bg-transparent text-[48px] leading-none focus:outline-none" value=${r[k]} onInput=${e=>setR({...r,[k]:e.target.value})}/><span className="pb-2 text-xl text-faint">${un}</span></div>
-      <p className="mt-2 text-xs text-faint">${h}</p></div>`)}</div>
-    <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-xs text-faint">Valores padrão configuráveis. Confirme as regras de jornada dos seus contratos e convenções.</p><${Btn} v="lime" onClick=${()=>run((D,U)=>A.rules(D,U,r),'Regras salvas.')}>Salvar regras<//></div>
-    <${Card} title="Instituição"><div className="grid gap-3 sm:grid-cols-3">${[['Nome',S.inst.name],['Tipo',S.inst.type],['Unidades',S.units.map(x=>x.name).join(', ')]].map(([k,v])=>html`<div key=${k} className="rounded-[20px] bg-panel2 p-4"><p className="text-[12px] text-faint">${k}</p><p className="mt-1 text-sm font-semibold">${v}</p></div>`)}</div><//></div>`;
-}
 function Notificacoes(){
   const {S,u,run,go}=useApp();const list=S.notifs.filter(n=>n.user===u.id);const unread=list.filter(n=>!n.read).length;
   return html`<div><${PageHead} title="Notificações" desc="Avisos deste perfil." actions=${unread>0&&html`<${Btn} onClick=${()=>run((D,U)=>A.readAll(D,U),'Notificações marcadas como lidas.')}>Marcar todas como lidas<//>`}/>
-    ${list.length===0?html`<${Empty} title="Nenhuma notificação">Avisos de escala, solicitações e alertas aparecem aqui.<//>`:html`<ul className="space-y-2">${list.map(n=>html`<li key=${n.id}><button className="flex w-full items-start gap-3 rounded-[24px] bg-panel p-4 text-left shadow-[0_1px_0_rgb(var(--c-line))] transition hover:ring-2 hover:ring-lime" onClick=${()=>{run((D,U)=>A.read(D,U,n.id));n.link&&go(n.link)}}>
+    ${list.length===0?html`<${Empty} title="Nenhuma notificação">Avisos de escala, solicitações e alertas aparecem aqui.<//>`:html`<ul className="space-y-2">${list.map(n=>html`<li key=${n.id}><button className="flex w-full items-start gap-3 rounded-[24px] bg-panel p-4 text-left card-sh transition hover:ring-2 hover:ring-lime" onClick=${()=>{run((D,U)=>A.read(D,U,n.id));n.link&&go(n.link)}}>
       <span className=${cx('grid h-10 w-10 shrink-0 place-items-center rounded-full',n.read?'bg-panel2 text-faint':'bg-lime text-onlime')}><${Icon} n="bell" s=${16}/></span>
       <span className="min-w-0 flex-1"><span className=${cx('block',!n.read&&'font-bold')}>${n.title}</span>${n.body&&html`<span className="block text-sm text-soft">${n.body}</span>`}<span className="mt-0.5 block text-xs text-faint">${F(n.at,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></span></button></li>`)}</ul>`}</div>`;
 }

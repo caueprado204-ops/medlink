@@ -2,7 +2,7 @@
 """Monta a demonstração em um único HTML: head + Tailwind compilado + scripts."""
 import subprocess, pathlib, sys
 D=pathlib.Path(__file__).parent; S=D/'src'
-parts=['engine.js','ui-base.js','ui-shell.js','ui-escalas.js','ui-pessoas.js','ui-ops.js','ui-manual.js']
+parts=['engine.js','data-vac.js','ui-base.js','ui-shell.js','ui-escalas.js','ui-pessoas.js','ui-clinico.js','ui-org.js','ui-ops.js','ui-manual.js']
 js='\n'.join((S/p).read_text() for p in parts)
 body='<script>\n(function(){\n'+js+'\n})();\n</script>\n'
 head=(S/'head.html').read_text()
@@ -11,7 +11,7 @@ tmp=D/'.build'; tmp.mkdir(exist_ok=True)
 (tmp/'in.css').write_text('@tailwind base;\n@tailwind components;\n@tailwind utilities;\n')
 cfg=r"""const c=n=>`rgb(var(--c-${n}) / <alpha-value>)`;
 module.exports={content:['%s'],theme:{extend:{
- colors:Object.fromEntries(['bg','panel','panel2','line','ink','soft','faint','navy','onnavy','lime','onlime','teal','tealsoft','sky','skyink','amber','amberbg','danger','dangerbg','cobalt','cobaltdeep','mint'].map(k=>[k,c(k)])),
+ colors:Object.fromEntries(['bg','panel','panel2','line','ink','soft','faint','navy','onnavy','lime','onlime','teal','tealsoft','sky','skyink','amber','amberbg','danger','dangerbg','cobalt','cobaltdeep','mint','p1','p2','p3','p4','p5','p6','onp'].map(k=>[k,c(k)])),
  fontFamily:{sans:['Manrope','system-ui','sans-serif']}}}};"""%(tmp/'content.html')
 (tmp/'tw.cjs').write_text(cfg)
 subprocess.run(['npx','tailwindcss','-c',str(tmp/'tw.cjs'),'-i',str(tmp/'in.css'),'-o',str(tmp/'tw.css'),'--minify'],cwd=D.parent,check=True,capture_output=True)

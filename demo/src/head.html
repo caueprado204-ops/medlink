@@ -6,21 +6,24 @@
 <style>
 /* Layout: app em "aparelho" grafite com navegação em pílulas e acento verde-limão; apresentação em azul-cobalto com tipografia larga gigante. */
 :root{
-  --c-bg:233 234 238; --c-panel:255 255 255; --c-panel2:243 244 246; --c-line:222 224 229; --c-ink:22 24 28; --c-soft:88 93 104; --c-faint:128 133 143;
-  --c-navy:12 13 15; --c-onnavy:255 255 255; --c-lime:197 247 58; --c-onlime:18 20 12; --c-teal:72 112 8; --c-tealsoft:236 251 205;
-  --c-sky:224 234 255; --c-skyink:30 70 200; --c-amber:168 92 0; --c-amberbg:255 241 210; --c-danger:196 40 30; --c-dangerbg:255 229 225;
+  --c-bg:236 239 245; --c-panel:255 255 255; --c-panel2:243 245 249; --c-line:226 230 238; --c-ink:18 21 30; --c-soft:90 97 112; --c-faint:138 145 160;
+  --c-navy:16 18 24; --c-onnavy:255 255 255; --c-lime:197 247 58; --c-onlime:18 20 12; --c-teal:52 120 30; --c-tealsoft:228 248 214;
+  --c-sky:225 236 255; --c-skyink:36 82 200; --c-amber:166 96 0; --c-amberbg:255 241 212; --c-danger:200 44 36; --c-dangerbg:255 230 226;
   --c-cobalt:28 62 228; --c-cobaltdeep:18 40 170; --c-mint:236 251 205;
-  --font-ui:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif; --font-display:"Archivo","Arial Black",system-ui,sans-serif;
+  --c-p1:252 234 136; --c-p2:216 202 255; --c-p3:191 228 255; --c-p4:193 239 206; --c-p5:255 215 186; --c-p6:255 201 222; --c-onp:24 25 32;
+  --blob:.55; --font-ui:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif; --font-display:"Archivo","Arial Black",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --c-bg:18 19 22; --c-panel:31 33 38; --c-panel2:42 44 50; --c-line:52 55 62; --c-ink:238 240 243; --c-soft:162 166 175; --c-faint:115 119 128;
-  --c-navy:255 255 255; --c-onnavy:16 17 19; --c-teal:197 247 58; --c-tealsoft:46 56 22;
-  --c-sky:30 42 70; --c-skyink:150 185 255; --c-amber:255 192 84; --c-amberbg:62 46 16; --c-danger:255 122 110; --c-dangerbg:72 28 25; --c-mint:46 56 22; color-scheme:dark;
+  --c-bg:13 14 17; --c-panel:25 27 32; --c-panel2:35 37 43; --c-line:46 49 57; --c-ink:238 240 244; --c-soft:164 169 180; --c-faint:116 121 132;
+  --c-navy:245 246 248; --c-onnavy:16 17 20; --c-teal:197 247 58; --c-tealsoft:40 52 20;
+  --c-sky:30 42 72; --c-skyink:150 186 255; --c-amber:255 194 90; --c-amberbg:60 45 16; --c-danger:255 124 112; --c-dangerbg:74 28 26; --c-mint:46 56 22;
+  --c-p1:246 226 104; --c-p2:196 176 255; --c-p3:150 208 252; --c-p4:158 228 180; --c-p5:255 190 150; --c-p6:255 168 204; --blob:.14; color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --c-bg:18 19 22; --c-panel:31 33 38; --c-panel2:42 44 50; --c-line:52 55 62; --c-ink:238 240 243; --c-soft:162 166 175; --c-faint:115 119 128;
-  --c-navy:255 255 255; --c-onnavy:16 17 19; --c-teal:197 247 58; --c-tealsoft:46 56 22;
-  --c-sky:30 42 70; --c-skyink:150 185 255; --c-amber:255 192 84; --c-amberbg:62 46 16; --c-danger:255 122 110; --c-dangerbg:72 28 25; --c-mint:46 56 22; color-scheme:dark;
+  --c-bg:13 14 17; --c-panel:25 27 32; --c-panel2:35 37 43; --c-line:46 49 57; --c-ink:238 240 244; --c-soft:164 169 180; --c-faint:116 121 132;
+  --c-navy:245 246 248; --c-onnavy:16 17 20; --c-teal:197 247 58; --c-tealsoft:40 52 20;
+  --c-sky:30 42 72; --c-skyink:150 186 255; --c-amber:255 194 90; --c-amberbg:60 45 16; --c-danger:255 124 112; --c-dangerbg:74 28 26; --c-mint:46 56 22;
+  --c-p1:246 226 104; --c-p2:196 176 255; --c-p3:150 208 252; --c-p4:158 228 180; --c-p5:255 190 150; --c-p6:255 168 204; --blob:.14; color-scheme:dark;
 }
 html,body{min-height:100%}
 body{background:rgb(var(--c-bg));color:rgb(var(--c-ink));font-family:var(--font-ui);font-size:15px;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
@@ -28,7 +31,14 @@ body{background:rgb(var(--c-bg));color:rgb(var(--c-ink));font-family:var(--font-
 h1,h2,h3{text-wrap:balance}
 .display{font-family:var(--font-display);font-stretch:125%;font-weight:900;letter-spacing:-0.035em;line-height:.86;text-transform:uppercase}
 .display-n{font-family:var(--font-display);font-stretch:112%;font-weight:800;letter-spacing:-0.02em}
-.thin{font-weight:300;letter-spacing:-0.02em}
+.thin{font-weight:600;letter-spacing:-0.035em}
+.card-sh{border:1px solid rgb(var(--c-line) / .75);box-shadow:0 1px 2px rgb(10 20 40 / .04),0 10px 30px -18px rgb(20 30 70 / .22)}
+.app-bg{background:radial-gradient(900px 520px at 0% -8%,rgb(var(--c-p3) / var(--blob)),transparent 62%),radial-gradient(800px 520px at 100% -10%,rgb(var(--c-p2) / var(--blob)),transparent 60%),radial-gradient(700px 600px at 60% 110%,rgb(var(--c-p4) / calc(var(--blob) * .6)),transparent 60%),rgb(var(--c-bg));background-attachment:fixed}
+.kpi-foot{background:linear-gradient(180deg,rgb(var(--c-panel2) / .2),rgb(var(--c-p3) / .28));border-top:1px solid rgb(var(--c-line) / .6)}
+.hours-bg{background-image:repeating-linear-gradient(to bottom,rgb(var(--c-line) / .9) 0 1px,transparent 1px var(--hh))}
+.side-glass{background:linear-gradient(180deg,rgb(var(--c-panel) / .92),rgb(var(--c-panel) / .82));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.text-onp{color:rgb(var(--c-onp))}
+@media print{aside,header,.no-print{display:none!important}main{padding:0!important}.app-bg{background:#fff}}
 .label-up{text-transform:uppercase;letter-spacing:.08em;font-size:.72rem;font-weight:700}
 :focus-visible{outline:2px solid rgb(var(--c-lime));outline-offset:2px;border-radius:10px}
 dialog::backdrop{background:rgb(8 9 11 / .55);backdrop-filter:blur(3px)}

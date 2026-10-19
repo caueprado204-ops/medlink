@@ -1,19 +1,19 @@
 /* ------------------------------------------------------------------ app */
-const GROUPS=[
-  {id:'inicio',label:'Início',icon:'dash',items:[['inicio','Visão geral',null]]},
-  {id:'escalas',label:'Escalas',icon:'cal',items:[['escalas','Calendário','shifts.view'],['solicitacoes','Solicitações','requests.decide'],['gerar','Gerar escala','shifts.manage']]},
-  {id:'pessoas',label:'Pessoas',icon:'users',items:[['profissionais','Profissionais','professionals.view'],['talentos','Banco de talentos','talent.manage'],['equipe','Equipe e acessos','members.manage']]},
-  {id:'operacao',label:'Operação',icon:'syringe',items:[['vacinacao','Vacinação','vaccines.view'],['estoque','Estoque','stock.view'],['temperatura','Temperatura','coldchain.view'],['homecare','Home care','homecare.view']]},
-  {id:'financeiro',label:'Financeiro',icon:'wallet',items:[['pagar','Contas a pagar','finance.view'],['receber','Contas a receber','finance.view'],['relatorios','Relatórios','reports.view']]},
-  {id:'sistema',label:'Sistema',icon:'gear',items:[['auditoria','Auditoria','audit.view'],['configuracoes','Configurações','institution.manage'],['notificacoes','Notificações',null]]},
-  {id:'meu',label:'Minha área',icon:'user',items:[['meu','Minha área',null]],prof:true},
-  {id:'manual',label:'Manual',icon:'book',items:[['manual','Manual de uso',null]]}];
+const NAV=[
+  {label:'Principal',items:[['inicio','Visão geral','dash',u=>u.role!=='prof'],['meu','Minha área','user',u=>!!u.prof],['notificacoes','Notificações','bell',null]]},
+  {label:'Escalas',items:[['escalas','Calendário','cal','shifts.view'],['solicitacoes','Solicitações','inbox','requests.decide'],['gerar','Gerar escala','wand','shifts.manage']]},
+  {label:'Clínico',items:[['vacinacao','Vacinação','syringe','vaccines.view'],['calendario','Calendário vacinal','calcheck','vaccines.view'],['prontuario','Prontuário','file','records.view'],['procedimentos','Procedimentos','clip','procedures.verify']]},
+  {label:'Pessoas',items:[['profissionais','Profissionais','users','professionals.view'],['talentos','Banco de talentos','star','talent.manage'],['equipe','Equipe e acessos','shield','members.manage']]},
+  {label:'Operação',items:[['estoque','Estoque','box','stock.view'],['temperatura','Temperatura','thermo','coldchain.view'],['homecare','Home care','home','homecare.view']]},
+  {label:'Financeiro',items:[['pagar','Contas a pagar','wallet','finance.view'],['receber','Contas a receber','coins','finance.view'],['relatorios','Relatórios','chart','reports.view']]},
+  {label:'Sistema',items:[['organizacao','Organização','building',['org.manage','institution.manage']],['auditoria','Auditoria','hist','audit.view'],['manual','Manual de uso','book',null]]}];
+const allowed=(S,u,p)=>p==null?true:typeof p==='function'?p(u):Array.isArray(p)?p.some(x=>can(S,u,x)):can(S,u,p);
 const isManager=(S,u)=>u.role!=='prof';
-function navFor(S,u){return GROUPS.map(g=>{
-  if(g.prof&&!u.prof)return null;
-  if(g.id==='inicio'&&!isManager(S,u))return null;
-  const items=g.items.filter(([,,p])=>!p||can(S,u,p));return items.length?{...g,items}:null}).filter(Boolean)}
-const groupOf=page=>{const p=page==='prof'?'profissionais':page;return (GROUPS.find(g=>g.items.some(i=>i[0]===p))||GROUPS[0]).id};
+function navFor(S,u){return NAV.map(g=>({...g,items:g.items.filter(i=>allowed(S,u,i[3]))})).filter(g=>g.items.length)}
+const PAGE_ALIAS={prof:'profissionais',paciente:'prontuario',configuracoes:'organizacao'};
+const navItem=page=>{const k=PAGE_ALIAS[page]||page;for(const g of NAV){const i=g.items.find(x=>x[0]===k);if(i)return{g,i}}return null};
+/* compatibilidade com a apresentação: lista plana de grupos com itens */
+const GROUPS=NAV.map(g=>({id:g.label,label:g.label,items:g.items}));
 
 function App(){
   const [S,setS]=useState(()=>load()||seed());
@@ -53,10 +53,11 @@ const MODULES=[
   ['cal','Calendário de escalas','Dia, semana, mês e lista, com arrastar e soltar.'],['wand','Gerar escala','Proposta automática que respeita descanso, férias e categoria.'],
   ['inbox','Solicitações','Substituições e candidaturas com aprovação e substituto validado.'],['user','Área do profissional','Confirmar presença, pedir troca e informar disponibilidade.'],
   ['users','Profissionais','Cadastro, conselho, competências e validação.'],['star','Banco de talentos','Convide profissionais e acompanhe a seleção.'],
-  ['syringe','Vacinação','Registro de aplicação ligado ao lote e baixa automática no estoque.'],['box','Estoque','Lotes, validades, entradas, saídas, perdas e alertas.'],
+  ['syringe','Vacinação','Registro com paciente, vacina, dose, lote, via e local de aplicação.'],['calcheck','Calendário vacinal','Calendário Nacional 2026 por idade, com conferência da caderneta.'],
+  ['file','Prontuário eletrônico','Evoluções assinadas, caderneta, procedimentos e acessos registrados.'],['clip','Procedimentos','Registro pelo profissional e conferência pela responsável técnica.'],['box','Estoque','Lotes, validades, entradas, saídas, perdas e alertas.'],
   ['thermo','Temperatura','Leituras da rede de frio e ocorrências com avaliação técnica.'],['home','Home care','Agenda domiciliar por profissional, paciente e região.'],
   ['wallet','Financeiro','Contas a pagar e a receber com vencidos e baixas.'],['chart','Relatórios','Cobertura, horas, custos e aplicações em gráficos.'],
-  ['hist','Auditoria','Quem fez o quê, quando e por qual motivo.'],['shield','Perfis e permissões','Acesso por função e por unidade.'],['bell','Notificações','Avisos de vaga descoberta, trocas e alertas.']];
+  ['hist','Auditoria','Quem fez o quê, quando e por qual motivo.'],['building','Organização','Edite, organize e exclua unidades, setores e catálogos.'],['shield','Perfis e permissões','Acesso por função e por unidade.'],['bell','Notificações','Avisos de vaga descoberta, trocas e alertas.']];
 
 function LandingNav({dark}){
   const {openPicker,setRoute}=useApp();
@@ -123,8 +124,8 @@ function Landing(){
 const PROFILES=[
   {id:'ana',what:'Vê todos os módulos, aprova, configura regras e permissões.'},
   {id:'marcos',what:'Monta e gera escalas da Unidade Taquaral e cuida do estoque.'},
-  {id:'helena',what:'Valida cadastros, registra vacinas e trata a rede de frio.'},
-  {id:'carla',what:'Confirma plantões, pede substituição e se candidata a vagas.'},
+  {id:'helena',what:'Valida cadastros, confere procedimentos, registra vacinas e trata a rede de frio.'},
+  {id:'carla',what:'Confirma plantões, registra ponto, vacinas e procedimentos, e consulta o prontuário.'},
   {id:'paulo',what:'Enfermeiro: escala, atendimentos domiciliares e férias.'}];
 function ProfilePicker({open,onClose}){
   const {S,login,reset}=useApp();const [confirm,setConfirm]=useState(false);
@@ -136,41 +137,79 @@ function ProfilePicker({open,onClose}){
 }
 
 /* ------------------------------------------------------------------ estrutura do app */
-function Shell(){
-  const {S,u,page,go,logout}=useApp();
-  const nav=navFor(S,u);const gid=groupOf(page.page);const grp=nav.find(g=>g.id===gid)||nav[0];
+function Sidebar({open,onClose}){
+  const {S,u,page,go,logout}=useApp();const nav=navFor(S,u);const cur=navItem(page.page);
   const unread=S.notifs.filter(n=>n.user===u.id&&!n.read).length;
   const pend=S.reqs.filter(r=>r.status==='pendente'&&can(S,u,'requests.decide',shiftOf(S,r.shift).unit)).length;
-  const [menu,setMenu]=useState(false);
-  const counts={solicitacoes:pend,notificacoes:unread};
-  return html`<div className="min-h-screen pb-16">
-    <header className="sticky z-40 bg-bg/85 backdrop-blur-md" style=${{top:'env(safe-area-inset-top, 0px)'}}>
-      <div className="mx-auto flex max-w-[1400px] items-center gap-3 px-4 py-3 sm:px-6">
-        <button onClick=${()=>go({page:nav[0].items[0][0]})} aria-label="Início" className="shrink-0"><${Logo}/></button>
-        <nav aria-label="Módulos" className="no-scrollbar mx-auto flex min-w-0 gap-1 overflow-x-auto rounded-full bg-panel p-1 shadow-[0_1px_0_rgb(var(--c-line))]">
-          ${nav.map(g=>html`<button key=${g.id} onClick=${()=>go({page:g.items[0][0]})} aria-current=${grp.id===g.id?'page':undefined}
-            className=${cx('inline-flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-semibold transition sm:px-4',grp.id===g.id?'bg-lime text-onlime':'text-soft hover:text-ink')}>
-            <${Icon} n=${g.icon} s=${15}/><span className=${grp.id===g.id?'':'hidden md:inline'}>${g.label}</span></button>`)}</nav>
-        <div className="flex shrink-0 items-center gap-2">
-          <${ThemeToggle} className="hidden bg-panel sm:inline-flex"/>
+  const toCheck=S.procs.filter(x=>x.status==='realizado'||x.status==='nao_realizado').length;
+  const mine=u.prof?S.procs.filter(x=>x.prof===u.prof&&(x.status==='agendado'||x.status==='devolvido')).length+S.asg.filter(a=>a.prof===u.prof&&a.status==='aguardando_confirmacao'&&shiftOf(S,a.shift).status!=='rascunho').length:0;
+  const counts={notificacoes:unread,solicitacoes:pend,procedimentos:can(S,u,'procedures.verify')?toCheck:0,meu:mine};
+  return html`<${Fragment}>
+    ${open&&html`<button aria-label="Fechar menu" onClick=${onClose} className="fixed inset-0 z-40 bg-black/40 lg:hidden"></button>`}
+    <aside className=${cx('side-glass fixed inset-y-0 left-0 z-50 flex w-[264px] flex-col border-r border-line/70 transition-transform lg:translate-x-0',open?'translate-x-0':'-translate-x-full')} aria-label="Menu principal">
+      <div className="flex items-center justify-between px-5 pb-3 pt-5"><button onClick=${()=>go({page:nav[0].items[0][0]})} aria-label="Início"><${Logo}/></button>
+        <button className="grid h-9 w-9 place-items-center rounded-full hover:bg-panel2 lg:hidden" onClick=${onClose} aria-label="Fechar menu"><${Icon} n="x"/></button></div>
+      <div className="mx-4 mb-2 flex items-center gap-3 rounded-2xl bg-panel2 px-3 py-2.5"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-navy text-onnavy"><${Icon} n="building" s=${17}/></span>
+        <span className="min-w-0"><span className="block truncate text-[13px] font-bold">${S.inst.name}</span><span className="block truncate text-[11px] text-faint">${u.units?unitOf(S,u.units[0]).name:(n=>n+(n===1?' unidade':' unidades'))(S.units.filter(x=>!x.archived).length)}</span></span></div>
+      <nav className="no-scrollbar flex-1 overflow-y-auto px-3 pb-4" aria-label="Módulos">
+        ${nav.map(g=>html`<div key=${g.label} className="mt-4"><p className="px-3 pb-1.5 text-[11px] font-bold uppercase tracking-[.09em] text-faint">${g.label}</p>
+          <ul className="space-y-0.5">${g.items.map(([k,l,ic])=>{const on=cur&&cur.i[0]===k;return html`<li key=${k}><button onClick=${()=>{go({page:k});onClose()}} aria-current=${on?'page':undefined}
+            className=${cx('flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition',on?'bg-lime text-onlime shadow-sm':'text-soft hover:bg-panel2 hover:text-ink')}>
+            <${Icon} n=${ic} s=${17}/><span className="min-w-0 flex-1 truncate">${l}</span>${counts[k]>0&&html`<span className=${cx('min-w-[1.3rem] rounded-full px-1.5 text-center text-[11px] font-bold leading-5',on?'bg-onlime text-lime':'bg-p6 text-onp')}>${counts[k]}</span>`}</button></li>`})}</ul></div>`)}</nav>
+      <div className="border-t border-line/70 p-3"><div className="flex items-center gap-3 rounded-2xl bg-panel2 p-2.5"><${Avatar} name=${u.name} size=${38}/>
+        <span className="min-w-0 flex-1"><span className="block truncate text-[13px] font-bold">${u.name}</span><span className="block truncate text-[11px] text-faint">${ROLE[u.role]}</span></span>
+        <button onClick=${logout} className="grid h-9 w-9 place-items-center rounded-full text-soft hover:bg-panel hover:text-ink" aria-label="Trocar perfil" title="Trocar perfil"><${Icon} n="out" s=${17}/></button></div></div>
+    </aside><//>`;
+}
+function GlobalSearch(){
+  const {S,u,go}=useApp();const [q,setQ]=useState('');const [open,setOpen]=useState(false);const ref=useRef(null);
+  useEffect(()=>{const f=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();ref.current&&ref.current.focus()}};window.addEventListener('keydown',f);return()=>window.removeEventListener('keydown',f)},[]);
+  const t=q.trim().toLowerCase();const res=[];
+  if(t){navFor(S,u).forEach(g=>g.items.forEach(([k,l,ic])=>{if((l+' '+g.label).toLowerCase().includes(t))res.push({k:'pg'+k,ic,t:l,s:g.label,to:{page:k}})}));
+    if(can(S,u,'records.view'))S.patients.filter(p=>p.name.toLowerCase().includes(t)).slice(0,5).forEach(p=>res.push({k:p.id,ic:'file',t:p.name,s:'Paciente, '+ageLabel(p.birth),to:{page:'paciente',id:p.id}}));
+    if(can(S,u,'professionals.view'))S.profs.filter(p=>p.name.toLowerCase().includes(t)).slice(0,4).forEach(p=>res.push({k:p.id,ic:'user',t:p.name,s:CAT[p.cat],to:{page:'prof',id:p.id}}));
+    if(can(S,u,'vaccines.view'))Object.entries(VAC).filter(([,v])=>v.full.toLowerCase().includes(t)).slice(0,3).forEach(([k,v])=>res.push({k:'v'+k,ic:'calcheck',t:v.full,s:'Calendário vacinal',to:{page:'calendario',vac:k}}));}
+  const pick=r=>{go(r.to);setQ('');setOpen(false)};
+  return html`<div className="relative min-w-0 flex-1 sm:max-w-md"><label className="card-sh flex h-11 items-center gap-2 rounded-full bg-panel px-4"><${Icon} n="search" s=${17} className="text-faint"/>
+    <input ref=${ref} className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-faint" placeholder="Buscar paciente, profissional, vacina…" aria-label="Busca geral" value=${q}
+      onInput=${e=>{setQ(e.target.value);setOpen(true)}} onFocus=${()=>setOpen(true)} onBlur=${()=>setTimeout(()=>setOpen(false),150)} onKeyDown=${e=>{if(e.key==='Enter'&&res[0])pick(res[0]);if(e.key==='Escape'){setQ('');e.target.blur()}}}/>
+    <kbd className="hidden rounded-md bg-panel2 px-1.5 py-0.5 text-[11px] font-semibold text-faint md:inline">Ctrl K</kbd></label>
+    ${open&&t&&html`<div className="anim absolute left-0 right-0 top-12 z-50 overflow-hidden rounded-[20px] border border-line bg-panel p-1.5 shadow-2xl">${res.length?res.slice(0,9).map(r=>html`<button key=${r.k} onMouseDown=${e=>e.preventDefault()} onClick=${()=>pick(r)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left hover:bg-panel2">
+      <span className="grid h-8 w-8 place-items-center rounded-lg bg-panel2"><${Icon} n=${r.ic} s=${15}/></span><span className="min-w-0"><span className="block truncate text-sm font-semibold">${r.t}</span><span className="block truncate text-[12px] text-faint">${r.s}</span></span></button>`)
+      :html`<p className="px-3 py-3 text-sm text-soft">Nada encontrado para “${q}”.</p>`}</div>`}</div>`;
+}
+function Shell(){
+  const {S,u,page,go}=useApp();const [side,setSide]=useState(false);
+  const unread=S.notifs.filter(n=>n.user===u.id&&!n.read).length;const cur=navItem(page.page);
+  const quick=[can(S,u,'vaccines.apply')&&['Registrar vacina','syringe',{page:'vacinacao'}],can(S,u,'shifts.manage')&&['Novo plantão','cal',{page:'escalas',nw:Date.now()}],
+    u.prof&&can(S,u,'procedures.register')&&['Registrar procedimento','clip',{page:'meu',tab:'procs',nw:Date.now()}],can(S,u,'records.write')&&['Novo paciente','file',{page:'prontuario',nw:Date.now()}]].filter(Boolean);
+  const [qm,setQm]=useState(false);
+  return html`<div className="app-bg min-h-screen lg:pl-[264px]">
+    <${Sidebar} open=${side} onClose=${()=>setSide(false)}/>
+    <header className="sticky top-0 z-30 border-b border-line/50 bg-bg/70 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-[1500px] items-center gap-2 px-4 py-3 sm:gap-3 sm:px-6">
+        <${IconBtn} n="menu" label="Abrir menu" onClick=${()=>setSide(true)} className="bg-panel lg:hidden"/>
+        <div className="hidden min-w-0 xl:block xl:w-56"><p className="truncate text-[12px] text-faint">${cur?cur.g.label:'MedLink'}</p><p className="truncate text-[15px] font-bold">${cur?cur.i[1]:''}</p></div>
+        <${GlobalSearch}/>
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          ${quick.length>0&&html`<div className="relative"><${Btn} v="lime" icon="plus" onClick=${()=>setQm(m=>!m)} className="max-sm:w-10 max-sm:px-0" aria-expanded=${qm}><span className="hidden sm:inline">Novo</span><//>
+            ${qm&&html`<div className="anim absolute right-0 z-50 mt-2 w-60 rounded-[20px] border border-line bg-panel p-1.5 shadow-2xl">${quick.map(([l,ic,to])=>html`<button key=${l} onClick=${()=>{setQm(false);go(to)}} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold hover:bg-panel2"><${Icon} n=${ic} s=${16}/>${l}</button>`)}</div>`}</div>`}
+          <${ThemeToggle} className="hidden bg-panel card-sh sm:inline-flex"/>
           <${IconBtn} n="bell" label="Notificações" badge=${unread} onClick=${()=>go({page:'notificacoes'})} className="bg-panel"/>
-          <div className="relative"><button onClick=${()=>setMenu(m=>!m)} aria-expanded=${menu} aria-label="Menu do perfil" className="rounded-full ring-2 ring-transparent transition hover:ring-lime"><${Avatar} name=${u.name} size=${40}/></button>
-            ${menu&&html`<div className="anim absolute right-0 mt-2 w-64 rounded-[22px] bg-panel p-2 shadow-2xl">
-              <div className="px-3 py-2"><p className="font-bold">${u.name}</p><p className="text-[13px] text-soft">${ROLE[u.role]}${u.units?', Unidade Taquaral':''}</p></div>
-              <div className="flex items-center justify-between px-3 py-2 sm:hidden"><span className="text-sm">Tema</span><${ThemeToggle}/></div>
-              <button onClick=${()=>{setMenu(false);logout()}} className="flex w-full items-center gap-2 rounded-2xl px-3 py-2.5 text-left text-sm font-semibold hover:bg-panel2"><${Icon} n="out"/>Trocar perfil</button></div>`}</div>
+          <button onClick=${()=>go({page:u.prof?'meu':'inicio'})} className="hidden rounded-full ring-2 ring-transparent transition hover:ring-lime sm:block" aria-label="Meu painel"><${Avatar} name=${u.name} size=${40}/></button>
         </div></div></header>
-    <main className="mx-auto max-w-[1400px] px-4 pt-4 sm:px-6">
-      ${grp.items.length>1&&html`<div className="mb-5"><${Seg} items=${grp.items.map(([k,l])=>[k,l,counts[k]||null])} value=${page.page==='prof'?'profissionais':page.page} onChange=${k=>go({page:k})}/></div>`}
-      <div className="mb-4 flex items-center gap-2 rounded-full bg-tealsoft px-4 py-2 text-[13px] text-teal"><${Icon} n="star" s=${14} className="shrink-0"/><span>Dados fictícios. Perfil: <strong>${u.name}</strong></span></div>
+    <main className="mx-auto max-w-[1500px] px-4 pb-16 pt-5 sm:px-6">
+      <div className="no-print mb-4 flex flex-wrap items-center gap-2 text-[12.5px] text-soft"><span className="inline-flex items-center gap-1.5 rounded-full bg-p4/70 px-3 py-1 font-semibold text-onp"><${Icon} n="star" s=${12}/>Demonstração com dados fictícios</span>
+        <span className="sm:hidden"><${ThemeToggle} className="h-8 w-[66px] bg-panel"/></span></div>
       <${Router}/></main></div>`;
 }
 function Router(){
   const {page}=useApp();
   const M={inicio:Inicio,escalas:Escalas,solicitacoes:Solicitacoes,gerar:Gerar,profissionais:Profissionais,talentos:Talentos,equipe:Equipe,
-    vacinacao:Vacinacao,estoque:Estoque,temperatura:Temperatura,homecare:HomeCare,pagar:Pagar,receber:Receber,relatorios:Relatorios,
-    auditoria:Auditoria,configuracoes:Config,notificacoes:Notificacoes,meu:MinhaArea,manual:Manual};
+    vacinacao:Vacinacao,calendario:CalendarioVacinal,prontuario:Prontuario,procedimentos:Procedimentos,estoque:Estoque,temperatura:Temperatura,homecare:HomeCare,pagar:Pagar,receber:Receber,relatorios:Relatorios,
+    auditoria:Auditoria,organizacao:Organizacao,configuracoes:Organizacao,notificacoes:Notificacoes,meu:MinhaArea,manual:Manual};
   if(page.page==='prof')return html`<${ProfDetail} id=${page.id}/>`;
-  const C=M[page.page]||Inicio;return html`<${C}/>`;
+  if(page.page==='paciente')return html`<${PacienteDetail} key=${page.id} id=${page.id}/>`;
+  const C=M[page.page]||Inicio;return html`<${C} key=${page.page}/>`;
 }
 const visibleShifts=(S,u)=>S.shifts.filter(s=>can(S,u,'shifts.view',s.unit));
