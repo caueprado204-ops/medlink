@@ -119,6 +119,14 @@ const PERMS={
  'records.write':['Registrar evoluções e cadastrar pacientes','Clínico'],
  'procedures.register':['Registrar procedimentos realizados','Clínico'],
  'procedures.verify':['Agendar e conferir procedimentos','Clínico'],
+ 'aesthetic.view':['Ver agenda de estética','Estética'],
+ 'aesthetic.manage':['Agendar, vender pacotes e editar catálogo de estética','Estética'],
+ 'aesthetic.perform':['Registrar sessões de estética','Estética'],
+ 'ltc.view':['Ver longa permanência','Longa permanência'],
+ 'ltc.care':['Registrar cuidados, medicações e intercorrências','Longa permanência'],
+ 'ltc.manage':['Admitir residentes, leitos e transcrever prescrições','Longa permanência'],
+ 'wounds.view':['Ver feridas e estomias','Feridas e estomaterapia'],
+ 'wounds.manage':['Registrar lesões, avaliações e estomias','Feridas e estomaterapia'],
  'stock.view':['Ver estoque','Operação'],
  'stock.manage':['Movimentar estoque','Operação'],
  'coldchain.view':['Ver temperatura','Operação'],
@@ -133,24 +141,26 @@ const ACT={create:'Criou plantão',update:'Editou plantão',move:'Moveu plantão
  org:'Alterou a organização',org_delete:'Excluiu da organização',org_archive:'Arquivou',shift_delete:'Excluiu rascunho de plantão',prof_delete:'Excluiu profissional',bill_delete:'Excluiu lançamento',
  patient:'Cadastrou ou editou paciente',patient_delete:'Excluiu paciente',record:'Registrou evolução',addendum:'Registrou adendo',record_view:'Acessou prontuário',imm_external:'Transcreveu dose da caderneta',
  proc_assign:'Agendou procedimento',proc_done:'Registrou procedimento realizado',proc_not:'Registrou procedimento não realizado',proc_ok:'Conferiu procedimento',proc_back:'Devolveu procedimento para correção',
- checkin:'Registrou entrada no plantão',checkout:'Registrou saída do plantão'};
-const ENT={shift:'Plantão',asg:'Escala do profissional',req:'Solicitação',prof:'Profissional',inst:'Instituição',stock:'Estoque',vaccine:'Vacinação',cold:'Temperatura',home:'Home care',finance:'Financeiro',talent:'Banco de talentos',org:'Organização',patient:'Prontuário',proc:'Procedimentos'};
+ checkin:'Registrou entrada no plantão',checkout:'Registrou saída do plantão',
+ aes_appt:'Agendou atendimento de estética',aes_status:'Atualizou atendimento de estética',aes_session:'Registrou sessão de estética',aes_pkg:'Vendeu pacote de estética',aes_anam:'Atualizou anamnese estética',aes_cat:'Alterou catálogo de estética',
+ ltc_admit:'Admitiu residente',ltc_discharge:'Registrou saída de residente',ltc_rx:'Transcreveu prescrição',ltc_rx_stop:'Suspendeu prescrição',ltc_mar:'Registrou administração de medicação',ltc_care:'Registrou cuidado',ltc_occ:'Registrou intercorrência',ltc_occ_close:'Encerrou intercorrência',ltc_handoff:'Registrou passagem de plantão',ltc_room:'Alterou quartos e leitos',wound_add:'Registrou lesão',wound_eval:'Registrou avaliação de lesão',wound_status:'Alterou situação da lesão',ostomy_add:'Registrou estomia',ostomy_eval:'Registrou avaliação de estomia'};
+const ENT={shift:'Plantão',asg:'Escala do profissional',req:'Solicitação',prof:'Profissional',inst:'Instituição',stock:'Estoque',vaccine:'Vacinação',cold:'Temperatura',home:'Home care',finance:'Financeiro',talent:'Banco de talentos',org:'Organização',patient:'Prontuário',proc:'Procedimentos',aes:'Estética',ltc:'Longa permanência',wound:'Feridas e estomias'};
 const ACTIVE=s=>s==='aguardando_confirmacao'||s==='confirmado'||s==='substituicao_solicitada';
 const ALL_PERMS=Object.keys(PERMS);
 
 /* ------------------------------------------------------------------ dados de demonstração */
 function seed(){
   const T=today(), W0=weekStart(T);
-  const S={v:3,inst:{name:'Clínica Vida Vacinas',type:'Clínica de vacinação e home care',city:'Campinas/SP',cnpj:'00.000.000/0001-00 (fictício)',phone:'(19) 3000-0000',email:'contato@vidavacinas.demo'},
+  const S={v:5,inst:{name:'Clínica Vida Vacinas',type:'Vacinação, estética, home care e longa permanência',city:'Campinas/SP',cnpj:'00.000.000/0001-00 (fictício)',phone:'(19) 3000-0000',email:'contato@vidavacinas.demo'},
     rules:{rest:11,week:44,maxShift:24},
     rates:{tecnico_enfermagem:28,enfermeiro:46,medico:150,auxiliar_enfermagem:24,farmaceutico:52},
     rolePerms:{
       admin:ALL_PERMS.slice(),
-      gestor:['org.manage','professionals.view','professionals.manage','talent.manage','shifts.view','shifts.manage','shifts.publish','requests.decide','stock.view','stock.manage','homecare.view','homecare.manage','vaccines.view','coldchain.view','reports.view','audit.view'],
-      rt:['professionals.view','documents.verify','shifts.view','vaccines.view','vaccines.apply','vaccines.manage','records.view','records.write','procedures.verify','stock.view','coldchain.view','coldchain.manage','homecare.view','reports.view','audit.view'],
-      prof:['vaccines.view','vaccines.apply','records.view','records.write','procedures.register']},
-    units:[{id:'u1',name:'Matriz Centro',addr:'Rua Barão de Jaguara, 1200, Centro'},{id:'u2',name:'Unidade Taquaral',addr:'Av. Heitor Penteado, 450, Taquaral'}],
-    services:[{id:'s1',unit:'u1',name:'Sala de vacinação'},{id:'s2',unit:'u1',name:'Atendimento de enfermagem'},{id:'s3',unit:'u2',name:'Sala de vacinação'},{id:'s4',unit:'u2',name:'Coleta domiciliar'}],
+      gestor:['wounds.view','aesthetic.view','aesthetic.manage','ltc.view','ltc.manage','org.manage','professionals.view','professionals.manage','talent.manage','shifts.view','shifts.manage','shifts.publish','requests.decide','stock.view','stock.manage','homecare.view','homecare.manage','vaccines.view','coldchain.view','reports.view','audit.view'],
+      rt:['wounds.view','wounds.manage','aesthetic.view','aesthetic.perform','ltc.view','ltc.care','ltc.manage','professionals.view','documents.verify','shifts.view','vaccines.view','vaccines.apply','vaccines.manage','records.view','records.write','procedures.verify','stock.view','coldchain.view','coldchain.manage','homecare.view','reports.view','audit.view'],
+      prof:['wounds.view','wounds.manage','aesthetic.view','aesthetic.perform','ltc.view','ltc.care','vaccines.view','vaccines.apply','records.view','records.write','procedures.register']},
+    units:[{id:'u1',name:'Matriz Centro',addr:'Rua Barão de Jaguara, 1200, Centro'},{id:'u2',name:'Unidade Taquaral',addr:'Av. Heitor Penteado, 450, Taquaral'},{id:'u3',name:'Residencial Vida Longa',addr:'Rua Padre Vieira, 300, Bosque'}],
+    services:[{id:'s1',unit:'u1',name:'Sala de vacinação'},{id:'s2',unit:'u1',name:'Atendimento de enfermagem'},{id:'s3',unit:'u2',name:'Sala de vacinação'},{id:'s4',unit:'u2',name:'Coleta domiciliar'},{id:'s5',unit:'u1',name:'Estética'},{id:'s6',unit:'u3',name:'Cuidados residenciais'}],
     users:[
       {id:'ana',name:'Ana Ribeiro',role:'admin',email:'ana.ribeiro@vidavacinas.demo'},
       {id:'marcos',name:'Marcos Lima',role:'gestor',units:['u2'],email:'marcos.lima@vidavacinas.demo'},
@@ -159,6 +169,7 @@ function seed(){
       {id:'paulo',name:'Paulo Santos',role:'prof',prof:'p5',email:'paulo.santos@email.demo'}],
     profs:[],shifts:[],asg:[],reqs:[],abs:[],notifs:[],audit:[],
     items:[],lots:[],moves:[],imm:[],equip:[],readings:[],occ:[],patients:[],visits:[],pay:[],rec:[],cands:[],opps:[],evol:[],procs:[],
+    aesCat:[],aesPkgs:[],aesAppts:[],wounds:[],ostomies:[],rooms:[],rx:[],mar:[],care:[],ltcOcc:[],handoff:[],
     procCat:['Aferição de sinais vitais','Curativo','Glicemia capilar','Coleta de material para exame','Administração de medicação prescrita','Retirada de pontos','Orientação de enfermagem'].map((n,i)=>({id:'pc'+(i+1),name:n,archived:false}))};
   let ph=0;
   const P=(id,name,cat,num,comps,extra={})=>{ph++;S.profs.push({id,name,cat,council:COUNCIL[cat],num,uf:'SP',comps,validation:'validado',active:true,email:'',phone:`(19) 9${8100+ph*37}-${pad(10+ph*7)}${pad(ph*3)}`,units:[],avail:[1,2,3,4,5,6].map(wd=>({wd,s:'07:00',e:'19:00'})),maxWeek:null,...extra})};
@@ -284,6 +295,57 @@ function seed(){
   PR('hp1','Curativo',-7,'09:00','p6','conferido',{notes:'Curativo realizado conforme prescrição.',vb:'Helena Prado'});
   PR('pa1','Orientação de enfermagem',-20,'15:00','p5','conferido',{notes:'Orientações sobre o calendário da gestante.',vb:'Helena Prado'});
 
+  /* enfermagem estética (catálogo configurável pela clínica; nomes e valores fictícios) */
+  [['Limpeza de pele',60,180,1,2],['Drenagem linfática',50,150,10,4],['Microagulhamento',60,420,4,6],['Peeling químico superficial',45,260,4,1],['Fotobiomodulação com LED',30,120,8,3],['Massagem modeladora',50,160,10,5]]
+    .forEach(([n,d,v,ses,c],i)=>S.aesCat.push({id:'ae'+(i+1),name:n,dur:d,price:v,sessions:ses,c,archived:false}));
+  PT('ae1','Larissa Moura',bm(31*12,40),'F',{region:'Cambuí',addr:'Rua Olavo Bilac, 210',aes:{at:addDays(T,-40),complaint:'Manchas e textura irregular na face',reported:'Nega gestação. Relata pele sensível ao sol.',notes:'Usa protetor solar diariamente.'}});
+  PT('ae2','Beatriz Lemos',bm(42*12,15),'F',{region:'Nova Campinas',addr:'Rua Buarque de Macedo, 77',aes:{at:addDays(T,-20),complaint:'Retenção de líquido nas pernas',reported:'Nega doenças crônicas.',notes:''}});
+  PT('ae3','Camila Torres',bm(29*12,80),'F',{region:'Taquaral',addr:'Rua Uruguai, 145',aes:null});
+  const PK=(pid,cat,used,d)=>{const c=S.aesCat.find(x=>x.id===cat);const k={id:'pk'+uid(),patient:pid,cat,total:c.sessions,used,price:c.price*c.sessions*0.85,created:addDays(T,d),status:used>=c.sessions?'concluido':'ativo'};S.aesPkgs.push(k);return k};
+  const pk1=PK('ae1','ae3',2,-40),pk2=PK('ae2','ae2',6,-12);
+  const AP=(pid,cat,d,t,prof,st,o={})=>S.aesAppts.push({id:'aa'+uid(),patient:pid,cat,date:addDays(T,d),start:t,prof,status:st,pkg:o.pkg||null,consent:!!o.consent,notes:o.notes||'',products:o.products||'',doneAt:st==='realizado'?at(addDays(T,d),t):null});
+  AP('ae1','ae3',-28,'10:00','p6','realizado',{pkg:pk1.id,consent:true,notes:'Sessão realizada conforme protocolo da clínica. Orientada sobre fotoproteção.',products:'Kit microagulhamento lote KM-221 (demo)'});
+  AP('ae1','ae3',-7,'10:00','p6','realizado',{pkg:pk1.id,consent:true,notes:'Sessão realizada sem intercorrências.',products:'Kit microagulhamento lote KM-240 (demo)'});
+  AP('ae2','ae2',-2,'16:00','p5','realizado',{pkg:pk2.id,consent:true,notes:'Drenagem realizada. Cliente refere bem-estar.'});
+  AP('ae1','ae3',0,'10:00','p6','confirmado',{pkg:pk1.id,consent:true});AP('ae2','ae2',0,'16:00','p5','agendado',{pkg:pk2.id,consent:true});
+  AP('ae3','ae1',0,'17:30','p6','agendado');AP('ae2','ae2',2,'16:00','p5','agendado',{pkg:pk2.id,consent:true});AP('ae3','ae5',3,'11:00','p6','agendado');
+  S.rec.push({id:'rc'+uid(),payer:'Larissa Moura',service:'Pacote Microagulhamento (4 sessões)',value:pk1.price,issued:addDays(T,-40),due:addDays(T,-40),received:addDays(T,-40)});
+
+  /* longa permanência (residentes e prescrições fictícios) */
+  S.rooms=[{id:'q1',name:'Quarto 1',beds:['A','B']},{id:'q2',name:'Quarto 2',beds:['A','B']},{id:'q3',name:'Quarto 3',beds:['A','B','C']},{id:'q4',name:'Quarto 4',beds:['A']}];
+  const RS=(id,name,age,sex,room,bed,grau,o={})=>PT(id,name,bm(age*12,id.charCodeAt(2)*7),sex,{region:'Residencial Vida Longa',addr:'Rua Padre Vieira, 300',ltc:{room,bed,grau,admitted:addDays(T,o.adm||-300),contact:o.contact||'',diet:o.diet||'Dieta geral',active:true},...o.extra});
+  RS('lr1','Dona Aurora Campos',86,'F','q1','A',3,{contact:'Sérgio Campos (filho), (19) 99111-2030',diet:'Dieta pastosa',extra:{allergies:['Penicilina (informada)'],conditions:['Demência (diagnóstico informado)']}});
+  RS('lr2','Sr. Benedito Rocha',79,'M','q1','B',2,{contact:'Marta Rocha (filha), (19) 99222-4050'});
+  RS('lr3','Dona Iracema Luz',91,'F','q2','A',3,{contact:'Paulo Luz (neto), (19) 99333-6070',diet:'Dieta branda'});
+  RS('lr4','Sr. Joaquim Prates',74,'M','q3','A',1,{contact:'Ana Prates (esposa), (19) 99444-8090',adm:-40});
+  RS('lr5','Dona Zélia Andrade',82,'F','q3','B',2,{contact:'Rita Andrade (filha), (19) 99555-1020',extra:{conditions:['Diabetes mellitus (informada)']}});
+  const PRESC='Dr. Rafael Nogueira, CRM fictício 184.322';
+  const RX=(pid,drug,dose,route,times,o={})=>S.rx.push({id:'rx'+uid(),patient:pid,drug,dose,route,times,prescriber:PRESC,start:addDays(T,-60),end:null,active:true,notes:o.notes||'',by:'Helena Prado',demo:true});
+  RX('lr1','Medicamento de uso contínuo A (demo)','1 comprimido','Via oral',['08:00','20:00']);RX('lr1','Suplemento nutricional (demo)','200 mL','Via oral',['10:00','15:00']);
+  RX('lr2','Medicamento de uso contínuo B (demo)','1 comprimido','Via oral',['08:00']);RX('lr3','Medicamento de uso contínuo C (demo)','1 comprimido','Via oral',['08:00','14:00','20:00']);
+  RX('lr4','Medicamento de uso contínuo D (demo)','1 comprimido','Via oral',['12:00']);RX('lr5','Medicamento de uso contínuo E (demo)','Conforme prescrição','Via subcutânea',['07:00','19:00'],{notes:'Registrar glicemia capilar antes da administração, conforme prescrição.'});
+  const nowHM=hm(nowIso());
+  S.rx.forEach(r=>r.times.forEach(t=>{[-1,0].forEach(d=>{if(d===0&&t>nowHM)return;if(d===0&&r.patient==='lr3'&&t==='14:00')return;
+    S.mar.push({id:'mr'+uid(),rx:r.id,patient:r.patient,date:addDays(T,d),time:t,status:r.patient==='lr2'&&t==='08:00'&&d===-1?'recusado':'administrado',note:r.patient==='lr2'&&t==='08:00'&&d===-1?'Residente recusou. Médico comunicado.':'',by:['Carla Mendes','Mariana Costa','Paulo Santos'][(t.charCodeAt(1)+d)%3],at:at(addDays(T,d),t)})})}));
+  {const sn=shiftNow(),ago=m=>new Date(Date.now()-m*6e4).toISOString();
+   ['lr1','lr2','lr3','lr5'].forEach((pid,i)=>{S.care.push({id:'cr'+uid(),patient:pid,date:T,shift:sn,kind:'higiene',value:i===2?'Realizada com auxílio total':'Realizada',by:'Mariana Costa',at:ago(150-i*8)});
+     if(i<3)S.care.push({id:'cr'+uid(),patient:pid,date:T,shift:sn,kind:'alimentacao',value:i===1?'Aceitação parcial':'Aceitação total',by:'Mariana Costa',at:ago(90-i*6)});});
+   S.care.push({id:'cr'+uid(),patient:'lr1',date:T,shift:sn,kind:'sinais',value:'PA 128/80 mmHg · FC 76 bpm · Tax 36,4 °C · SpO2 96%',by:'Paulo Santos',at:ago(70)});
+   S.care.push({id:'cr'+uid(),patient:'lr3',date:T,shift:sn,kind:'decubito',value:'Realizada',by:'Mariana Costa',at:ago(40)});}
+  S.ltcOcc.push({id:'lo'+uid(),patient:'lr3',at:at(addDays(T,-2),'03:40'),kind:'Queda',desc:'Encontrada sentada ao lado da cama durante a ronda. Consciente, sem queixa de dor no momento.',actions:'Avaliada pela enfermeira de plantão, família e médico comunicados. Grade da cama revisada.',by:'Ana Beatriz Lima',status:'aberta'});
+  S.handoff.push({id:'hf'+uid(),at:at(addDays(T,-1),'19:05'),shift:'tarde',by:'Ana Beatriz Lima',text:'Dona Iracema em observação após a queda de anteontem, sem novas queixas. Sr. Benedito recusou a medicação das 8h de ontem; médico ciente. Demais residentes sem intercorrências.'});
+  S.handoff.push({id:'hf'+uid(),at:at(T,'07:05'),shift:'noite',by:'Paulo Santos',text:'Noite tranquila. Dona Aurora dormiu bem, sem agitação. Rondas de 2 em 2 horas realizadas.'});
+
+  /* feridas e estomias (registros fictícios de demonstração) */
+  const WD=(pid,type,site,stage,days,evals)=>{const w={id:'wd'+uid(),patient:pid,type,site,stage,opened:addDays(T,-days),status:'em_tratamento',origin:'',evals:[]};
+    evals.forEach(([d,L,W,D,tis,ex,pain,cov,by],k)=>w.evals.push({id:'we'+uid(),at:at(addDays(T,d),'10:'+pad(10+k*7)),len:L,wid:W,dep:D,tissue:tis,exudate:ex,exType:ex==='Ausente'?'':'Seroso',odor:'Ausente',edges:k<evals.length-1?'Regulares, aderidas':'Regulares, com epitelização',peri:'Íntegra',pain,cover:cov,next:addDays(T,d+3),by,notes:''}));S.wounds.push(w);return w};
+  WD('hp1','Lesão por pressão','Região sacral','Estágio 3',42,[[-42,6.0,4.5,1.2,{gran:40,esf:50,nec:10,epi:0},'Moderado',5,'Cobertura conforme protocolo institucional (demo)','Ana Beatriz Lima'],[-28,5.2,4.0,1.0,{gran:60,esf:35,nec:5,epi:0},'Moderado',4,'Cobertura conforme protocolo institucional (demo)','Ana Beatriz Lima'],[-14,4.1,3.2,0.6,{gran:80,esf:15,nec:0,epi:5},'Pouco',3,'Cobertura conforme protocolo institucional (demo)','Paulo Santos'],[0,3.0,2.4,0.3,{gran:80,esf:5,nec:0,epi:15},'Pouco',2,'Cobertura conforme protocolo institucional (demo)','Ana Beatriz Lima']]);
+  WD('lr1','Lesão por pressão','Calcâneo direito','Estágio 2',18,[[-18,2.2,2.0,0.1,{gran:70,esf:30,nec:0,epi:0},'Pouco',2,'Cobertura conforme prescrição (demo)','Paulo Santos'],[-6,1.6,1.4,0.1,{gran:70,esf:10,nec:0,epi:20},'Pouco',1,'Cobertura conforme prescrição (demo)','Mariana Costa']]);
+  WD('hp2','Úlcera em pé diabético','Hálux esquerdo, face plantar','Não se aplica',30,[[-30,1.8,1.5,0.4,{gran:50,esf:50,nec:0,epi:0},'Moderado',3,'Cobertura conforme prescrição (demo)','Paulo Santos'],[-9,1.9,1.6,0.4,{gran:45,esf:55,nec:0,epi:0},'Moderado',4,'Cobertura conforme prescrição (demo)','Paulo Santos']]);
+  S.ostomies.push({id:'os'+uid(),patient:'hp3',type:'Colostomia',site:'Quadrante inferior esquerdo',since:addDays(T,-120),diameter:32,equipment:'Bolsa drenável de uma peça, recorte 35 mm (demo)',status:'ativa',evals:[
+    {id:'oe'+uid(),at:at(addDays(T,-15),'15:00'),aspect:'Vermelho vivo, úmido, protruso',peri:'Íntegra',effluent:'Fezes pastosas',diameter:32,change:true,teach:'Familiar orientado sobre recorte da placa e esvaziamento da bolsa.',by:'Paulo Santos'},
+    {id:'oe'+uid(),at:at(addDays(T,-1),'10:30'),aspect:'Vermelho vivo, úmido, protruso',peri:'Hiperemia leve às 6h',effluent:'Fezes pastosas',diameter:32,change:true,teach:'Reforçada orientação de recorte justo ao estoma.',by:'Paulo Santos'}]});
+
   /* financeiro */
   const PY=(sup,desc,cat,val,d,paid)=>S.pay.push({id:'py'+uid(),supplier:sup,desc,cat,value:val,due:addDays(T,d),paid:paid?addDays(T,paid):null});
   PY('Distribuidora Imuno (demo)','Lote de vacinas influenza','Vacinas e insumos',18640,6,null);PY('Frio Certo Manutenção (demo)','Manutenção preventiva das câmaras','Manutenção',1480,-2,null);
@@ -373,6 +435,13 @@ function orgUses(S,kind,id){const u=[];
   if(kind==='items'&&(S.moves.some(m=>m.item===id)||S.lots.some(l=>l.item===id&&l.qty>0)))u.push('movimentações');
   if(kind==='procCat'){const n=(S.procCat.find(p=>p.id===id)||{}).name;if(S.procs.some(p=>p.type===n))u.push('procedimentos registrados')}
   return u}
+const aesCatOf=(S,id)=>S.aesCat.find(x=>x.id===id);const roomOf=(S,id)=>S.rooms.find(x=>x.id===id)||{name:'Sem quarto',beds:[]};
+const shiftNow=()=>{const h=new Date().getHours();return h>=7&&h<13?'manha':h>=13&&h<19?'tarde':'noite'};const SHIFTN={manha:'Manhã (7h às 13h)',tarde:'Tarde (13h às 19h)',noite:'Noite (19h às 7h)'};
+const CARE={higiene:['Higiene corporal',['Realizada','Realizada com auxílio total','Recusou']],alimentacao:['Alimentação',['Aceitação total','Aceitação parcial','Recusou']],hidratacao:['Hidratação',null,'Ex.: 300 mL'],
+  decubito:['Mudança de decúbito',['Realizada']],sinais:['Sinais vitais',null,'Ex.: PA 120/80 mmHg, FC 72 bpm, Tax 36,5 °C'],eliminacoes:['Eliminações',['Diurese presente','Evacuação presente','Sem eliminações no turno']],sono:['Sono e repouso',['Dormiu bem','Sono agitado','Acordado']]};
+const WST={em_tratamento:['Em tratamento','amber'],cicatrizada:['Cicatrizada','teal'],encaminhada:['Encaminhada','sky']};
+const wArea=e=>e?Math.round(e.len*e.wid*10)/10:0;
+const AST2={agendado:['Agendado','sky'],confirmado:['Confirmado','teal'],realizado:['Realizado','p4'],faltou:['Faltou','amber'],cancelado:['Cancelado','neutral']};
 const PST={agendado:['Agendado','sky'],realizado:['Aguardando conferência','amber'],conferido:['Conferido','teal'],devolvido:['Devolvido para correção','danger'],nao_realizado:['Não realizado','neutral']};
 const itemQty=(S,id)=>S.lots.filter(l=>l.item===id).reduce((t,l)=>t+l.qty,0);
 
@@ -635,6 +704,82 @@ const A={
     x.status=ok?'conferido':'devolvido';x.verifiedBy=u.name;x.verifiedAt=nowIso();x.returnNote=ok?null:txt.trim();
     log(S,u,ok?'proc_ok':'proc_back','proc',x.patient,ok?null:txt,`${x.type}: ${patOf(S,x.patient).name}`);
     noteProf(S,u,x.prof,ok?'Procedimento conferido':'Procedimento devolvido para correção',`${x.type}, ${patOf(S,x.patient).name}${ok?'':'. '+txt}`);},
+  /* ---------------- enfermagem estética */
+  aesAppt(S,u,f){need(S,u,'aesthetic.manage');if(!f.patient||!f.cat||!f.prof||!f.date||!f.start)throw new Stop('validation','Preencha cliente, procedimento, profissional, data e horário.');
+    const c=S.aesCat.find(x=>x.id===f.cat);const end=m=>{const[h,mi]=m.split(':').map(Number);const t=h*60+mi+c.dur;return pad(Math.floor(t/60))+':'+pad(t%60)};
+    const clash=S.aesAppts.find(a=>a.prof===f.prof&&a.date===f.date&&!['cancelado','faltou'].includes(a.status)&&a.start<end(f.start)&&end(a.start)>f.start);
+    if(clash)throw new Stop('blocking',`${profOf(S,f.prof).name} já tem atendimento às ${clash.start} neste dia.`);
+    const pkg=S.aesPkgs.find(k=>k.patient===f.patient&&k.cat===f.cat&&k.status==='ativo');
+    S.aesAppts.push({id:'aa'+uid(),patient:f.patient,cat:f.cat,date:f.date,start:f.start,prof:f.prof,status:'agendado',pkg:pkg?pkg.id:null,consent:false,notes:'',products:'',doneAt:null});
+    log(S,u,'aes_appt','aes',f.patient,null,`${c.name}: ${patOf(S,f.patient).name}, ${D2(f.date)} ${f.start}`);noteProf(S,u,f.prof,'Novo atendimento de estética',`${c.name}, ${patOf(S,f.patient).name}, ${D2(f.date)} às ${f.start}`);},
+  aesStatus(S,u,id,st){const a=S.aesAppts.find(x=>x.id===id);if(!(can(S,u,'aesthetic.manage')||(u.prof===a.prof&&can(S,u,'aesthetic.perform'))))throw new Stop('permission','Sem permissão.');
+    a.status=st;log(S,u,'aes_status','aes',a.patient,null,`${aesCatOf(S,a.cat).name}: ${patOf(S,a.patient).name}, ${{confirmado:'confirmado',cancelado:'cancelado',faltou:'falta registrada'}[st]||st}`);},
+  aesAnam(S,u,pid,f){if(!(can(S,u,'aesthetic.perform')||can(S,u,'aesthetic.manage')))throw new Stop('permission','Sem permissão.');if(!(f.complaint||'').trim())throw new Stop('validation','Informe a queixa principal.');
+    patOf(S,pid).aes={at:today(),complaint:f.complaint.trim(),reported:(f.reported||'').trim(),notes:(f.notes||'').trim()};log(S,u,'aes_anam','aes',pid,null,patOf(S,pid).name);},
+  aesSession(S,u,id,f){need(S,u,'aesthetic.perform');const a=S.aesAppts.find(x=>x.id===id);const pt=patOf(S,a.patient);
+    if(!['agendado','confirmado'].includes(a.status))throw new Stop('validation','Este atendimento não está em aberto.');
+    if(!pt.aes)throw new Stop('blocking','Registre a anamnese estética do cliente antes da primeira sessão.');
+    if(!f.consent)throw new Stop('blocking','Confirme que o termo de consentimento foi assinado pelo cliente.');
+    if((f.notes||'').trim().length<10)throw new Stop('validation','Descreva a sessão (mínimo de 10 caracteres).');
+    a.status='realizado';a.consent=true;a.notes=f.notes.trim();a.products=(f.products||'').trim();a.doneAt=nowIso();a.by=u.name;
+    const k=a.pkg&&S.aesPkgs.find(x=>x.id===a.pkg);if(k){k.used=Math.min(k.total,k.used+1);if(k.used>=k.total)k.status='concluido'}
+    log(S,u,'aes_session','aes',pt.id,null,`${aesCatOf(S,a.cat).name}: ${pt.name}${k?` (sessão ${k.used} de ${k.total})`:''}`);},
+  aesPkg(S,u,f){need(S,u,'aesthetic.manage');const c=aesCatOf(S,f.cat);if(!f.patient||!c)throw new Stop('validation','Selecione cliente e procedimento.');
+    const n=Math.max(1,Math.round(+f.total||0)),v=+String(f.price).replace(/\./g,'').replace(',','.');if(!v||v<=0)throw new Stop('validation','Informe o valor do pacote.');
+    if(S.aesPkgs.some(k=>k.patient===f.patient&&k.cat===f.cat&&k.status==='ativo'))throw new Stop('validation','Este cliente já tem um pacote ativo deste procedimento.');
+    S.aesPkgs.push({id:'pk'+uid(),patient:f.patient,cat:f.cat,total:n,used:0,price:v,created:today(),status:'ativo'});
+    S.rec.push({id:'rc'+uid(),payer:patOf(S,f.patient).name,service:`Pacote ${c.name} (${n} sessões)`,value:v,issued:today(),due:f.due||today(),received:null});
+    log(S,u,'aes_pkg','aes',f.patient,null,`${c.name}, ${n} sessões, ${BRL(v)}`);},
+  aesCatSave(S,u,f){need(S,u,'aesthetic.manage');if((f.name||'').trim().length<3)throw new Stop('validation','Informe o nome do procedimento.');
+    const d={name:f.name.trim(),dur:Math.max(10,+f.dur||30),price:+String(f.price).replace(',','.')||0,sessions:Math.max(1,+f.sessions||1)};
+    if(f.id)Object.assign(aesCatOf(S,f.id),d);else S.aesCat.push({id:'ae'+uid(),...d,c:S.aesCat.length%6+1,archived:false});log(S,u,'aes_cat','aes',null,null,d.name);},
+  aesCatDel(S,u,id){need(S,u,'aesthetic.manage');const c=aesCatOf(S,id);if(S.aesAppts.some(a=>a.cat===id)){c.archived=true;log(S,u,'aes_cat','aes',null,null,'Arquivado: '+c.name);return 'archived'}
+    S.aesCat=S.aesCat.filter(x=>x.id!==id);log(S,u,'aes_cat','aes',null,null,'Excluído: '+c.name);return 'deleted';},
+  /* ---------------- longa permanência */
+  ltcAdmit(S,u,f){need(S,u,'ltc.manage');const p=patOf(S,f.patient);if(!p)throw new Stop('validation','Selecione o residente.');if(!f.room||!f.bed)throw new Stop('validation','Escolha quarto e leito.');
+    if(S.patients.some(x=>x.ltc&&x.ltc.active&&x.id!==p.id&&x.ltc.room===f.room&&x.ltc.bed===f.bed))throw new Stop('blocking','Este leito está ocupado.');
+    if(!['1','2','3',1,2,3].includes(f.grau))throw new Stop('validation','Informe o grau de dependência.');
+    const was=p.ltc&&p.ltc.active;p.ltc={room:f.room,bed:f.bed,grau:+f.grau,admitted:was?p.ltc.admitted:(f.date||today()),contact:f.contact||'',diet:f.diet||'Dieta geral',active:true};
+    log(S,u,'ltc_admit','ltc',p.id,null,`${p.name}: ${roomOf(S,f.room).name}, leito ${f.bed}, grau ${f.grau}`);},
+  ltcDischarge(S,u,pid,reason){need(S,u,'ltc.manage');if(!(reason||'').trim())throw new Stop('validation','Informe o motivo da saída.');const p=patOf(S,pid);
+    p.ltc.active=false;p.ltc.left=today();p.ltc.leftReason=reason;S.rx.filter(r=>r.patient===pid&&r.active).forEach(r=>{r.active=false;r.end=today()});log(S,u,'ltc_discharge','ltc',pid,reason,p.name);},
+  ltcRx(S,u,f){need(S,u,'ltc.manage');if(!f.patient||!(f.drug||'').trim()||!(f.dose||'').trim()||!f.route)throw new Stop('validation','Preencha residente, medicamento, dose e via.');
+    const times=(f.times||'').split(/[,; ]+/).map(t=>t.trim()).filter(Boolean);if(!times.length||times.some(t=>!/^\d{2}:\d{2}$/.test(t)))throw new Stop('validation','Informe os horários no formato 08:00, 20:00.');
+    if(!(f.prescriber||'').trim())throw new Stop('validation','Informe o prescritor e o registro do conselho.');
+    S.rx.push({id:'rx'+uid(),patient:f.patient,drug:f.drug.trim(),dose:f.dose.trim(),route:f.route,times:times.sort(),prescriber:f.prescriber.trim(),start:today(),end:null,active:true,notes:(f.notes||'').trim(),by:u.name});
+    log(S,u,'ltc_rx','ltc',f.patient,null,`${f.drug}, ${f.dose}, ${times.join(' ')}`);},
+  ltcRxStop(S,u,id,reason){need(S,u,'ltc.manage');if(!(reason||'').trim())throw new Stop('validation','Informe o motivo da suspensão.');const r=S.rx.find(x=>x.id===id);r.active=false;r.end=today();r.stopReason=reason;log(S,u,'ltc_rx_stop','ltc',r.patient,reason,r.drug);},
+  ltcMar(S,u,rxid,time,st,txt){need(S,u,'ltc.care');const r=S.rx.find(x=>x.id===rxid);const T=today();
+    if(S.mar.some(m=>m.rx===rxid&&m.date===T&&m.time===time))throw new Stop('validation','Este horário já foi registrado.');
+    if(st!=='administrado'&&!(txt||'').trim())throw new Stop('validation','Informe o motivo.');
+    S.mar.push({id:'mr'+uid(),rx:rxid,patient:r.patient,date:T,time,status:st,note:(txt||'').trim(),by:u.name,at:nowIso()});
+    log(S,u,'ltc_mar','ltc',r.patient,txt||null,`${r.drug} ${time}: ${st.replace('_',' ')}`);
+    if(st!=='administrado')note(S,u,'ltc.manage','Medicação não administrada',`${patOf(S,r.patient).name}: ${r.drug} das ${time}. ${txt}`,{page:'ilpi'});},
+  ltcCare(S,u,f){need(S,u,'ltc.care');if(!f.patient||!f.kind||!(f.value||'').trim())throw new Stop('validation','Informe o registro.');
+    S.care.push({id:'cr'+uid(),patient:f.patient,date:today(),shift:shiftNow(),kind:f.kind,value:f.value.trim(),by:u.name,at:nowIso()});log(S,u,'ltc_care','ltc',f.patient,null,`${CARE[f.kind][0]}: ${f.value}`);},
+  ltcOccAdd(S,u,f){need(S,u,'ltc.care');if(!f.patient||!f.kind||(f.desc||'').trim().length<10)throw new Stop('validation','Informe residente, tipo e descrição (mínimo de 10 caracteres).');
+    S.ltcOcc.unshift({id:'lo'+uid(),patient:f.patient,at:nowIso(),kind:f.kind,desc:f.desc.trim(),actions:(f.actions||'').trim(),by:u.name,status:'aberta'});
+    log(S,u,'ltc_occ','ltc',f.patient,null,`${f.kind}: ${patOf(S,f.patient).name}`);note(S,u,'ltc.manage','Intercorrência na longa permanência',`${f.kind}: ${patOf(S,f.patient).name}`,{page:'ilpi'});},
+  ltcOccClose(S,u,id,txt){need(S,u,'ltc.manage');if(!(txt||'').trim())throw new Stop('validation','Descreva o desfecho.');const o=S.ltcOcc.find(x=>x.id===id);o.status='encerrada';o.outcome=txt.trim();o.closedBy=u.name;log(S,u,'ltc_occ_close','ltc',o.patient,txt,o.kind);},
+  ltcHandoff(S,u,txt){need(S,u,'ltc.care');if((txt||'').trim().length<15)throw new Stop('validation','Escreva a passagem de plantão (mínimo de 15 caracteres).');
+    S.handoff.unshift({id:'hf'+uid(),at:nowIso(),shift:shiftNow(),by:u.name,text:txt.trim()});log(S,u,'ltc_handoff','ltc',null,null,SHIFTN[shiftNow()]);},
+  ltcRooms(S,u,rooms){need(S,u,'ltc.manage');S.rooms=rooms;log(S,u,'ltc_room','ltc',null,null,`${rooms.length} quartos, ${rooms.reduce((t,r)=>t+r.beds.length,0)} leitos`);},
+  /* ---------------- feridas e estomias */
+  woundAdd(S,u,f){need(S,u,'wounds.manage');if(!f.patient||!f.type||!(f.site||'').trim())throw new Stop('validation','Informe paciente, tipo e localização da lesão.');
+    const w={id:'wd'+uid(),patient:f.patient,type:f.type,site:f.site.trim(),stage:f.stage||'Não se aplica',opened:f.opened||today(),status:'em_tratamento',origin:(f.origin||'').trim(),evals:[]};S.wounds.push(w);
+    log(S,u,'wound_add','wound',f.patient,null,`${f.type}, ${f.site}: ${patOf(S,f.patient).name}`);return w.id;},
+  woundEval(S,u,id,f){need(S,u,'wounds.manage');const w=S.wounds.find(x=>x.id===id);const n=k=>+String(f[k]||'').replace(',','.');
+    if(!(n('len')>0&&n('wid')>0))throw new Stop('validation','Informe comprimento e largura em centímetros.');
+    const tis={gran:+f.gran||0,esf:+f.esf||0,nec:+f.nec||0,epi:+f.epi||0};const tot=tis.gran+tis.esf+tis.nec+tis.epi;if(tot!==100)throw new Stop('validation',`A soma dos tecidos precisa dar 100% (está em ${tot}%).`);
+    if(!(f.cover||'').trim())throw new Stop('validation','Informe a cobertura ou o curativo realizado, conforme a prescrição.');
+    w.evals.push({id:'we'+uid(),at:nowIso(),len:n('len'),wid:n('wid'),dep:n('dep')||0,tissue:tis,exudate:f.exudate,exType:f.exType||'',odor:f.odor,edges:f.edges||'',peri:f.peri||'',pain:+f.pain||0,cover:f.cover.trim(),next:f.next||'',by:u.name,notes:(f.notes||'').trim()});
+    if(f.stage)w.stage=f.stage;log(S,u,'wound_eval','wound',w.patient,null,`${w.type}, ${w.site}: ${(n('len')*n('wid')).toFixed(1).replace('.',',')} cm²`);},
+  woundStatus(S,u,id,st,txt){need(S,u,'wounds.manage');const w=S.wounds.find(x=>x.id===id);if(!(txt||'').trim())throw new Stop('validation','Registre a observação.');w.status=st;w.closed=today();w.closeNote=txt.trim();log(S,u,'wound_status','wound',w.patient,txt,`${w.type}: ${WST[st][0].toLowerCase()}`);},
+  ostomyAdd(S,u,f){need(S,u,'wounds.manage');if(!f.patient||!f.type)throw new Stop('validation','Informe paciente e tipo de estomia.');
+    S.ostomies.push({id:'os'+uid(),patient:f.patient,type:f.type,site:(f.site||'').trim(),since:f.since||today(),diameter:+f.diameter||null,equipment:(f.equipment||'').trim(),status:'ativa',evals:[]});log(S,u,'ostomy_add','wound',f.patient,null,f.type);},
+  ostomyEval(S,u,id,f){need(S,u,'wounds.manage');const o=S.ostomies.find(x=>x.id===id);if(!f.aspect||!f.peri)throw new Stop('validation','Informe o aspecto do estoma e da pele periestomal.');
+    o.evals.push({id:'oe'+uid(),at:nowIso(),aspect:f.aspect,peri:f.peri,effluent:(f.effluent||'').trim(),diameter:+f.diameter||o.diameter,change:!!f.change,teach:(f.teach||'').trim(),by:u.name});if(+f.diameter)o.diameter=+f.diameter;
+    log(S,u,'ostomy_eval','wound',o.patient,null,`${o.type}: ${patOf(S,o.patient).name}`);},
   /* ---------------- ponto do plantão */
   punch(S,u,aid,kind){const a=A.myAsg(S,u,aid),s=shiftOf(S,a.shift);if(a.status!=='confirmado')throw new Stop('validation','Confirme a presença antes de registrar o ponto.');
     const now=Date.now(),st=+new Date(s.start),en=+new Date(s.end);
@@ -645,8 +790,8 @@ const A={
 };
 
 /* ------------------------------------------------------------------ armazenamento */
-const SKEY='medlink-demo-v3',UKEY='medlink-demo-user3',TKEY='medlink-theme';
-const load=()=>{try{const s=JSON.parse(localStorage.getItem(SKEY));if(s&&s.v===3)return s}catch(e){}return null};
+const SKEY='medlink-demo-v5',UKEY='medlink-demo-user3',TKEY='medlink-theme';
+const load=()=>{try{const s=JSON.parse(localStorage.getItem(SKEY));if(s&&s.v===5)return s}catch(e){}return null};
 const save=s=>{try{localStorage.setItem(SKEY,JSON.stringify(s))}catch(e){}};
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
@@ -866,6 +1011,7 @@ const NAV=[
   {label:'Principal',items:[['inicio','Visão geral','dash',u=>u.role!=='prof'],['meu','Minha área','user',u=>!!u.prof],['notificacoes','Notificações','bell',null]]},
   {label:'Escalas',items:[['escalas','Calendário','cal','shifts.view'],['solicitacoes','Solicitações','inbox','requests.decide'],['gerar','Gerar escala','wand','shifts.manage']]},
   {label:'Clínico',items:[['vacinacao','Vacinação','syringe','vaccines.view'],['calendario','Calendário vacinal','calcheck','vaccines.view'],['prontuario','Prontuário','file','records.view'],['procedimentos','Procedimentos','clip','procedures.verify']]},
+  {label:'Serviços',items:[['feridas','Feridas e estomias','activity',['wounds.view']],['estetica','Enfermagem estética','heart','aesthetic.view'],['ilpi','Longa permanência','home','ltc.view']]},
   {label:'Pessoas',items:[['profissionais','Profissionais','users','professionals.view'],['talentos','Banco de talentos','star','talent.manage'],['equipe','Equipe e acessos','shield','members.manage']]},
   {label:'Operação',items:[['estoque','Estoque','box','stock.view'],['temperatura','Temperatura','thermo','coldchain.view'],['homecare','Home care','home','homecare.view']]},
   {label:'Financeiro',items:[['pagar','Contas a pagar','wallet','finance.view'],['receber','Contas a receber','coins','finance.view'],['relatorios','Relatórios','chart','reports.view']]},
@@ -918,7 +1064,8 @@ const MODULES=[
   ['users','Profissionais','Cadastro, conselho, competências e validação.'],['star','Banco de talentos','Convide profissionais e acompanhe a seleção.'],
   ['syringe','Vacinação','Registro com paciente, vacina, dose, lote, via e local de aplicação.'],['calcheck','Calendário vacinal','Calendário Nacional 2026 por idade, com conferência da caderneta.'],
   ['file','Prontuário eletrônico','Evoluções assinadas, caderneta, procedimentos e acessos registrados.'],['clip','Procedimentos','Registro pelo profissional e conferência pela responsável técnica.'],['box','Estoque','Lotes, validades, entradas, saídas, perdas e alertas.'],
-  ['thermo','Temperatura','Leituras da rede de frio e ocorrências com avaliação técnica.'],['home','Home care','Agenda domiciliar por profissional, paciente e região.'],
+  ['thermo','Temperatura','Leituras da rede de frio e ocorrências com avaliação técnica.'],['activity','Feridas e estomaterapia','Lesões com medidas, tecidos e gráfico de evolução; estomias e orientações.'],
+  ['heart','Enfermagem estética','Agenda, anamnese, termo de consentimento, sessões e pacotes.'],['users','Longa permanência','Leitos, medicação aprazada, cuidados por turno e passagem de plantão.'],['home','Home care','Agenda domiciliar por profissional, paciente e região.'],
   ['wallet','Financeiro','Contas a pagar e a receber com vencidos e baixas.'],['chart','Relatórios','Cobertura, horas, custos e aplicações em gráficos.'],
   ['hist','Auditoria','Quem fez o quê, quando e por qual motivo.'],['building','Organização','Edite, organize e exclua unidades, setores e catálogos.'],['shield','Perfis e permissões','Acesso por função e por unidade.'],['bell','Notificações','Avisos de vaga descoberta, trocas e alertas.']];
 
@@ -948,7 +1095,7 @@ function Landing(){
           <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-lime px-3 py-1 text-xs font-bold text-onlime"><${Icon} n="check" s=${12}/>Presença confirmada</p></div>
         <div className="floaty glass absolute right-[9%] top-[6%] hidden w-[200px] rounded-[26px] p-4 md:block" style=${{'--r':'7deg',animationDelay:'1.2s'}}>
           <p className="text-xs text-white/80">Vaga de sexta, 07:00</p><p className="display-n mt-1 text-2xl">COBERTA</p><p className="mt-1 text-xs text-white/80">substituta validada pelas regras</p></div>
-        <p className="mx-auto mt-8 max-w-xl text-center text-[17px] text-white/90">Escalas, equipes, vacinação, estoque, temperatura, home care e financeiro em um só painel, para clínicas de vacinação, clínicas e empresas de home care.</p>
+        <p className="mx-auto mt-8 max-w-xl text-center text-[17px] text-white/90">Escalas, vacinação, prontuário, feridas, estética, longa permanência, home care, estoque e financeiro em um só painel, para clínicas, serviços de enfermagem, ILPIs e empresas de home care.</p>
         <div className="mt-7 flex flex-wrap justify-center gap-3"><button onClick=${openPicker} className="h-12 rounded-full bg-lime px-7 font-bold text-onlime transition hover:brightness-95">Experimentar a demonstração</button>
           <a href="#modulos" className="grid h-12 place-items-center rounded-full border-2 border-white px-7 font-bold transition hover:bg-white hover:text-[#1c3ee4]">Ver módulos</a></div>
         <button onClick=${openPicker} aria-label="Entrar na demonstração" className="absolute bottom-6 right-4 grid h-32 w-32 place-items-center rounded-full bg-lime text-onlime transition hover:scale-105 sm:right-10 sm:h-36 sm:w-36">
@@ -989,7 +1136,7 @@ const PROFILES=[
   {id:'marcos',what:'Monta e gera escalas da Unidade Taquaral e cuida do estoque.'},
   {id:'helena',what:'Valida cadastros, confere procedimentos, registra vacinas e trata a rede de frio.'},
   {id:'carla',what:'Confirma plantões, registra ponto, vacinas e procedimentos, e consulta o prontuário.'},
-  {id:'paulo',what:'Enfermeiro: escala, atendimentos domiciliares e férias.'}];
+  {id:'paulo',what:'Enfermeiro: escala, home care, feridas, estomias e longa permanência.'}];
 function ProfilePicker({open,onClose}){
   const {S,login,reset}=useApp();const [confirm,setConfirm]=useState(false);
   return html`<${Modal} open=${open} onClose=${onClose} title="Escolha um perfil" desc="Demonstração com dados fictícios. As alterações ficam salvas só neste navegador.">
@@ -1069,7 +1216,7 @@ function Shell(){
 function Router(){
   const {page}=useApp();
   const M={inicio:Inicio,escalas:Escalas,solicitacoes:Solicitacoes,gerar:Gerar,profissionais:Profissionais,talentos:Talentos,equipe:Equipe,
-    vacinacao:Vacinacao,calendario:CalendarioVacinal,prontuario:Prontuario,procedimentos:Procedimentos,estoque:Estoque,temperatura:Temperatura,homecare:HomeCare,pagar:Pagar,receber:Receber,relatorios:Relatorios,
+    vacinacao:Vacinacao,calendario:CalendarioVacinal,prontuario:Prontuario,procedimentos:Procedimentos,feridas:Feridas,estetica:Estetica,ilpi:ILPI,estoque:Estoque,temperatura:Temperatura,homecare:HomeCare,pagar:Pagar,receber:Receber,relatorios:Relatorios,
     auditoria:Auditoria,organizacao:Organizacao,configuracoes:Organizacao,notificacoes:Notificacoes,meu:MinhaArea,manual:Manual};
   if(page.page==='prof')return html`<${ProfDetail} id=${page.id}/>`;
   if(page.page==='paciente')return html`<${PacienteDetail} key=${page.id} id=${page.id}/>`;
@@ -1104,6 +1251,9 @@ function Inicio(){
     can(S,u,'vaccines.view')&&{icon:'syringe',tone:3,title:'Vacinação',sub:'Hoje',value:imToday.length,detail:`${imWeek.length} aplicações nos últimos 7 dias`,to:{page:'vacinacao'}},
     can(S,u,'homecare.view')&&{icon:'home',tone:1,title:'Home care',sub:'Hoje',value:visitsToday.length,detail:`${visitsToday.filter(v=>v.status==='concluido').length} concluídos`,to:{page:'homecare'}},
     can(S,u,'procedures.verify')&&{icon:'clip',tone:2,title:'Procedimentos',sub:'Para conferir',value:toCheck.length,detail:`${S.procs.filter(x=>x.status==='agendado'&&x.date===T).length} agendados hoje`,to:{page:'procedimentos'}},
+    can(S,u,'wounds.view')&&{icon:'activity',tone:6,title:'Feridas',sub:'Em tratamento',value:S.wounds.filter(w=>w.status==='em_tratamento').length,detail:`${S.ostomies.length} estomia${S.ostomies.length===1?'':'s'} em acompanhamento`,to:{page:'feridas'}},
+    can(S,u,'aesthetic.view')&&{icon:'heart',tone:2,title:'Estética',sub:'Hoje',value:S.aesAppts.filter(a=>a.date===T&&a.status!=='cancelado').length,detail:`${S.aesPkgs.filter(k=>k.status==='ativo').length} pacotes ativos`,to:{page:'estetica'}},
+    can(S,u,'ltc.view')&&(()=>{const md=marToday(S);return{icon:'users',tone:3,title:'Longa permanência',sub:'Medicações agora',value:md.filter(x=>x.due).length,danger:md.some(x=>x.late),detail:`${residents(S).length} residentes, ${S.ltcOcc.filter(o=>o.status==='aberta').length} intercorrência(s)`,to:{page:'ilpi'}}})(),
     (can(S,u,'stock.view')||can(S,u,'coldchain.view'))&&{icon:'box',tone:5,title:'Alertas',sub:'Estoque e rede de frio',value:lowItems.length+expLots.length+occOpen.length,detail:`${occOpen.length} ocorrência${occOpen.length===1?'':'s'} de temperatura`,to:{page:can(S,u,'stock.view')?'estoque':'temperatura'}}].filter(Boolean);
   /* agenda de hoje: plantões, visitas e procedimentos */
   const agenda=[...vis.filter(s=>dkey(s.start)===T&&s.status!=='cancelado'&&s.status!=='rascunho').map(s=>{const a=active(s);return{t:hm(s.start),k:'s'+s.id,name:a.length?a.map(x=>profOf(S,x.prof).name.split(' ')[0]).join(', '):'Vaga aberta',sub:`Plantão ${hm(s.start)}–${hm(s.end)}, ${s.service?servOf(S,s.service).name:unitOf(S,s.unit).name}`,av:a[0]?profOf(S,a[0].prof).name:null,st:s.status==='confirmado'?'teal':s.status==='descoberto'?'danger':'amber',to:{page:'escalas',shift:s.id,d:T}}}),
@@ -1115,13 +1265,13 @@ function Inicio(){
   const dots=d=>{const sh=vis.filter(s=>dkey(s.start)===d&&s.status!=='cancelado');return[sh.some(s=>s.status==='descoberto')&&'bg-danger',sh.length&&'bg-teal',S.visits.some(v=>v.date===d&&v.status!=='cancelado')&&'bg-skyink'].filter(Boolean)};
   const mods=navFor(S,u).flatMap(g=>g.items.map(i=>({id:i[0],label:i[1],group:g.label,icon:i[2]}))).filter(m=>!['inicio','notificacoes','manual','meu'].includes(m.id));
   const metric={escalas:`${open.length} vagas abertas`,solicitacoes:`${reqs.length} pendentes`,gerar:'Proposta automática',profissionais:`${S.profs.filter(p=>p.active).length} ativos`,talentos:`${S.cands.filter(c=>c.status==='disponivel').length} disponíveis`,equipe:`${S.users.length} acessos`,
-    vacinacao:`${imToday.length} aplicações hoje`,calendario:'CNV 2026',prontuario:`${S.patients.filter(p=>p.active).length} pacientes`,procedimentos:`${toCheck.length} para conferir`,estoque:`${lowItems.length} abaixo do mínimo`,temperatura:`${occOpen.length} ocorrências abertas`,homecare:`${visitsToday.length} visitas hoje`,
+    vacinacao:`${imToday.length} aplicações hoje`,calendario:'CNV 2026',prontuario:`${S.patients.filter(p=>p.active).length} pacientes`,procedimentos:`${toCheck.length} para conferir`,feridas:`${S.wounds.filter(w=>w.status==='em_tratamento').length} lesões em tratamento`,estetica:`${S.aesAppts.filter(a=>a.date===T&&a.status!=='cancelado').length} atendimentos hoje`,ilpi:`${residents(S).length} residentes`,estoque:`${lowItems.length} abaixo do mínimo`,temperatura:`${occOpen.length} ocorrências abertas`,homecare:`${visitsToday.length} visitas hoje`,
     pagar:BRL0(S.pay.filter(p=>!p.paid&&daysTo(p.due)<=30).reduce((t,p)=>t+p.value,0))+' em 30 dias',receber:BRL0(S.rec.filter(r=>!r.received).reduce((t,r)=>t+r.value,0))+' em aberto',relatorios:'Cobertura, horas e custos',auditoria:`${S.audit.length} registros`,organizacao:`${S.units.filter(x=>!x.archived).length} unidades`};
   return html`<div className="space-y-5">
     <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-[13px] font-semibold text-soft">${cap(F(T,{weekday:'long',day:'numeric',month:'long'}))}</p>
       <h1 className="text-[30px] font-semibold leading-tight tracking-tight sm:text-[38px]">${greet()}, ${u.name.split(' ')[0]}</h1><p className="text-[14.5px] text-soft">${S.inst.name}${u.units?', '+unitOf(S,u.units[0]).name:''}. Semana de ${D2(ws)} a ${D2(addDays(ws,6))}.</p></div>
       <div className="flex flex-wrap gap-2">${can(S,u,'shifts.manage')&&html`<${Btn} v="ink" icon="wand" onClick=${()=>go({page:'gerar'})}>Gerar escala<//>`}${can(S,u,'shifts.view')&&html`<${Btn} v="lime" icon="cal" onClick=${()=>go({page:'escalas'})}>Abrir calendário<//>`}</div></div>
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">${K.map(k=>html`<${Kpi} key=${k.title} ...${k} onClick=${()=>go(k.to)}/>`)}</div>
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">${K.map(k=>html`<${Kpi} key=${k.title} ...${k} onClick=${()=>go(k.to)}/>`)}</div>
 
     <div className="grid gap-5 xl:grid-cols-[1.45fr_1fr]">
       ${can(S,u,'shifts.view')&&html`<${Card} title="Cobertura por dia" sub="Vagas preenchidas sobre o total publicado" icon="chart" tone=${4} action=${drafts.length>0&&html`<${Btn} size="sm" onClick=${()=>go({page:'escalas',view:'lista',st:'rascunho'})}>${drafts.length} rascunhos para publicar<//>`}>
@@ -1621,7 +1771,7 @@ function MyActions({a,dark}){
 const HVS={agendado:['Agendado','sky'],em_andamento:['Em andamento','amber'],concluido:['Concluído','teal'],cancelado:['Cancelado','neutral']};
 
 /* ------------------------------------------------------------------ pacientes: seleção e cadastro */
-const ptTags=p=>[ageMonths(p.birth||today())<120&&p.birth?['Criança','p3']:null,p.homecare?['Home care','p4']:null,p.pregnant?['Gestante','p6']:null,ageMonths(p.birth||today())>=720?['60+','p5']:null,!p.active?['Inativo','neutral']:null].filter(Boolean);
+const ptTags=p=>[ageMonths(p.birth||today())<120&&p.birth?['Criança','p3']:null,p.homecare?['Home care','p4']:null,p.pregnant?['Gestante','p6']:null,ageMonths(p.birth||today())>=720?['60+','p5']:null,p.ltc&&p.ltc.active?['Residente','p2']:null,p.aes?['Estética','p6']:null,!p.active?['Inativo','neutral']:null].filter(Boolean);
 function PatientPicker({value,onChange,allowNew=true,id='pp'}){
   const {S}=useApp();const [q,setQ]=useState('');const [open,setOpen]=useState(false);const [nw,setNw]=useState(false);
   const p=value&&patOf(S,value);const t=q.trim().toLowerCase();
@@ -1806,7 +1956,11 @@ function PacienteDetail({id}){
   const tl=[...imm.map(i=>({at:i.at,k:i.id,ic:'syringe',tn:VAC[i.vac].c,t:`${VAC[i.vac].n}, ${i.dose}`,d:i.origin==='externa'?`Transcrita da caderneta: ${i.place}`:`${i.via}, ${i.site.toLowerCase()}, lote ${i.lot?lotOf(S,i.lot).lot:'—'}`,by:i.prof?profOf(S,i.prof).name:i.by,off:i.status==='cancelado'})),
     ...evol.map(e=>({at:e.at,k:e.id,ic:'file',tn:2,t:e.kind,d:e.text,by:e.author})),
     ...procs.filter(x=>x.doneAt||x.status==='agendado').map(x=>({at:x.doneAt||at(x.date,x.start),k:x.id,ic:'clip',tn:1,t:x.type,d:`${PST[x.status][0]}${x.notes?': '+x.notes:''}`,by:profOf(S,x.prof).name})),
-    ...visits.map(v=>({at:at(v.date,v.start),k:v.id,ic:'home',tn:4,t:'Visita domiciliar: '+v.service,d:HVS[v.status][0]+(v.notes?'. '+v.notes:''),by:profOf(S,v.prof).name}))].sort((a,b)=>b.at.localeCompare(a.at));
+    ...visits.map(v=>({at:at(v.date,v.start),k:v.id,ic:'home',tn:4,t:'Visita domiciliar: '+v.service,d:HVS[v.status][0]+(v.notes?'. '+v.notes:''),by:profOf(S,v.prof).name})),
+    ...S.aesAppts.filter(a=>a.patient===id&&a.status==='realizado').map(a=>({at:a.doneAt,k:a.id,ic:'heart',tn:6,t:'Estética: '+aesCatOf(S,a.cat).name,d:a.notes+(a.products?' Produtos: '+a.products+'.':'')+' Termo de consentimento assinado.',by:a.by||profOf(S,a.prof).name})),
+    ...S.wounds.filter(w=>w.patient===id).flatMap(w=>w.evals.map(e=>({at:e.at,k:e.id,ic:'activity',tn:5,t:`Avaliação de ${w.type.toLowerCase()} (${w.site.toLowerCase()})`,d:`${e.len} × ${e.wid} × ${e.dep} cm, ${wArea(e).toLocaleString('pt-BR')} cm². Granulação ${e.tissue.gran}%, esfacelo ${e.tissue.esf}%. Exsudato ${e.exudate.toLowerCase()}. ${e.cover}.`,by:e.by}))),
+    ...S.ostomies.filter(o=>o.patient===id).flatMap(o=>o.evals.map(e=>({at:e.at,k:e.id,ic:'activity',tn:4,t:'Avaliação de '+o.type.toLowerCase(),d:`Estoma: ${e.aspect.toLowerCase()}. Pele: ${e.peri.toLowerCase()}.${e.teach?' '+e.teach:''}`,by:e.by}))),
+    ...S.ltcOcc.filter(o=>o.patient===id).map(o=>({at:o.at,k:o.id,ic:'alert',tn:6,t:'Intercorrência: '+o.kind,d:o.desc+(o.actions?' Condutas: '+o.actions:''),by:o.by}))].filter(x=>x.at).sort((a,b)=>b.at.localeCompare(a.at));
   const tabs=[['tempo','Linha do tempo',tl.length],['vacinas','Caderneta',imm.filter(i=>i.status==='registrado').length],['evol','Evoluções',evol.length],['procs','Procedimentos',procs.length]].concat(can(S,u,'audit.view')?[['acessos','Acessos',access.length]]:[]);
   return html`<div className="space-y-5">
     <div className="flex items-center gap-3"><${IconBtn} n="left" label="Voltar" onClick=${()=>go({page:'prontuario'})} className="bg-panel"/><p className="text-sm text-soft">Prontuário eletrônico</p></div>
@@ -1885,6 +2039,267 @@ function Procedimentos(){
         ${verify&&k==='realizado'&&html`<div className="mt-3 flex gap-2"><button className="h-8 flex-1 rounded-full bg-[#111318] text-[12.5px] font-bold text-white" onClick=${()=>run((D,U)=>A.procVerify(D,U,x.id,true),'Procedimento conferido.')}>Conferir</button><button className="h-8 flex-1 rounded-full bg-white/80 text-[12.5px] font-bold" onClick=${()=>setBack(x)}>Devolver</button></div>`}</article>`})}</div></section>`})}</div></div>
     ${nw&&html`<${ProcAssign} onClose=${()=>setNw(false)}/>`}
     <${Confirm} open=${!!back} title="Devolver para correção" desc=${back?`${back.type}, ${patOf(S,back.patient).name}. O profissional recebe o aviso e corrige pela Minha área.`:''} okLabel="Devolver" tone="ink" needReason onClose=${()=>setBack(null)} onOk=${r=>{const x=run((D,U)=>A.procVerify(D,U,back.id,false,r),'Procedimento devolvido.');if(x.ok)setBack(null)}}/></div>`;
+}
+
+/* ------------------------------------------------------------------ enfermagem estética */
+const aesClients=S=>S.patients.filter(p=>p.aes||S.aesAppts.some(a=>a.patient===p.id)||S.aesPkgs.some(k=>k.patient===p.id));
+function AesSession({a,onClose}){
+  const {S,run}=useApp();const pt=patOf(S,a.patient),c=aesCatOf(S,a.cat),k=a.pkg&&S.aesPkgs.find(x=>x.id===a.pkg);
+  const [an,setAn]=useState(pt.aes?null:{complaint:'',reported:'',notes:''});const [f,setF]=useState({consent:a.consent,notes:'',products:''});
+  return html`<${Modal} open wide onClose=${onClose} title=${'Registrar sessão: '+c.name} desc=${`${pt.name}, ${ageLabel(pt.birth)}${k?` · pacote, sessão ${k.used+1} de ${k.total}`:''}`}
+    footer=${html`<${Btn} onClick=${onClose}>Cancelar<//><${Btn} v="lime" icon="check" disabled=${!!an||!f.consent||f.notes.trim().length<10} onClick=${()=>{const r=run((D,U)=>A.aesSession(D,U,a.id,f),'Sessão registrada no prontuário.');if(r.ok)onClose()}}>Registrar sessão<//>`}>
+    <div className="space-y-4">${pt.allergies.length>0&&html`<p className="flex items-center gap-2 rounded-2xl bg-dangerbg px-3.5 py-2.5 text-sm font-semibold text-danger"><${Icon} n="alert" s=${16}/>Alergias registradas: ${pt.allergies.join(', ')}</p>`}
+      ${an?html`<div className="rounded-[20px] bg-p1/50 p-4"><p className="mb-3 font-bold">Anamnese estética obrigatória antes da primeira sessão</p><div className="grid gap-3">
+        <${Field} label="Queixa principal" id="an-c"><input id="an-c" className=${inputCls+' bg-panel'} value=${an.complaint} onInput=${e=>setAn({...an,complaint:e.target.value})}/><//>
+        <${Field} label="Condições, medicamentos e contraindicações relatadas pelo cliente" id="an-r"><textarea id="an-r" className=${inputCls+' min-h-[60px] bg-panel'} value=${an.reported} onInput=${e=>setAn({...an,reported:e.target.value})}></textarea><//>
+        <${Field} label="Observações" id="an-n"><input id="an-n" className=${inputCls+' bg-panel'} value=${an.notes} onInput=${e=>setAn({...an,notes:e.target.value})}/><//>
+        <div className="flex justify-end"><${Btn} v="ink" onClick=${()=>{const r=run((D,U)=>A.aesAnam(D,U,pt.id,an),'Anamnese registrada.');if(r.ok)setAn(null)}}>Salvar anamnese<//></div></div></div>`
+      :html`<div className="rounded-[18px] bg-panel2 p-4 text-sm"><p className="font-bold">Anamnese de ${F(patOf(S,a.patient).aes.at,{day:'2-digit',month:'2-digit',year:'numeric'})}</p><p className="mt-1"><b>Queixa:</b> ${pt.aes.complaint}</p>${pt.aes.reported&&html`<p className="mt-0.5"><b>Relatado:</b> ${pt.aes.reported}</p>`}${pt.aes.notes&&html`<p className="mt-0.5 text-soft">${pt.aes.notes}</p>`}
+        <button className="mt-2 font-semibold text-skyink hover:underline" onClick=${()=>setAn({...pt.aes})}>Atualizar anamnese</button></div>`}
+      <label className=${cx('flex cursor-pointer items-start gap-3 rounded-[18px] p-4',f.consent?'bg-tealsoft':'bg-panel2')}><input type="checkbox" className="mt-1 h-4 w-4" checked=${f.consent} onChange=${e=>setF({...f,consent:e.target.checked})}/>
+        <span className="text-sm"><b>Termo de consentimento assinado pelo cliente</b><span className="block text-soft">Confirme que o termo deste procedimento foi lido, explicado e assinado. O registro fica na auditoria.</span></span></label>
+      <${Field} label="Descrição da sessão" id="as-n"><textarea id="as-n" className=${inputCls+' min-h-[90px]'} value=${f.notes} onInput=${e=>setF({...f,notes:e.target.value})} placeholder="Área tratada, técnica conforme o protocolo da clínica, intercorrências e orientações dadas."></textarea><//>
+      <${Field} label="Produtos e lotes utilizados" id="as-p"><input id="as-p" className=${inputCls} value=${f.products} onInput=${e=>setF({...f,products:e.target.value})} placeholder="Ex.: produto, lote e validade"/><//></div><//>`;
+}
+function Estetica(){
+  const {S,u,run,go}=useApp();const T=today();const manage=can(S,u,'aesthetic.manage'),perform=can(S,u,'aesthetic.perform');
+  const [tab,setTab]=useState('agenda');const [day,setDay]=useState(T);const [nw,setNw]=useState(false);const [pk,setPk]=useState(false);const [ses,setSes]=useState(null);const [cat,setCat]=useState(null);const [delC,setDelC]=useState(null);
+  const [f,setF]=useState({patient:'',cat:S.aesCat.find(c=>!c.archived).id,prof:'p6',date:T,start:'10:00'});const [g,setG]=useState({patient:'',cat:S.aesCat.find(c=>!c.archived).id,total:'',price:'',due:T});
+  const days=[...Array(7)].map((_,i)=>addDays(T,i-1));const list=S.aesAppts.filter(a=>a.date===day).sort((a,b)=>a.start.localeCompare(b.start));
+  const m0=T.slice(0,7);const done=S.aesAppts.filter(a=>a.status==='realizado'&&a.date.slice(0,7)===m0);
+  const pkgs=S.aesPkgs.filter(k=>k.status==='ativo');const rev=S.aesPkgs.filter(k=>k.created.slice(0,7)===m0).reduce((t,k)=>t+k.price,0);
+  const nurses=S.profs.filter(p=>p.active&&(p.cat==='enfermeiro'||p.cat==='tecnico_enfermagem'));const cats=S.aesCat.filter(c=>!c.archived);
+  const endOf=a=>{const[h,mi]=a.start.split(':').map(Number);const t=h*60+mi+aesCatOf(S,a.cat).dur;return pad(Math.floor(t/60))+':'+pad(t%60)};
+  return html`<div className="space-y-5"><${PageHead} title="Enfermagem estética" desc="Agenda, anamnese, termo de consentimento, sessões e pacotes. Cada sessão entra no prontuário do cliente."
+    actions=${manage&&html`<${Btn} icon="wallet" onClick=${()=>setPk(true)}>Vender pacote<//><${Btn} v="lime" icon="plus" onClick=${()=>{setF({...f,date:day});setNw(true)}}>Agendar<//>`}/>
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <${Kpi} icon="heart" tone=${6} title="Atendimentos" sub="Hoje" value=${S.aesAppts.filter(a=>a.date===T&&!['cancelado'].includes(a.status)).length} detail=${S.aesAppts.filter(a=>a.date===T&&a.status==='realizado').length+' realizados'}/>
+      <${Kpi} icon="check" tone=${4} title="Sessões" sub="Neste mês" value=${done.length}/>
+      <${Kpi} icon="clip" tone=${2} title="Pacotes ativos" sub="Sessões restantes" value=${pkgs.length} detail=${pkgs.reduce((t,k)=>t+k.total-k.used,0)+' sessões a realizar'}/>
+      <${Kpi} icon="coins" tone=${1} title="Pacotes vendidos" sub="Neste mês" value=${BRL0(rev)} onClick=${can(S,u,'finance.view')?()=>go({page:'receber'}):null}/></div>
+    <p className="flex items-start gap-2 rounded-[18px] bg-p2/45 px-4 py-3 text-[13px] text-onp"><${Icon} n="info" s=${15} className="mt-0.5 shrink-0"/>Enfermagem estética é regulamentada pelas Resoluções Cofen 529/2016, 626/2020 e 715/2023. Procedimentos de maior complexidade são do enfermeiro especialista em estética. Monte o catálogo conforme a habilitação da equipe.</p>
+    <${Seg} items=${[['agenda','Agenda'],['clientes','Clientes e pacotes',aesClients(S).length],['catalogo','Catálogo',cats.length]]} value=${tab} onChange=${setTab}/>
+    ${tab==='agenda'&&html`<div className="space-y-4"><div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">${days.map(d=>{const n=S.aesAppts.filter(a=>a.date===d&&a.status!=='cancelado').length;return html`<button key=${d} onClick=${()=>setDay(d)} className=${cx('flex w-20 shrink-0 flex-col items-center rounded-[20px] py-3 transition',d===day?'bg-navy text-onnavy':'card-sh bg-panel hover:-translate-y-0.5')}>
+        <span className="text-[11px] font-bold uppercase opacity-70">${F(d,{weekday:'short'}).replace('.','')}</span><span className="text-[26px] font-semibold leading-tight">${F(d,{day:'2-digit'})}</span><span className="text-[11px] font-semibold opacity-70">${n} ${n===1?'cliente':'clientes'}</span></button>`})}</div>
+      ${list.length===0?html`<${Empty} title="Nenhum atendimento neste dia" action=${manage&&html`<${Btn} v="lime" size="sm" onClick=${()=>{setF({...f,date:day});setNw(true)}}>Agendar<//>`}/>`:html`<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">${list.map(a=>{const pt=patOf(S,a.patient),c=aesCatOf(S,a.cat),pr=profOf(S,a.prof),k=a.pkg&&S.aesPkgs.find(x=>x.id===a.pkg);const open=['agendado','confirmado'].includes(a.status);
+        return html`<article key=${a.id} className=${cx('flex flex-col rounded-[22px] p-4 text-onp',PASTEL[c.c],!open&&a.status!=='realizado'&&'opacity-60')}>
+          <div className="flex items-start justify-between gap-2"><p className="text-[26px] font-semibold leading-none">${a.start}<span className="text-sm opacity-60">–${endOf(a)}</span></p><span className="rounded-full bg-white/75 px-2.5 py-0.5 text-[11.5px] font-bold">${AST2[a.status][0]}</span></div>
+          <p className="mt-3 text-[17px] font-bold leading-tight">${c.name}</p><button className="text-left text-[13.5px] font-semibold opacity-80 hover:underline" onClick=${()=>can(S,u,'records.view')&&go({page:'paciente',id:pt.id})}>${pt.name}</button>
+          <div className="mt-2 flex flex-wrap gap-1">${k&&html`<span className="rounded-full bg-white/70 px-2 py-0.5 text-[11px] font-bold">Pacote ${k.used}/${k.total}</span>`}${!pt.aes&&html`<span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-bold text-danger">Sem anamnese</span>`}${a.consent&&html`<span className="rounded-full bg-white/70 px-2 py-0.5 text-[11px] font-bold">Termo assinado</span>`}</div>
+          ${a.notes&&html`<p className="mt-2 rounded-xl bg-white/55 px-2.5 py-1.5 text-[12.5px]">${a.notes}</p>`}
+          <div className="mt-auto flex items-center gap-2 pt-3"><${Avatar} name=${pr.name} size=${26}/><span className="min-w-0 flex-1 truncate text-[12.5px] font-semibold">${pr.name}</span></div>
+          ${open&&html`<div className="mt-3 flex flex-wrap gap-1.5">${perform&&(u.prof===a.prof||!u.prof)&&html`<button className="h-8 rounded-full bg-[#111318] px-3.5 text-[12.5px] font-bold text-white" onClick=${()=>setSes(a)}>Registrar sessão</button>`}
+            ${manage&&a.status==='agendado'&&html`<button className="h-8 rounded-full bg-white/80 px-3 text-[12.5px] font-bold" onClick=${()=>run((D,U)=>A.aesStatus(D,U,a.id,'confirmado'),'Atendimento confirmado.')}>Confirmar</button>`}
+            ${manage&&html`<button className="h-8 rounded-full bg-white/55 px-3 text-[12.5px] font-bold" onClick=${()=>run((D,U)=>A.aesStatus(D,U,a.id,'faltou'),'Falta registrada.')}>Faltou</button><button className="h-8 rounded-full bg-white/40 px-3 text-[12.5px] font-bold" onClick=${()=>run((D,U)=>A.aesStatus(D,U,a.id,'cancelado'),'Atendimento cancelado.')}>Cancelar</button>`}</div>`}</article>`})}</div>`}</div>`}
+    ${tab==='clientes'&&html`<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">${aesClients(S).map(p=>{const ks=S.aesPkgs.filter(k=>k.patient===p.id);const nx=S.aesAppts.filter(a=>a.patient===p.id&&a.date>=T&&['agendado','confirmado'].includes(a.status)).sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start))[0];
+      return html`<article key=${p.id} className="card-sh rounded-[22px] bg-panel p-4"><div className="flex items-start gap-3"><${Avatar} name=${p.name} size=${44}/><div className="min-w-0 flex-1"><p className="truncate font-bold">${p.name}</p><p className="text-[12.5px] text-soft">${ageLabel(p.birth)}</p></div>${p.aes?html`<${Badge} tone="teal">Anamnese ${D2(p.aes.at)}<//>`:html`<${Badge} tone="danger">Sem anamnese<//>`}</div>
+        ${p.aes&&html`<p className="mt-2 text-[13px] text-soft">Queixa: ${p.aes.complaint}</p>`}
+        <div className="mt-3 space-y-2">${ks.length===0?html`<p className="text-[13px] text-faint">Sem pacotes.</p>`:ks.map(k=>{const c=aesCatOf(S,k.cat);return html`<div key=${k.id} className="rounded-2xl bg-panel2 p-3"><div className="flex items-center justify-between text-[13px]"><b>${c.name}</b><span className="text-soft">${k.used} de ${k.total}</span></div>
+          <div className="mt-1.5 flex gap-1">${[...Array(k.total)].map((_,i)=>html`<span key=${i} className=${cx('h-2 flex-1 rounded-full',i<k.used?PASTEL[c.c]:'bg-line')}></span>`)}</div><p className="mt-1 text-[11.5px] text-faint">${BRL(k.price)} · ${k.status==='concluido'?'concluído':'ativo'}</p></div>`})}</div>
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-[12.5px]">${nx?html`<span className="text-soft">Próximo: ${D2(nx.date)} ${nx.start}</span>`:html`<span className="text-faint">Sem agendamento</span>`}${can(S,u,'records.view')&&html`<button className="ml-auto font-semibold text-skyink hover:underline" onClick=${()=>go({page:'paciente',id:p.id})}>Prontuário</button>`}</div></article>`})}</div>`}
+    ${tab==='catalogo'&&html`<${Card} title="Catálogo de procedimentos estéticos" sub="Duração e valor de referência usados na agenda e nos pacotes." icon="heart" tone=${6} action=${manage&&html`<${Btn} v="lime" size="sm" icon="plus" onClick=${()=>setCat({name:'',dur:60,price:'',sessions:1})}>Adicionar<//>`}>
+      <ul className="space-y-2">${cats.map(c=>html`<li key=${c.id} className="flex flex-wrap items-center gap-3 rounded-[18px] border border-line/70 px-3 py-2.5"><span className=${cx('grid h-10 w-10 place-items-center rounded-xl text-onp',PASTEL[c.c])}><${Icon} n="heart" s=${16}/></span>
+        <span className="min-w-0 flex-1"><span className="block font-bold">${c.name}</span><span className="text-[12.5px] text-soft">${c.dur} min · ${BRL(c.price)} por sessão · pacote sugerido de ${c.sessions} ${c.sessions===1?'sessão':'sessões'}</span></span>
+        ${manage&&html`<${Btn} size="sm" v="ghost" icon="pencil" onClick=${()=>setCat({...c})}>Editar<//><button className="grid h-8 w-8 place-items-center rounded-full text-faint hover:bg-dangerbg hover:text-danger" aria-label=${'Excluir '+c.name} onClick=${()=>setDelC(c)}><${Icon} n="trash" s=${15}/></button>`}</li>`)}</ul><//>`}
+    ${nw&&html`<${Modal} open wide onClose=${()=>setNw(false)} title="Agendar atendimento" desc="Se o cliente tiver pacote ativo deste procedimento, a sessão é vinculada a ele." footer=${html`<${Btn} onClick=${()=>setNw(false)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const r=run((D,U)=>A.aesAppt(D,U,f),'Atendimento agendado.');if(r.ok){setNw(false);setDay(f.date);setTab('agenda')}}}>Agendar<//>`}>
+      <div className="grid gap-4 sm:grid-cols-2"><div className="sm:col-span-2"><p className="mb-1.5 text-[13px] font-semibold text-soft">Cliente</p><${PatientPicker} id="ag-p" value=${f.patient} onChange=${id=>setF({...f,patient:id})}/></div>
+        <${Field} label="Procedimento" id="ag-c"><select id="ag-c" className=${inputCls} value=${f.cat} onChange=${e=>setF({...f,cat:e.target.value})}>${cats.map(c=>html`<option key=${c.id} value=${c.id}>${c.name} (${c.dur} min)</option>`)}</select><//>
+        <${Field} label="Profissional" id="ag-pr"><select id="ag-pr" className=${inputCls} value=${f.prof} onChange=${e=>setF({...f,prof:e.target.value})}>${nurses.map(p=>html`<option key=${p.id} value=${p.id}>${p.name}</option>`)}</select><//>
+        <${Field} label="Data" id="ag-d"><input id="ag-d" type="date" className=${inputCls} value=${f.date} onChange=${e=>setF({...f,date:e.target.value})}/><//><${Field} label="Horário" id="ag-h"><input id="ag-h" type="time" className=${inputCls} value=${f.start} onChange=${e=>setF({...f,start:e.target.value})}/><//></div><//>`}
+    ${pk&&html`<${Modal} open wide onClose=${()=>setPk(false)} title="Vender pacote" desc="O valor entra em Contas a receber." footer=${html`<${Btn} onClick=${()=>setPk(false)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const c=aesCatOf(S,g.cat);const r=run((D,U)=>A.aesPkg(D,U,{...g,total:g.total||c.sessions,price:g.price||String(c.price*(+g.total||c.sessions))}),'Pacote registrado e lançado em Contas a receber.');if(r.ok)setPk(false)}}>Registrar venda<//>`}>
+      <div className="grid gap-4 sm:grid-cols-2"><div className="sm:col-span-2"><p className="mb-1.5 text-[13px] font-semibold text-soft">Cliente</p><${PatientPicker} id="pk-p" value=${g.patient} onChange=${id=>setG({...g,patient:id})}/></div>
+        <${Field} label="Procedimento" id="pk-c"><select id="pk-c" className=${inputCls} value=${g.cat} onChange=${e=>setG({...g,cat:e.target.value,total:'',price:''})}>${cats.map(c=>html`<option key=${c.id} value=${c.id}>${c.name}</option>`)}</select><//>
+        <${Field} label="Sessões" id="pk-n"><input id="pk-n" type="number" min="1" className=${inputCls} placeholder=${String(aesCatOf(S,g.cat).sessions)} value=${g.total} onInput=${e=>setG({...g,total:e.target.value})}/><//>
+        <${Field} label="Valor total (R$)" id="pk-v" hint=${'Referência: '+BRL(aesCatOf(S,g.cat).price*(+g.total||aesCatOf(S,g.cat).sessions))}><input id="pk-v" inputMode="decimal" className=${inputCls} value=${g.price} onInput=${e=>setG({...g,price:e.target.value})}/><//>
+        <${Field} label="Vencimento" id="pk-d"><input id="pk-d" type="date" className=${inputCls} value=${g.due} onChange=${e=>setG({...g,due:e.target.value})}/><//></div><//>`}
+    ${ses&&html`<${AesSession} a=${ses} onClose=${()=>setSes(null)}/>`}
+    ${cat&&html`<${Modal} open onClose=${()=>setCat(null)} title=${cat.id?'Editar procedimento':'Novo procedimento'} footer=${html`<${Btn} onClick=${()=>setCat(null)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const r=run((D,U)=>A.aesCatSave(D,U,cat),'Catálogo atualizado.');if(r.ok)setCat(null)}}>Salvar<//>`}>
+      <div className="grid gap-4 sm:grid-cols-2"><${Field} label="Nome" id="ac-n" className="sm:col-span-2"><input id="ac-n" className=${inputCls} value=${cat.name} onInput=${e=>setCat({...cat,name:e.target.value})}/><//>
+        <${Field} label="Duração (min)" id="ac-d"><input id="ac-d" type="number" className=${inputCls} value=${cat.dur} onInput=${e=>setCat({...cat,dur:e.target.value})}/><//><${Field} label="Valor por sessão (R$)" id="ac-v"><input id="ac-v" inputMode="decimal" className=${inputCls} value=${cat.price} onInput=${e=>setCat({...cat,price:e.target.value})}/><//>
+        <${Field} label="Sessões do pacote sugerido" id="ac-s"><input id="ac-s" type="number" min="1" className=${inputCls} value=${cat.sessions} onInput=${e=>setCat({...cat,sessions:e.target.value})}/><//></div><//>`}
+    <${Confirm} open=${!!delC} title=${delC?'Excluir '+delC.name:''} desc="Com atendimentos registrados, o procedimento é arquivado para manter o histórico. Sem registros, é excluído." onClose=${()=>setDelC(null)} onOk=${()=>{run((D,U)=>A.aesCatDel(D,U,delC.id),x=>x==='archived'?'Procedimento arquivado.':'Procedimento excluído.');setDelC(null)}}/></div>`;
+}
+
+/* ------------------------------------------------------------------ longa permanência (ILPI) */
+const GRAU={1:['Grau I','p4','Independente, mesmo com equipamentos de autoajuda'],2:['Grau II','p1','Ajuda em até três atividades de autocuidado'],3:['Grau III','p6','Ajuda em todas as atividades de autocuidado e/ou comprometimento cognitivo']};
+const residents=S=>S.patients.filter(p=>p.ltc&&p.ltc.active);
+const marToday=S=>{const T=today(),now=hm(nowIso());return S.rx.filter(r=>r.active&&patOf(S,r.patient).ltc&&patOf(S,r.patient).ltc.active).flatMap(r=>r.times.map(t=>{const m=S.mar.find(x=>x.rx===r.id&&x.date===T&&x.time===t);
+  const mins=(+now.slice(0,2)*60+ +now.slice(3))-(+t.slice(0,2)*60+ +t.slice(3));return {r,t,m,late:!m&&mins>60,due:!m&&mins>=-30}})).sort((a,b)=>a.t.localeCompare(b.t))};
+function ILPI(){
+  const {S,u,run,go}=useApp();const T=today();const care=can(S,u,'ltc.care'),manage=can(S,u,'ltc.manage');
+  const [tab,setTab]=useState('painel');const [fr,setFr]=useState('');const [mr,setMr]=useState(null);const [cr,setCr]=useState(null);const [occ,setOcc]=useState(null);const [close,setClose]=useState(null);
+  const [ho,setHo]=useState('');const [adm,setAdm]=useState(null);const [rxf,setRxf]=useState(null);const [stop,setStop]=useState(null);const [dis,setDis]=useState(null);const [rooms,setRooms]=useState(null);
+  const res=residents(S);const beds=S.rooms.reduce((t,r)=>t+r.beds.length,0);const md=marToday(S);const pend=md.filter(x=>x.due);const late=md.filter(x=>x.late);
+  const occOpen=S.ltcOcc.filter(o=>o.status==='aberta');const n=g=>res.filter(p=>p.ltc.grau===g).length;
+  const need={g1:Math.ceil(n(1)/20),g2:Math.ceil(n(2)/10),g3:Math.ceil(n(3)/6)};const sh=shiftNow();
+  const resOf=r=>S.patients.find(p=>p.ltc&&p.ltc.active&&p.ltc.room===r.id);
+  return html`<div className="space-y-5"><${PageHead} title="Longa permanência" desc="Residentes, leitos, medicação aprazada, cuidados por turno, intercorrências e passagem de plantão."
+    actions=${html`${care&&html`<${Btn} icon="alert" onClick=${()=>setOcc({patient:'',kind:'Queda',desc:'',actions:''})}>Registrar intercorrência<//>`}${manage&&html`<${Btn} v="lime" icon="plus" onClick=${()=>setAdm({patient:'',room:'',bed:'',grau:'2',contact:'',diet:'Dieta geral'})}>Admitir residente<//>`}`}/>
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <${Kpi} icon="home" tone=${3} title="Residentes" sub=${S.units.find(x=>x.id==='u3')?unitOf(S,'u3').name:'Leitos'} value=${res.length} detail=${`${beds-res.length} de ${beds} leitos livres`}/>
+      <${Kpi} icon="clock" tone=${late.length?6:1} title="Medicações agora" sub="Pendentes no horário" value=${pend.length} danger=${late.length>0} detail=${late.length?late.length+' com mais de 1h de atraso':'Nenhuma em atraso'} onClick=${()=>setTab('medicacao')}/>
+      <${Kpi} icon="alert" tone=${5} title="Intercorrências" sub="Em aberto" value=${occOpen.length} onClick=${()=>setTab('ocorrencias')}/>
+      <${Kpi} icon="users" tone=${2} title="Cuidadores por turno" sub="Mínimo para graus II e III" value=${need.g2+need.g3} detail=${`+ ${need.g1} para grau I (8h/dia)`}/></div>
+    <${Seg} items=${[['painel','Leitos'],['medicacao','Medicação',pend.length||null],['cuidados','Cuidados do turno'],['ocorrencias','Intercorrências',occOpen.length||null],['passagem','Passagem de plantão'],['residentes','Residentes e prescrições']]} value=${tab} onChange=${setTab}/>
+    ${tab==='painel'&&html`<div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]"><div className="grid min-w-0 gap-4 sm:grid-cols-2">${S.rooms.map(r=>html`<${Card} key=${r.id} title=${r.name} sub=${r.beds.length+(r.beds.length===1?' leito':' leitos')} icon="home" tone=${3}>
+        <ul className="space-y-2">${r.beds.map(b=>{const p=S.patients.find(x=>x.ltc&&x.ltc.active&&x.ltc.room===r.id&&x.ltc.bed===b);if(!p)return html`<li key=${b}><button disabled=${!manage} onClick=${()=>setAdm({patient:'',room:r.id,bed:b,grau:'2',contact:'',diet:'Dieta geral'})} className="flex w-full items-center gap-3 rounded-[16px] border-[1.5px] border-dashed border-line px-3 py-3 text-left text-sm text-faint enabled:hover:border-ink/40"><span className="grid h-9 w-9 place-items-center rounded-full bg-panel2 font-bold">${b}</span>Leito livre${manage?' · admitir':''}</button></li>`;
+          const lt=md.filter(x=>x.r.patient===p.id&&x.late).length,oc=occOpen.filter(o=>o.patient===p.id).length;
+          return html`<li key=${b}><button onClick=${()=>go({page:'paciente',id:p.id})} className=${cx('flex w-full items-center gap-3 rounded-[16px] p-3 text-left text-onp transition hover:-translate-y-0.5',PASTEL[GRAU[p.ltc.grau][1].slice(1)])}>
+            <span className="relative"><${Avatar} name=${p.name} size=${40}/><span className="absolute -bottom-1 -right-1 grid h-5 w-5 place-items-center rounded-full bg-white text-[10px] font-bold">${b}</span></span>
+            <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">${p.name}</span><span className="block text-[12px] opacity-75">${ageLabel(p.birth)} · ${GRAU[p.ltc.grau][0]} · ${p.ltc.diet}</span></span>
+            <span className="flex flex-col items-end gap-1">${p.allergies.length>0&&html`<span className="rounded-full bg-white px-1.5 text-[10px] font-bold text-danger">alergia</span>`}${lt>0&&html`<span className="rounded-full bg-white px-1.5 text-[10px] font-bold text-danger">${lt} med. atrasada</span>`}${oc>0&&html`<span className="rounded-full bg-white/80 px-1.5 text-[10px] font-bold">intercorrência</span>`}</span></button></li>`})}</ul><//>`)}</div>
+      <div className="space-y-5"><${Card} title="Dimensionamento de cuidadores" icon="users" tone=${2}><ul className="space-y-2">${[1,2,3].map(g=>html`<li key=${g} className="flex items-center gap-3 rounded-2xl bg-panel2 px-3 py-2.5"><span className=${cx('rounded-full px-2.5 py-0.5 text-xs font-bold text-onp',PASTEL[GRAU[g][1].slice(1)])}>${GRAU[g][0]}</span><span className="min-w-0 flex-1 text-[12.5px] text-soft">${n(g)} residente${n(g)===1?'':'s'} · ${g===1?'1 para cada 20, 8h/dia':g===2?'1 para cada 10, por turno':'1 para cada 6, por turno'}</span><b>${need['g'+g]}</b></li>`)}</ul>
+          <p className="mt-3 text-[12px] text-faint">Proporções da Anvisa (RDC 502/2021) para cuidadores de ILPI. Confira também as exigências do conselho de enfermagem e da vigilância sanitária local.</p><//>
+        ${manage&&html`<${Btn} className="w-full" icon="pencil" onClick=${()=>setRooms(S.rooms.map(r=>({...r,beds:r.beds.join(', ')})))}>Editar quartos e leitos<//>`}</div></div>`}
+    ${tab==='medicacao'&&html`<div className="space-y-4"><div className="flex flex-wrap items-center gap-2"><select aria-label="Residente" className=${selCls+' card-sh h-10'} value=${fr} onChange=${e=>setFr(e.target.value)}><option value="">Todos os residentes</option>${res.map(p=>html`<option key=${p.id} value=${p.id}>${p.name}</option>`)}</select>
+        <span className="text-[13px] text-soft">Aprazamento de hoje conforme as prescrições transcritas. Hora atual ${hm(nowIso())}.</span></div>
+      ${[...new Set(md.filter(x=>!fr||x.r.patient===fr).map(x=>x.t))].map(t=>html`<section key=${t}><h3 className="mb-2 flex items-center gap-2 text-sm font-bold"><span className="rounded-full bg-navy px-3 py-1 text-onnavy">${t}</span></h3>
+        <div className="grid gap-2 md:grid-cols-2">${md.filter(x=>x.t===t&&(!fr||x.r.patient===fr)).map(x=>{const p=patOf(S,x.r.patient);return html`<div key=${x.r.id+t} className=${cx('flex flex-wrap items-center gap-3 rounded-[18px] border p-3',x.late?'border-danger/50 bg-dangerbg':'border-line/70 bg-panel')}>
+          <${Avatar} name=${p.name} size=${36}/><span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">${p.name}</span><span className="block text-[12.5px] text-soft">${x.r.drug} · ${x.r.dose} · ${x.r.route.toLowerCase()}</span>${x.r.notes&&html`<span className="block text-[11.5px] text-amber">${x.r.notes}</span>`}</span>
+          ${x.m?html`<span className="text-right"><${Badge} tone=${x.m.status==='administrado'?'teal':'amber'}>${{administrado:'Administrado',recusado:'Recusado',nao_administrado:'Não administrado'}[x.m.status]}<//><span className="block text-[11px] text-faint">${x.m.by.split(' ')[0]}, ${hm(x.m.at)}</span></span>`
+            :care?html`<span className="flex gap-1.5">${x.late&&html`<${Badge} tone="danger">Atrasada<//>`}<${Btn} size="sm" v="lime" onClick=${()=>run((D,U)=>A.ltcMar(D,U,x.r.id,t,'administrado'),'Administração registrada.')}>Administrado<//><${Btn} size="sm" onClick=${()=>setMr({x,st:'recusado',t:''})}>Outro<//></span>`:html`<${Badge}>Pendente<//>`}</div>`})}</div></section>`)}
+      ${md.length===0&&html`<${Empty} title="Nenhuma medicação aprazada hoje"/>`}<p className="text-[12px] text-faint">Prescrições de demonstração são fictícias. A MedLink registra a administração; a prescrição é do médico e a transcrição, da enfermagem.</p></div>`}
+    ${tab==='cuidados'&&html`<${Card} title=${'Cuidados do turno: '+SHIFTN[sh]} sub="Toque em uma célula para registrar. O que já foi registrado no turno aparece com o nome de quem fez." icon="heart" tone=${4} pad=${false}>
+      <div className="overflow-x-auto px-3 pb-4 sm:px-5"><table className="w-full min-w-[900px] border-separate border-spacing-1.5 text-sm"><thead><tr><th className="text-left text-[12px] font-semibold text-faint">Residente</th>${Object.entries(CARE).map(([k,[l]])=>html`<th key=${k} className="text-left text-[12px] font-semibold text-faint">${l}</th>`)}</tr></thead>
+        <tbody>${res.map(p=>html`<tr key=${p.id}><td className="w-48"><span className="flex items-center gap-2"><${Avatar} name=${p.name} size=${30}/><span className="min-w-0"><span className="block truncate font-bold">${p.name.replace(/^(Sr\.|Dona)\s/,'')}</span><span className="text-[11px] text-faint">${roomOf(S,p.ltc.room).name}, ${p.ltc.bed}</span></span></span></td>
+          ${Object.keys(CARE).map(k=>{const c=S.care.filter(x=>x.patient===p.id&&x.date===T&&x.shift===sh&&x.kind===k).pop();return html`<td key=${k}><button disabled=${!care} onClick=${()=>setCr({patient:p.id,kind:k,value:''})} className=${cx('h-full min-h-[58px] w-full rounded-[14px] px-2.5 py-2 text-left text-[12px] transition',c?'bg-p4 text-onp':'border border-dashed border-line text-faint enabled:hover:border-ink/40 enabled:hover:text-ink')}>
+            ${c?html`<span className="block font-semibold leading-tight">${c.value}</span><span className="block text-[10.5px] opacity-70">${c.by.split(' ')[0]}, ${hm(c.at)}</span>`:'+ Registrar'}</button></td>`})}</tr>`)}</tbody></table></div><//>`}
+    ${tab==='ocorrencias'&&html`<div className="space-y-3">${S.ltcOcc.length===0?html`<${Empty} title="Nenhuma intercorrência registrada"/>`:S.ltcOcc.map(o=>{const p=patOf(S,o.patient);return html`<article key=${o.id} className=${cx('rounded-[22px] p-5',o.status==='aberta'?'bg-p5 text-onp':'card-sh bg-panel')}>
+        <div className="flex flex-wrap items-start gap-3"><${Avatar} name=${p.name} size=${40}/><div className="min-w-0 flex-1"><p className="font-bold">${o.kind}: ${p.name}</p><p className="text-[12.5px] opacity-70">${F(o.at,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · registrado por ${o.by}</p></div><${Badge} tone=${o.status==='aberta'?'danger':'teal'}>${o.status==='aberta'?'Em aberto':'Encerrada'}<//></div>
+        <p className="mt-3 text-sm">${o.desc}</p>${o.actions&&html`<p className="mt-1.5 text-sm"><b>Condutas:</b> ${o.actions}</p>`}${o.outcome&&html`<p className="mt-1.5 text-sm"><b>Desfecho:</b> ${o.outcome} (${o.closedBy})</p>`}
+        ${manage&&o.status==='aberta'&&html`<div className="mt-3"><${Btn} size="sm" v="ink" onClick=${()=>setClose(o)}>Encerrar com desfecho<//></div>`}</article>`})}</div>`}
+    ${tab==='passagem'&&html`<div className="grid gap-5 xl:grid-cols-[1fr_1.3fr]">${care&&html`<${Card} title=${'Passagem do turno: '+SHIFTN[sh]} icon="send" tone=${3}><textarea className=${inputCls+' min-h-[160px]'} aria-label="Passagem de plantão" value=${ho} onInput=${e=>setHo(e.target.value)} placeholder="Como estão os residentes, pendências, medicações recusadas, intercorrências e o que o próximo turno precisa acompanhar."></textarea>
+        <div className="mt-3 flex justify-end"><${Btn} v="lime" icon="send" disabled=${ho.trim().length<15} onClick=${()=>{const r=run((D,U)=>A.ltcHandoff(D,U,ho),'Passagem de plantão registrada.');if(r.ok)setHo('')}}>Registrar passagem<//></div><//>`}
+      <${Card} title="Últimas passagens" icon="hist" tone=${2}><ol className="space-y-3">${S.handoff.map(h=>html`<li key=${h.id} className="rounded-[18px] bg-panel2 p-4"><div className="flex flex-wrap items-center gap-2"><${Avatar} name=${h.by} size=${28}/><b className="text-sm">${h.by}</b><${Badge} tone="p3">${SHIFTN[h.shift].split(' ')[0]}<//><span className="ml-auto text-[12px] text-faint">${F(h.at,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></div><p className="mt-2 text-sm">${h.text}</p></li>`)}</ol><//></div>`}
+    ${tab==='residentes'&&html`<div className="space-y-3">${res.map(p=>{const rx=S.rx.filter(r=>r.patient===p.id&&r.active);return html`<${Card} key=${p.id} pad=${false}><div className="flex flex-wrap items-center gap-3 p-5"><${Avatar} name=${p.name} size=${48}/>
+        <div className="min-w-0 flex-1"><p className="font-bold">${p.name}</p><p className="text-[13px] text-soft">${ageLabel(p.birth)} · ${roomOf(S,p.ltc.room).name}, leito ${p.ltc.bed} · desde ${F(p.ltc.admitted,{day:'2-digit',month:'2-digit',year:'numeric'})}</p><p className="text-[12.5px] text-faint">Contato: ${p.ltc.contact||'não informado'} · ${p.ltc.diet}</p></div>
+        <span className=${cx('rounded-full px-3 py-1 text-xs font-bold text-onp',PASTEL[GRAU[p.ltc.grau][1].slice(1)])} title=${GRAU[p.ltc.grau][2]}>${GRAU[p.ltc.grau][0]}</span>
+        <div className="flex flex-wrap gap-2"><${Btn} size="sm" icon="file" onClick=${()=>go({page:'paciente',id:p.id})}>Prontuário<//>${manage&&html`<${Btn} size="sm" icon="pencil" onClick=${()=>setAdm({patient:p.id,room:p.ltc.room,bed:p.ltc.bed,grau:String(p.ltc.grau),contact:p.ltc.contact,diet:p.ltc.diet})}>Editar<//><${Btn} size="sm" v="danger" onClick=${()=>setDis(p)}>Registrar saída<//>`}</div></div>
+        <div className="border-t border-line/70 px-5 py-4"><div className="mb-2 flex items-center justify-between"><p className="text-sm font-bold">Prescrições ativas</p>${manage&&html`<${Btn} size="sm" v="lime" icon="plus" onClick=${()=>setRxf({patient:p.id,drug:'',dose:'',route:'Via oral',times:'',prescriber:'',notes:''})}>Transcrever prescrição<//>`}</div>
+          ${rx.length===0?html`<p className="text-sm text-faint">Nenhuma prescrição ativa.</p>`:html`<ul className="space-y-1.5">${rx.map(r=>html`<li key=${r.id} className="flex flex-wrap items-center gap-3 rounded-2xl bg-panel2 px-3.5 py-2.5 text-sm"><span className="min-w-0 flex-1"><b>${r.drug}</b> · ${r.dose} · ${r.route.toLowerCase()}<span className="block text-[12px] text-faint">${r.times.join(', ')} · ${r.prescriber} · transcrita por ${r.by}</span></span>
+            ${manage&&html`<button className="text-[13px] font-semibold text-soft hover:text-danger" onClick=${()=>setStop(r)}>Suspender</button>`}</li>`)}</ul>`}</div><//>`})}</div>`}
+
+    ${mr&&html`<${Modal} open onClose=${()=>setMr(null)} title="Registrar medicação não administrada" desc=${`${patOf(S,mr.x.r.patient).name}: ${mr.x.r.drug}, ${mr.x.t}`} footer=${html`<${Btn} onClick=${()=>setMr(null)}>Voltar<//><${Btn} v="danger" disabled=${!mr.t.trim()} onClick=${()=>{const r=run((D,U)=>A.ltcMar(D,U,mr.x.r.id,mr.x.t,mr.st,mr.t),'Registro feito. A responsável técnica foi avisada.');if(r.ok)setMr(null)}}>Registrar<//>`}>
+      <div className="space-y-3"><${Seg} size="sm" items=${[['recusado','Recusado pelo residente'],['nao_administrado','Não administrado']]} value=${mr.st} onChange=${st=>setMr({...mr,st})}/><${Field} label="Motivo e conduta" id="mr-t"><textarea id="mr-t" className=${inputCls+' min-h-[80px]'} value=${mr.t} onInput=${e=>setMr({...mr,t:e.target.value})} placeholder="Ex.: residente recusou; enfermeira e médico comunicados."></textarea><//></div><//>`}
+    ${cr&&html`<${Modal} open onClose=${()=>setCr(null)} title=${CARE[cr.kind][0]} desc=${patOf(S,cr.patient).name+' · '+SHIFTN[sh]} footer=${html`<${Btn} onClick=${()=>setCr(null)}>Cancelar<//><${Btn} v="lime" disabled=${!cr.value.trim()} onClick=${()=>{const r=run((D,U)=>A.ltcCare(D,U,cr),'Cuidado registrado.');if(r.ok)setCr(null)}}>Registrar<//>`}>
+      ${CARE[cr.kind][1]?html`<div className="flex flex-wrap gap-2">${CARE[cr.kind][1].map(o=>html`<button key=${o} onClick=${()=>setCr({...cr,value:o})} className=${cx('rounded-full px-4 py-2 text-sm font-semibold',cr.value===o?'bg-navy text-onnavy':'bg-panel2')}>${o}</button>`)}</div>`
+        :html`<input className=${inputCls} aria-label=${CARE[cr.kind][0]} placeholder=${CARE[cr.kind][2]} value=${cr.value} onInput=${e=>setCr({...cr,value:e.target.value})}/>`}<//>`}
+    ${occ&&html`<${Modal} open wide onClose=${()=>setOcc(null)} title="Registrar intercorrência" desc="A responsável técnica é avisada na hora." footer=${html`<${Btn} onClick=${()=>setOcc(null)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const r=run((D,U)=>A.ltcOccAdd(D,U,occ),'Intercorrência registrada.');if(r.ok){setOcc(null);setTab('ocorrencias')}}}>Registrar<//>`}>
+      <div className="grid gap-4"><${Field} label="Residente" id="oc-p"><select id="oc-p" className=${inputCls} value=${occ.patient} onChange=${e=>setOcc({...occ,patient:e.target.value})}><option value="">Selecione</option>${res.map(p=>html`<option key=${p.id} value=${p.id}>${p.name}</option>`)}</select><//>
+        <div className="flex flex-wrap gap-1.5">${['Queda','Lesão de pele','Agitação','Recusa alimentar','Febre','Engasgo','Outro'].map(k=>html`<button key=${k} onClick=${()=>setOcc({...occ,kind:k})} className=${cx('rounded-full px-3.5 py-1.5 text-[13px] font-semibold',occ.kind===k?'bg-navy text-onnavy':'bg-panel2')}>${k}</button>`)}</div>
+        <${Field} label="O que aconteceu" id="oc-d"><textarea id="oc-d" className=${inputCls+' min-h-[80px]'} value=${occ.desc} onInput=${e=>setOcc({...occ,desc:e.target.value})}></textarea><//>
+        <${Field} label="Condutas tomadas" id="oc-a"><textarea id="oc-a" className=${inputCls+' min-h-[60px]'} value=${occ.actions} onInput=${e=>setOcc({...occ,actions:e.target.value})} placeholder="Quem foi comunicado e o que foi feito."></textarea><//></div><//>`}
+    <${Confirm} open=${!!close} title="Encerrar intercorrência" okLabel="Encerrar" tone="ink" needReason desc="Descreva o desfecho no campo Motivo." onClose=${()=>setClose(null)} onOk=${t=>{const r=run((D,U)=>A.ltcOccClose(D,U,close.id,t),'Intercorrência encerrada.');if(r.ok)setClose(null)}}/>
+    ${adm&&html`<${Modal} open wide onClose=${()=>setAdm(null)} title=${adm.patient&&patOf(S,adm.patient).ltc&&patOf(S,adm.patient).ltc.active?'Editar residente':'Admitir residente'} desc="Se a pessoa ainda não tem cadastro, crie pelo botão Novo." footer=${html`<${Btn} onClick=${()=>setAdm(null)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const r=run((D,U)=>A.ltcAdmit(D,U,adm),'Residente salvo.');if(r.ok)setAdm(null)}}>Salvar<//>`}>
+      <div className="grid gap-4 sm:grid-cols-2"><div className="sm:col-span-2"><p className="mb-1.5 text-[13px] font-semibold text-soft">Residente</p><${PatientPicker} id="ad-p" value=${adm.patient} onChange=${id=>setAdm({...adm,patient:id})}/></div>
+        <${Field} label="Quarto" id="ad-r"><select id="ad-r" className=${inputCls} value=${adm.room} onChange=${e=>setAdm({...adm,room:e.target.value,bed:''})}><option value="">Selecione</option>${S.rooms.map(r=>html`<option key=${r.id} value=${r.id}>${r.name}</option>`)}</select><//>
+        <${Field} label="Leito" id="ad-b"><select id="ad-b" className=${inputCls} value=${adm.bed} onChange=${e=>setAdm({...adm,bed:e.target.value})}><option value="">Selecione</option>${(roomOf(S,adm.room).beds||[]).map(b=>{const o=S.patients.find(x=>x.ltc&&x.ltc.active&&x.ltc.room===adm.room&&x.ltc.bed===b&&x.id!==adm.patient);return html`<option key=${b} value=${b} disabled=${!!o}>${b}${o?' (ocupado)':''}</option>`})}</select><//>
+        <div className="sm:col-span-2"><p className="mb-1.5 text-[13px] font-semibold text-soft">Grau de dependência</p><div className="grid gap-2 sm:grid-cols-3">${[1,2,3].map(g=>html`<button key=${g} onClick=${()=>setAdm({...adm,grau:String(g)})} className=${cx('rounded-[16px] p-3 text-left text-onp transition',PASTEL[GRAU[g][1].slice(1)],adm.grau===String(g)&&'ring-2 ring-ink ring-offset-2 ring-offset-panel')}><b className="block text-sm">${GRAU[g][0]}</b><span className="text-[12px] opacity-75">${GRAU[g][2]}</span></button>`)}</div></div>
+        <${Field} label="Contato responsável" id="ad-c"><input id="ad-c" className=${inputCls} value=${adm.contact} onInput=${e=>setAdm({...adm,contact:e.target.value})}/><//><${Field} label="Dieta" id="ad-d"><input id="ad-d" className=${inputCls} value=${adm.diet} onInput=${e=>setAdm({...adm,diet:e.target.value})}/><//></div><//>`}
+    ${rxf&&html`<${Modal} open wide onClose=${()=>setRxf(null)} title="Transcrever prescrição" desc=${patOf(S,rxf.patient).name+'. Copie exatamente o que está na prescrição médica.'} footer=${html`<${Btn} onClick=${()=>setRxf(null)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const r=run((D,U)=>A.ltcRx(D,U,rxf),'Prescrição transcrita. Os horários entram no aprazamento.');if(r.ok)setRxf(null)}}>Salvar<//>`}>
+      <div className="grid gap-4 sm:grid-cols-2"><${Field} label="Medicamento e concentração" id="rx-d" className="sm:col-span-2"><input id="rx-d" className=${inputCls} value=${rxf.drug} onInput=${e=>setRxf({...rxf,drug:e.target.value})}/><//>
+        <${Field} label="Dose" id="rx-o"><input id="rx-o" className=${inputCls} value=${rxf.dose} onInput=${e=>setRxf({...rxf,dose:e.target.value})}/><//><${Field} label="Via" id="rx-v"><select id="rx-v" className=${inputCls} value=${rxf.route} onChange=${e=>setRxf({...rxf,route:e.target.value})}>${['Via oral','Via sublingual','Via subcutânea','Via intramuscular','Via tópica','Via inalatória','Via enteral (sonda)'].map(x=>html`<option key=${x}>${x}</option>`)}</select><//>
+        <${Field} label="Horários" id="rx-t" hint="Separe por vírgula. Ex.: 08:00, 20:00"><input id="rx-t" className=${inputCls} value=${rxf.times} onInput=${e=>setRxf({...rxf,times:e.target.value})}/><//><${Field} label="Prescritor e registro" id="rx-p"><input id="rx-p" className=${inputCls} placeholder="Nome, CRM/UF" value=${rxf.prescriber} onInput=${e=>setRxf({...rxf,prescriber:e.target.value})}/><//>
+        <${Field} label="Observações da prescrição" id="rx-n" className="sm:col-span-2"><input id="rx-n" className=${inputCls} value=${rxf.notes} onInput=${e=>setRxf({...rxf,notes:e.target.value})}/><//></div><//>`}
+    <${Confirm} open=${!!stop} title="Suspender prescrição" okLabel="Suspender" needReason desc=${stop?stop.drug+'. Informe o motivo (ex.: suspensa pelo médico em nova prescrição).':''} onClose=${()=>setStop(null)} onOk=${t=>{const r=run((D,U)=>A.ltcRxStop(D,U,stop.id,t),'Prescrição suspensa.');if(r.ok)setStop(null)}}/>
+    <${Confirm} open=${!!dis} title="Registrar saída" okLabel="Registrar saída" needReason desc=${dis?dis.name+'. O leito fica livre, as prescrições são encerradas e o prontuário continua guardado.':''} onClose=${()=>setDis(null)} onOk=${t=>{const r=run((D,U)=>A.ltcDischarge(D,U,dis.id,t),'Saída registrada.');if(r.ok)setDis(null)}}/>
+    ${rooms&&html`<${Modal} open wide onClose=${()=>setRooms(null)} title="Quartos e leitos" desc="Leitos separados por vírgula. Leitos ocupados não podem ser removidos." footer=${html`<${Btn} onClick=${()=>setRooms(null)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const list=rooms.filter(r=>r.name.trim()).map(r=>({id:r.id,name:r.name.trim(),beds:r.beds.split(',').map(b=>b.trim()).filter(Boolean)}));
+        const lost=residents(S).find(p=>!list.some(r=>r.id===p.ltc.room&&r.beds.includes(p.ltc.bed)));if(lost){run(()=>{throw new Stop('blocking',`${lost.name} ocupa um leito que seria removido.`)});return}
+        const r=run((D,U)=>A.ltcRooms(D,U,list),'Quartos atualizados.');if(r.ok)setRooms(null)}}>Salvar<//>`}>
+      <div className="space-y-2">${rooms.map((r,i)=>html`<div key=${r.id} className="grid grid-cols-[1fr_1fr_auto] gap-2"><input className=${inputCls} aria-label="Nome do quarto" value=${r.name} onInput=${e=>setRooms(rooms.map((x,j)=>j===i?{...x,name:e.target.value}:x))}/><input className=${inputCls} aria-label="Leitos" value=${r.beds} onInput=${e=>setRooms(rooms.map((x,j)=>j===i?{...x,beds:e.target.value}:x))}/>
+        <button className="grid h-11 w-11 place-items-center rounded-full text-faint hover:bg-dangerbg hover:text-danger" aria-label="Remover quarto" onClick=${()=>setRooms(rooms.filter((_,j)=>j!==i))}><${Icon} n="trash" s=${15}/></button></div>`)}
+        <${Btn} size="sm" icon="plus" onClick=${()=>setRooms([...rooms,{id:'q'+uid(),name:'Quarto '+(rooms.length+1),beds:'A, B'}])}>Adicionar quarto<//></div><//>`}</div>`;
+}
+
+/* ------------------------------------------------------------------ feridas e estomaterapia */
+const TIS=[['gran','Granulação','#e5534b'],['esf','Esfacelo','#f2c94c'],['nec','Necrose','#3a3a3a'],['epi','Epitelização','#f6a5c3']];
+const WTYPES=['Lesão por pressão','Úlcera venosa','Úlcera arterial','Úlcera em pé diabético','Ferida operatória','Queimadura','Lesão por fricção','Outra'];
+const LPP=['Estágio 1','Estágio 2','Estágio 3','Estágio 4','Não classificável','Tissular profunda'];
+const TisBar=({t,h='h-3'})=>html`<div className=${cx('flex w-full overflow-hidden rounded-full bg-panel2',h)}>${TIS.map(([k,l,c])=>t[k]>0&&html`<span key=${k} title=${l+' '+t[k]+'%'} style=${{width:t[k]+'%',background:c}}></span>`)}</div>`;
+function AreaChart({evals}){
+  const w=520,h=170,pd=28;const vals=evals.map(wArea);const mx=Math.max(...vals,1);
+  const x=i=>evals.length===1?w/2:pd+i*(w-pd*2)/(evals.length-1),y=v=>h-pd-(v/mx)*(h-pd*2);
+  return html`<svg viewBox=${`0 0 ${w} ${h}`} className="h-44 w-full" role="img" aria-label="Evolução da área da lesão">
+    ${[0,.5,1].map(f=>html`<line key=${f} x1=${pd} x2=${w-pd} y1=${y(mx*f)} y2=${y(mx*f)} stroke="rgb(var(--c-line))" strokeDasharray="3 4"/>`)}
+    <path d=${`M${x(0)},${h-pd} `+vals.map((v,i)=>`L${x(i)},${y(v)}`).join(' ')+` L${x(vals.length-1)},${h-pd} Z`} fill="rgb(var(--c-p6) / .35)"/>
+    <polyline points=${vals.map((v,i)=>`${x(i)},${y(v)}`).join(' ')} fill="none" stroke="rgb(var(--c-ink))" strokeWidth="2.5" strokeLinejoin="round"/>
+    ${vals.map((v,i)=>html`<g key=${i}><circle cx=${x(i)} cy=${y(v)} r="5" fill="rgb(var(--c-panel))" stroke="rgb(var(--c-ink))" strokeWidth="2.5"/><text x=${x(i)} y=${y(v)-12} textAnchor="middle" fontSize="12" fontWeight="700" fill="rgb(var(--c-ink))">${v.toLocaleString('pt-BR')}</text>
+      <text x=${x(i)} y=${h-8} textAnchor="middle" fontSize="11" fill="rgb(var(--c-faint))">${D2(evals[i].at)}</text></g>`)}</svg>`;
+}
+function Feridas(){
+  const {S,u,run,go}=useApp();const T=today();const manage=can(S,u,'wounds.manage');
+  const [tab,setTab]=useState('lesoes');const [fl,setFl]=useState('em_tratamento');const [sel,setSel]=useState(null);const [nw,setNw]=useState(null);const [ev,setEv]=useState(null);const [st,setSt]=useState(null);
+  const [no,setNo]=useState(null);const [oe,setOe]=useState(null);
+  const list=S.wounds.filter(w=>fl==='todas'||w.status===fl);const cur=S.wounds.find(w=>w.id===sel)||list[0];
+  const last=w=>w.evals[w.evals.length-1],first=w=>w.evals[0];const trend=w=>w.evals.length>1?Math.round((wArea(last(w))-wArea(first(w)))/wArea(first(w))*100):null;
+  const recent=S.wounds.flatMap(w=>w.evals).filter(e=>dkey(e.at)>=addDays(T,-6)).length;const dueToday=S.wounds.filter(w=>w.status==='em_tratamento'&&last(w)&&last(w).next&&last(w).next<=T).length;
+  const sumT=ev?['gran','esf','nec','epi'].reduce((t,k)=>t+(+ev.f[k]||0),0):0;
+  return html`<div className="space-y-5"><${PageHead} title="Feridas e estomaterapia" desc="Registro de lesões com medidas, tipo de tecido e gráfico da evolução; acompanhamento de estomias e orientações ao paciente e à família."
+    actions=${manage&&html`<${Btn} icon="plus" onClick=${()=>setNo({patient:'',type:'Colostomia',site:'',since:T,diameter:'',equipment:''})}>Nova estomia<//><${Btn} v="lime" icon="plus" onClick=${()=>setNw({patient:'',type:WTYPES[0],site:'',stage:LPP[1],opened:T,origin:'Admitido com a lesão'})}>Nova lesão<//>`}/>
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <${Kpi} icon="activity" tone=${6} title="Lesões em tratamento" sub="Todas as unidades" value=${S.wounds.filter(w=>w.status==='em_tratamento').length}/>
+      <${Kpi} icon="clip" tone=${3} title="Avaliações" sub="Últimos 7 dias" value=${recent}/>
+      <${Kpi} icon="clock" tone=${1} title="Trocas previstas" sub="Até hoje" value=${dueToday} danger=${dueToday>0}/>
+      <${Kpi} icon="heart" tone=${4} title="Estomias" sub="Em acompanhamento" value=${S.ostomies.filter(o=>o.status==='ativa').length} onClick=${()=>setTab('estomias')}/></div>
+    <p className="flex items-start gap-2 rounded-[18px] bg-p3/45 px-4 py-3 text-[13px] text-onp"><${Icon} n="info" s=${15} className="mt-0.5 shrink-0"/>Lesões por pressão são classificadas por estágio (NPIAP). Coberturas e curativos seguem a prescrição e o protocolo da instituição; o sistema registra, não indica tratamento.</p>
+    <${Seg} items=${[['lesoes','Lesões',S.wounds.filter(w=>w.status==='em_tratamento').length],['estomias','Estomias',S.ostomies.length]]} value=${tab} onChange=${setTab}/>
+    ${tab==='lesoes'&&html`<div className="grid gap-5 xl:grid-cols-[380px_minmax(0,1fr)]"><div className="min-w-0 space-y-3"><${Seg} size="sm" items=${[['em_tratamento','Em tratamento'],['cicatrizada','Cicatrizadas'],['todas','Todas']]} value=${fl} onChange=${setFl}/>
+        ${list.length===0?html`<${Empty} title="Nenhuma lesão neste filtro"/>`:list.map(w=>{const p=patOf(S,w.patient),tr=trend(w),on=cur&&cur.id===w.id;return html`<button key=${w.id} onClick=${()=>setSel(w.id)} className=${cx('w-full rounded-[20px] p-4 text-left transition',on?'bg-navy text-onnavy':'card-sh bg-panel hover:-translate-y-0.5')}>
+          <div className="flex items-start gap-3"><${Avatar} name=${p.name} size=${38}/><div className="min-w-0 flex-1"><p className="truncate font-bold">${p.name}</p><p className="truncate text-[12.5px] opacity-75">${w.type} · ${w.site}</p></div>
+            ${tr!=null&&html`<span className=${cx('rounded-full px-2 py-0.5 text-[11.5px] font-bold',tr<0?'bg-tealsoft text-teal':'bg-dangerbg text-danger')}>${tr>0?'+':''}${tr}%</span>`}</div>
+          <div className="mt-3 flex items-center gap-3"><span className="text-[22px] font-semibold leading-none">${wArea(last(w)||{len:0,wid:0}).toLocaleString('pt-BR')}<span className="text-[12px] opacity-60"> cm²</span></span><div className="flex-1">${last(w)&&html`<${TisBar} t=${last(w).tissue} h="h-2"/>`}</div></div>
+          <p className="mt-2 text-[11.5px] opacity-60">${w.stage!=='Não se aplica'?w.stage+' · ':''}${w.evals.length} avaliações · desde ${D2(w.opened)}</p></button>`})}</div>
+      ${cur?html`<div className="min-w-0 space-y-5"><${Card} pad=${false}><div className="flex flex-wrap items-start gap-4 p-5 sm:p-6"><div className="min-w-0 flex-1"><p className="text-[13px] text-soft">${patOf(S,cur.patient).name} · ${ageLabel(patOf(S,cur.patient).birth)}</p><h2 className="text-[24px] font-semibold leading-tight tracking-tight">${cur.type}</h2>
+          <p className="text-[14px] text-soft">${cur.site}${cur.stage!=='Não se aplica'?' · '+cur.stage:''} · aberta em ${F(cur.opened,{day:'2-digit',month:'2-digit',year:'numeric'})}</p><div className="mt-2"><${Badge} tone=${WST[cur.status][1]}>${WST[cur.status][0]}<//></div></div>
+          <div className="flex flex-wrap gap-2">${can(S,u,'records.view')&&html`<${Btn} icon="file" onClick=${()=>go({page:'paciente',id:cur.patient})}>Prontuário<//>`}${manage&&cur.status==='em_tratamento'&&html`<${Btn} onClick=${()=>setSt({w:cur,st:'cicatrizada'})}>Encerrar<//><${Btn} v="lime" icon="plus" onClick=${()=>{const l=last(cur)||{};setEv({w:cur,f:{len:'',wid:'',dep:'',gran:l.tissue?l.tissue.gran:'',esf:l.tissue?l.tissue.esf:'',nec:l.tissue?l.tissue.nec:'',epi:l.tissue?l.tissue.epi:'',exudate:'Pouco',exType:'Seroso',odor:'Ausente',edges:'Regulares, aderidas',peri:'Íntegra',pain:2,cover:l.cover||'',next:addDays(T,3),notes:'',stage:cur.stage==='Não se aplica'?'':cur.stage}})}}>Nova avaliação<//>`}</div></div>
+          ${cur.evals.length>0&&html`<div className="grid gap-4 border-t border-line/70 p-5 sm:p-6 lg:grid-cols-[1.4fr_1fr]"><div><p className="mb-1 text-sm font-bold">Área da lesão (cm²)</p><${AreaChart} evals=${cur.evals}/></div>
+            <div className="space-y-3"><p className="text-sm font-bold">Última avaliação, ${F(last(cur).at,{day:'2-digit',month:'2-digit'})}</p><${TisBar} t=${last(cur).tissue} h="h-4"/>
+              <ul className="grid grid-cols-2 gap-1.5 text-[12.5px]">${TIS.map(([k,l,c])=>html`<li key=${k} className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full" style=${{background:c}}></span>${l} <b>${last(cur).tissue[k]}%</b></li>`)}</ul>
+              <dl className="grid grid-cols-2 gap-1.5 text-[12.5px]">${[['Medidas',`${last(cur).len} × ${last(cur).wid} × ${last(cur).dep} cm`],['Exsudato',last(cur).exudate+(last(cur).exType?', '+last(cur).exType.toLowerCase():'')],['Dor',last(cur).pain+' de 10'],['Próxima troca',last(cur).next?D2(last(cur).next):'—']].map(([k,v])=>html`<div key=${k} className="rounded-xl bg-panel2 px-2.5 py-1.5"><dt className="text-faint">${k}</dt><dd className="font-semibold">${v}</dd></div>`)}</dl></div></div>`}<//>
+        <${Card} title="Histórico de avaliações" icon="hist" tone=${2}><${Table} minW=${760} cols=${['Data','Área','Tecidos','Exsudato','Bordas e pele','Dor','Curativo','Por']} rows=${cur.evals.slice().reverse().map(e=>html`<tr key=${e.id}>
+          <${TD} className="whitespace-nowrap">${F(e.at,{day:'2-digit',month:'2-digit',year:'2-digit'})}<//><${TD} className="whitespace-nowrap font-bold">${wArea(e).toLocaleString('pt-BR')} cm²<//><${TD} className="w-32"><${TisBar} t=${e.tissue} h="h-2"/><//><${TD}>${e.exudate}<//>
+          <${TD} className="text-soft">${e.edges}; ${e.peri.toLowerCase()}<//><${TD}>${e.pain}<//><${TD} className="min-w-[200px] text-soft">${e.cover}<//><${TD}>${e.by.split(' ')[0]}<//></tr>`)}/>${cur.closeNote&&html`<p className="mt-3 rounded-2xl bg-tealsoft px-4 py-2.5 text-sm text-teal">Encerrada em ${D2(cur.closed)}: ${cur.closeNote}</p>`}<//></div>`:html`<${Empty} title="Nenhuma lesão selecionada"/>`}</div>`}
+    ${tab==='estomias'&&html`<div className="grid gap-4 lg:grid-cols-2">${S.ostomies.length===0?html`<${Empty} title="Nenhuma estomia registrada"/>`:S.ostomies.map(o=>{const p=patOf(S,o.patient),l=o.evals[o.evals.length-1];return html`<${Card} key=${o.id} title=${o.type+': '+p.name} sub=${`${o.site||'Local não informado'} · desde ${F(o.since,{day:'2-digit',month:'2-digit',year:'numeric'})}`} icon="heart" tone=${4} action=${manage&&html`<${Btn} size="sm" v="lime" icon="plus" onClick=${()=>setOe({o,f:{aspect:'Vermelho vivo, úmido, protruso',peri:'Íntegra',effluent:'',diameter:o.diameter||'',change:true,teach:''}})}>Avaliar<//>`}>
+        <div className="grid grid-cols-2 gap-2 text-[13px]">${[['Diâmetro',o.diameter?o.diameter+' mm':'—'],['Equipamento',o.equipment||'—'],['Estoma',l?l.aspect:'Sem avaliação'],['Pele periestomal',l?l.peri:'—']].map(([k,v])=>html`<div key=${k} className="rounded-2xl bg-panel2 px-3 py-2"><p className="text-[11.5px] text-faint">${k}</p><p className="font-semibold">${v}</p></div>`)}</div>
+        <ol className="mt-4 space-y-2">${o.evals.slice().reverse().map(e=>html`<li key=${e.id} className="rounded-2xl border border-line/70 px-3.5 py-2.5 text-[13px]"><div className="flex flex-wrap justify-between gap-2"><b>${F(e.at,{day:'2-digit',month:'2-digit',year:'2-digit'})}${e.change?' · troca de equipamento':''}</b><span className="text-faint">${e.by}</span></div>
+          <p className="text-soft">Efluente: ${e.effluent||'—'} · pele: ${e.peri.toLowerCase()}</p>${e.teach&&html`<p className="mt-0.5">Orientação: ${e.teach}</p>`}</li>`)}</ol><//>`})}</div>`}
+
+    ${nw&&html`<${Modal} open wide onClose=${()=>setNw(null)} title="Nova lesão" footer=${html`<${Btn} onClick=${()=>setNw(null)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const r=run((D,U)=>A.woundAdd(D,U,{...nw,stage:nw.type==='Lesão por pressão'?nw.stage:'Não se aplica'}),'Lesão registrada. Faça a primeira avaliação.');if(r.ok){setNw(null);setSel(r.data);setFl('em_tratamento')}}}>Registrar<//>`}>
+      <div className="grid gap-4 sm:grid-cols-2"><div className="sm:col-span-2"><p className="mb-1.5 text-[13px] font-semibold text-soft">Paciente</p><${PatientPicker} id="wn-p" value=${nw.patient} onChange=${id=>setNw({...nw,patient:id})}/></div>
+        <${Field} label="Tipo" id="wn-t"><select id="wn-t" className=${inputCls} value=${nw.type} onChange=${e=>setNw({...nw,type:e.target.value})}>${WTYPES.map(x=>html`<option key=${x}>${x}</option>`)}</select><//>
+        ${nw.type==='Lesão por pressão'?html`<${Field} label="Estágio (NPIAP)" id="wn-s"><select id="wn-s" className=${inputCls} value=${nw.stage} onChange=${e=>setNw({...nw,stage:e.target.value})}>${LPP.map(x=>html`<option key=${x}>${x}</option>`)}</select><//>`:html`<div></div>`}
+        <${Field} label="Localização" id="wn-l"><input id="wn-l" className=${inputCls} placeholder="Ex.: região sacral" value=${nw.site} onInput=${e=>setNw({...nw,site:e.target.value})}/><//>
+        <${Field} label="Data de identificação" id="wn-d"><input id="wn-d" type="date" className=${inputCls} value=${nw.opened} onChange=${e=>setNw({...nw,opened:e.target.value})}/><//>
+        <${Field} label="Origem" id="wn-o" className="sm:col-span-2"><select id="wn-o" className=${inputCls} value=${nw.origin} onChange=${e=>setNw({...nw,origin:e.target.value})}>${['Admitido com a lesão','Adquirida durante o acompanhamento','Pós-operatório'].map(x=>html`<option key=${x}>${x}</option>`)}</select><//></div><//>`}
+    ${ev&&html`<${Modal} open wide onClose=${()=>setEv(null)} title="Avaliação da lesão" desc=${`${patOf(S,ev.w.patient).name}: ${ev.w.type}, ${ev.w.site}`} footer=${html`<${Btn} onClick=${()=>setEv(null)}>Cancelar<//><${Btn} v="lime" disabled=${sumT!==100} onClick=${()=>{const r=run((D,U)=>A.woundEval(D,U,ev.w.id,ev.f),'Avaliação registrada.');if(r.ok)setEv(null)}}>Registrar avaliação<//>`}>
+      ${(()=>{const f=ev.f,set=k=>e=>setEv({...ev,f:{...f,[k]:e.target.value}});return html`<div className="grid gap-4 sm:grid-cols-6">
+        ${[['len','Comprimento (cm)'],['wid','Largura (cm)'],['dep','Profundidade (cm)']].map(([k,l])=>html`<${Field} key=${k} label=${l} id=${'we-'+k} className="sm:col-span-2"><input id=${'we-'+k} inputMode="decimal" className=${inputCls} value=${f[k]} onInput=${set(k)}/><//>`)}
+        <div className="sm:col-span-6"><div className="mb-1.5 flex items-center justify-between"><p className="text-[13px] font-semibold text-soft">Tecido no leito da lesão (%)</p><span className=${cx('text-[13px] font-bold',sumT===100?'text-teal':'text-danger')}>Soma: ${sumT}%</span></div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">${TIS.map(([k,l,c])=>html`<label key=${k} className="flex items-center gap-2 rounded-2xl bg-panel2 px-3 py-2"><span className="h-3 w-3 shrink-0 rounded-full" style=${{background:c}}></span><span className="flex-1 text-[13px]">${l}</span><input type="number" min="0" max="100" className="w-14 bg-transparent text-right font-bold outline-none" aria-label=${l} value=${f[k]} onInput=${set(k)}/></label>`)}</div>
+          <div className="mt-2"><${TisBar} t=${{gran:+f.gran||0,esf:+f.esf||0,nec:+f.nec||0,epi:+f.epi||0}}/></div></div>
+        ${[['exudate','Exsudato',['Ausente','Pouco','Moderado','Abundante']],['exType','Tipo de exsudato',['Seroso','Serossanguinolento','Sanguinolento','Purulento']],['odor','Odor',['Ausente','Presente']],
+          ['edges','Bordas',['Regulares, aderidas','Regulares, com epitelização','Irregulares','Maceradas','Descoladas']],['peri','Pele perilesional',['Íntegra','Hiperemiada','Macerada','Ressecada','Com edema']]].concat(ev.w.type==='Lesão por pressão'?[['stage','Estágio (NPIAP)',LPP]]:[]).map(([k,l,o])=>html`<${Field} key=${k} label=${l} id=${'we-'+k} className="sm:col-span-2"><select id=${'we-'+k} className=${inputCls} value=${f[k]} onChange=${set(k)}>${o.map(x=>html`<option key=${x}>${x}</option>`)}</select><//>`)}
+        <${Field} label=${'Dor referida: '+f.pain+' de 10'} id="we-pain" className="sm:col-span-3"><input id="we-pain" type="range" min="0" max="10" className="w-full accent-[rgb(var(--c-ink))]" value=${f.pain} onInput=${set('pain')}/><//>
+        <${Field} label="Próxima troca" id="we-next" className="sm:col-span-3"><input id="we-next" type="date" className=${inputCls} value=${f.next} onChange=${set('next')}/><//>
+        <${Field} label="Curativo realizado (conforme prescrição)" id="we-cov" className="sm:col-span-6"><input id="we-cov" className=${inputCls} value=${f.cover} onInput=${set('cover')}/><//>
+        <${Field} label="Observações" id="we-n" className="sm:col-span-6"><textarea id="we-n" className=${inputCls+' min-h-[60px]'} value=${f.notes} onInput=${set('notes')}></textarea><//></div>`})()}<//>`}
+    <${Confirm} open=${!!st} title="Encerrar acompanhamento" okLabel="Encerrar" tone="ink" needReason desc="Escolha o desfecho e descreva no campo Motivo." onClose=${()=>setSt(null)} onOk=${t=>{const r=run((D,U)=>A.woundStatus(D,U,st.w.id,st.st,t),'Acompanhamento encerrado.');if(r.ok)setSt(null)}}>
+      ${st&&html`<${Seg} size="sm" items=${[['cicatrizada','Cicatrizada'],['encaminhada','Encaminhada a outro serviço']]} value=${st.st} onChange=${x=>setSt({...st,st:x})}/>`}<//>
+    ${no&&html`<${Modal} open wide onClose=${()=>setNo(null)} title="Nova estomia" footer=${html`<${Btn} onClick=${()=>setNo(null)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const r=run((D,U)=>A.ostomyAdd(D,U,no),'Estomia registrada.');if(r.ok){setNo(null);setTab('estomias')}}}>Registrar<//>`}>
+      <div className="grid gap-4 sm:grid-cols-2"><div className="sm:col-span-2"><p className="mb-1.5 text-[13px] font-semibold text-soft">Paciente</p><${PatientPicker} id="os-p" value=${no.patient} onChange=${id=>setNo({...no,patient:id})}/></div>
+        <${Field} label="Tipo" id="os-t"><select id="os-t" className=${inputCls} value=${no.type} onChange=${e=>setNo({...no,type:e.target.value})}>${['Colostomia','Ileostomia','Urostomia','Gastrostomia','Jejunostomia','Traqueostomia','Nefrostomia'].map(x=>html`<option key=${x}>${x}</option>`)}</select><//>
+        <${Field} label="Localização" id="os-s"><input id="os-s" className=${inputCls} value=${no.site} onInput=${e=>setNo({...no,site:e.target.value})}/><//>
+        <${Field} label="Desde" id="os-d"><input id="os-d" type="date" className=${inputCls} value=${no.since} onChange=${e=>setNo({...no,since:e.target.value})}/><//>
+        <${Field} label="Diâmetro (mm)" id="os-m"><input id="os-m" type="number" className=${inputCls} value=${no.diameter} onInput=${e=>setNo({...no,diameter:e.target.value})}/><//>
+        <${Field} label="Equipamento em uso" id="os-e" className="sm:col-span-2"><input id="os-e" className=${inputCls} value=${no.equipment} onInput=${e=>setNo({...no,equipment:e.target.value})}/><//></div><//>`}
+    ${oe&&html`<${Modal} open wide onClose=${()=>setOe(null)} title=${'Avaliar '+oe.o.type.toLowerCase()} desc=${patOf(S,oe.o.patient).name} footer=${html`<${Btn} onClick=${()=>setOe(null)}>Cancelar<//><${Btn} v="lime" onClick=${()=>{const r=run((D,U)=>A.ostomyEval(D,U,oe.o.id,oe.f),'Avaliação registrada.');if(r.ok)setOe(null)}}>Registrar<//>`}>
+      ${(()=>{const f=oe.f,set=k=>e=>setOe({...oe,f:{...f,[k]:e.target.type==='checkbox'?e.target.checked:e.target.value}});return html`<div className="grid gap-4 sm:grid-cols-2">
+        <${Field} label="Aspecto do estoma" id="oe-a"><select id="oe-a" className=${inputCls} value=${f.aspect} onChange=${set('aspect')}>${['Vermelho vivo, úmido, protruso','Vermelho vivo, úmido, plano','Pálido','Escurecido','Edemaciado','Retraído','Prolapsado','Sangramento'].map(x=>html`<option key=${x}>${x}</option>`)}</select><//>
+        <${Field} label="Pele periestomal" id="oe-p"><select id="oe-p" className=${inputCls} value=${f.peri} onChange=${set('peri')}>${['Íntegra','Hiperemia leve','Dermatite','Lesão','Granuloma','Outra'].map(x=>html`<option key=${x}>${x}</option>`)}</select><//>
+        <${Field} label="Efluente" id="oe-e"><input id="oe-e" className=${inputCls} placeholder="Aspecto e volume" value=${f.effluent} onInput=${set('effluent')}/><//>
+        <${Field} label="Diâmetro (mm)" id="oe-m"><input id="oe-m" type="number" className=${inputCls} value=${f.diameter} onInput=${set('diameter')}/><//>
+        <label className="flex items-center gap-2 text-sm sm:col-span-2"><input type="checkbox" className="h-4 w-4" checked=${f.change} onChange=${set('change')}/>Troca de equipamento realizada</label>
+        <${Field} label="Orientações ao paciente e à família" id="oe-t" className="sm:col-span-2"><textarea id="oe-t" className=${inputCls+' min-h-[60px]'} value=${f.teach} onInput=${set('teach')}></textarea><//></div>`})()}<//>`}</div>`;
 }
 
 /* ------------------------------------------------------------------ organização: editar, organizar e excluir */
@@ -2141,6 +2556,12 @@ const MANUAL=[
   steps:['A gestão ou a RT agenda o procedimento para um profissional.','O profissional confirma a realização na Minha área, descrevendo o que fez, ou informa que não foi realizado.','Também é possível registrar um procedimento feito sem agendamento, pelo botão “Registrar procedimento”.','A RT confere no quadro de Procedimentos ou devolve para correção com o motivo.','O profissional corrige e reenvia. Tudo entra no prontuário.'],tip:'Entre como Carla para confirmar um procedimento e depois como Helena para conferir.'},
  {id:'ponto',t:'Ponto do plantão',ic:'login',who:'Profissionais',page:'meu',intro:'Entrada e saída registradas pelo próprio profissional.',
   steps:['No cartão do próximo plantão, no dia, aparece “Registrar entrada” (a partir de 1 hora antes do início).','Ao terminar, toque em “Registrar saída”.','A gestão vê os horários no detalhe do plantão.'],tip:'Só plantões com presença confirmada aceitam registro de ponto.'},
+ {id:'feridas',t:'Feridas e estomaterapia',ic:'activity',who:'Enfermagem',page:'feridas',intro:'Acompanhamento de lesões e estomias com evolução em gráfico.',
+  steps:['Em Serviços > Feridas e estomias, toque em “Nova lesão” e informe paciente, tipo, localização e, se for lesão por pressão, o estágio.','Em cada avaliação, registre comprimento, largura e profundidade; a área é calculada sozinha.','Informe o percentual de granulação, esfacelo, necrose e epitelização (soma de 100%), exsudato, bordas, pele ao redor, dor e o curativo feito conforme a prescrição.','O gráfico mostra a evolução da área e o percentual de redução desde a primeira avaliação.','Em Estomias, registre o tipo, o diâmetro, o equipamento e, a cada visita, o aspecto do estoma, a pele e as orientações à família.'],tip:'Entre como Paulo e abra a lesão do Sr. Antônio: a área caiu de 27 para 7,2 cm².'},
+ {id:'estetica',t:'Enfermagem estética',ic:'heart',who:'Enfermagem e gestão',page:'estetica',intro:'Agenda, anamnese, consentimento, sessões e pacotes.',
+  steps:['Monte o catálogo com duração, valor e número de sessões sugerido.','Agende o cliente; se ele tiver pacote ativo, a sessão é vinculada automaticamente.','Na primeira sessão, o sistema exige a anamnese estética.','Antes de registrar, confirme que o termo de consentimento foi assinado.','Venda pacotes: o valor entra em Contas a receber e as sessões são contadas a cada atendimento.'],tip:'Camila Torres ainda não tem anamnese: tente registrar a sessão dela para ver o bloqueio.'},
+ {id:'ilpi',t:'Longa permanência (ILPI)',ic:'users',who:'Enfermagem e responsável técnica',page:'ilpi',intro:'Rotina de cuidado dos residentes, do leito à passagem de plantão.',
+  steps:['Em Leitos, veja o mapa de quartos com o grau de dependência de cada residente e os alertas.','O dimensionamento mostra quantos cuidadores são necessários por turno, pelas proporções da Anvisa.','Em Medicação, registre cada horário aprazado como administrado, recusado ou não administrado. Atrasos de mais de 1 hora ficam em vermelho.','Em Cuidados do turno, registre higiene, alimentação, hidratação, mudança de decúbito, sinais vitais, eliminações e sono.','Registre intercorrências e, ao fim do turno, a passagem de plantão.','A responsável técnica admite residentes, transcreve prescrições e suspende quando o médico mudar.'],tip:'As prescrições da demonstração são fictícias. A prescrição é sempre do médico; a enfermagem transcreve e registra a administração.'},
  {id:'estoque',t:'Estoque',ic:'box',who:'Gestão',page:'estoque',intro:'Itens, lotes, validades e movimentações rastreáveis.',
   steps:['Toque em um item para ver os lotes.','Use “Nova movimentação” para entrada, saída, perda ou ajuste, sempre com motivo.','Alertas mostram itens abaixo do mínimo, lotes vencendo em 30 dias e vencidos.'],tip:'Movimentações não são apagadas: uma correção vira um novo ajuste.'},
  {id:'temp',t:'Temperatura e rede de frio',ic:'thermo',who:'Responsável técnica',page:'temperatura',intro:'Leituras por equipamento com faixa configurada.',

@@ -2,7 +2,7 @@
 """Monta a demonstração em um único HTML: head + Tailwind compilado + scripts."""
 import subprocess, pathlib, sys
 D=pathlib.Path(__file__).parent; S=D/'src'
-parts=['engine.js','data-vac.js','ui-base.js','ui-shell.js','ui-escalas.js','ui-pessoas.js','ui-clinico.js','ui-org.js','ui-ops.js','ui-manual.js']
+parts=['engine.js','data-vac.js','ui-base.js','ui-shell.js','ui-escalas.js','ui-pessoas.js','ui-clinico.js','ui-servicos.js','ui-org.js','ui-ops.js','ui-manual.js']
 js='\n'.join((S/p).read_text() for p in parts)
 body='<script>\n(function(){\n'+js+'\n})();\n</script>\n'
 head=(S/'head.html').read_text()

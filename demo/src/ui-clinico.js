@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------ pacientes: seleção e cadastro */
-const ptTags=p=>[ageMonths(p.birth||today())<120&&p.birth?['Criança','p3']:null,p.homecare?['Home care','p4']:null,p.pregnant?['Gestante','p6']:null,ageMonths(p.birth||today())>=720?['60+','p5']:null,!p.active?['Inativo','neutral']:null].filter(Boolean);
+const ptTags=p=>[ageMonths(p.birth||today())<120&&p.birth?['Criança','p3']:null,p.homecare?['Home care','p4']:null,p.pregnant?['Gestante','p6']:null,ageMonths(p.birth||today())>=720?['60+','p5']:null,p.ltc&&p.ltc.active?['Residente','p2']:null,p.aes?['Estética','p6']:null,!p.active?['Inativo','neutral']:null].filter(Boolean);
 function PatientPicker({value,onChange,allowNew=true,id='pp'}){
   const {S}=useApp();const [q,setQ]=useState('');const [open,setOpen]=useState(false);const [nw,setNw]=useState(false);
   const p=value&&patOf(S,value);const t=q.trim().toLowerCase();
@@ -184,7 +184,11 @@ function PacienteDetail({id}){
   const tl=[...imm.map(i=>({at:i.at,k:i.id,ic:'syringe',tn:VAC[i.vac].c,t:`${VAC[i.vac].n}, ${i.dose}`,d:i.origin==='externa'?`Transcrita da caderneta: ${i.place}`:`${i.via}, ${i.site.toLowerCase()}, lote ${i.lot?lotOf(S,i.lot).lot:'—'}`,by:i.prof?profOf(S,i.prof).name:i.by,off:i.status==='cancelado'})),
     ...evol.map(e=>({at:e.at,k:e.id,ic:'file',tn:2,t:e.kind,d:e.text,by:e.author})),
     ...procs.filter(x=>x.doneAt||x.status==='agendado').map(x=>({at:x.doneAt||at(x.date,x.start),k:x.id,ic:'clip',tn:1,t:x.type,d:`${PST[x.status][0]}${x.notes?': '+x.notes:''}`,by:profOf(S,x.prof).name})),
-    ...visits.map(v=>({at:at(v.date,v.start),k:v.id,ic:'home',tn:4,t:'Visita domiciliar: '+v.service,d:HVS[v.status][0]+(v.notes?'. '+v.notes:''),by:profOf(S,v.prof).name}))].sort((a,b)=>b.at.localeCompare(a.at));
+    ...visits.map(v=>({at:at(v.date,v.start),k:v.id,ic:'home',tn:4,t:'Visita domiciliar: '+v.service,d:HVS[v.status][0]+(v.notes?'. '+v.notes:''),by:profOf(S,v.prof).name})),
+    ...S.aesAppts.filter(a=>a.patient===id&&a.status==='realizado').map(a=>({at:a.doneAt,k:a.id,ic:'heart',tn:6,t:'Estética: '+aesCatOf(S,a.cat).name,d:a.notes+(a.products?' Produtos: '+a.products+'.':'')+' Termo de consentimento assinado.',by:a.by||profOf(S,a.prof).name})),
+    ...S.wounds.filter(w=>w.patient===id).flatMap(w=>w.evals.map(e=>({at:e.at,k:e.id,ic:'activity',tn:5,t:`Avaliação de ${w.type.toLowerCase()} (${w.site.toLowerCase()})`,d:`${e.len} × ${e.wid} × ${e.dep} cm, ${wArea(e).toLocaleString('pt-BR')} cm². Granulação ${e.tissue.gran}%, esfacelo ${e.tissue.esf}%. Exsudato ${e.exudate.toLowerCase()}. ${e.cover}.`,by:e.by}))),
+    ...S.ostomies.filter(o=>o.patient===id).flatMap(o=>o.evals.map(e=>({at:e.at,k:e.id,ic:'activity',tn:4,t:'Avaliação de '+o.type.toLowerCase(),d:`Estoma: ${e.aspect.toLowerCase()}. Pele: ${e.peri.toLowerCase()}.${e.teach?' '+e.teach:''}`,by:e.by}))),
+    ...S.ltcOcc.filter(o=>o.patient===id).map(o=>({at:o.at,k:o.id,ic:'alert',tn:6,t:'Intercorrência: '+o.kind,d:o.desc+(o.actions?' Condutas: '+o.actions:''),by:o.by}))].filter(x=>x.at).sort((a,b)=>b.at.localeCompare(a.at));
   const tabs=[['tempo','Linha do tempo',tl.length],['vacinas','Caderneta',imm.filter(i=>i.status==='registrado').length],['evol','Evoluções',evol.length],['procs','Procedimentos',procs.length]].concat(can(S,u,'audit.view')?[['acessos','Acessos',access.length]]:[]);
   return html`<div className="space-y-5">
     <div className="flex items-center gap-3"><${IconBtn} n="left" label="Voltar" onClick=${()=>go({page:'prontuario'})} className="bg-panel"/><p className="text-sm text-soft">Prontuário eletrônico</p></div>

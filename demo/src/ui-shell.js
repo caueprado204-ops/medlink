@@ -3,6 +3,7 @@ const NAV=[
   {label:'Principal',items:[['inicio','Visão geral','dash',u=>u.role!=='prof'],['meu','Minha área','user',u=>!!u.prof],['notificacoes','Notificações','bell',null]]},
   {label:'Escalas',items:[['escalas','Calendário','cal','shifts.view'],['solicitacoes','Solicitações','inbox','requests.decide'],['gerar','Gerar escala','wand','shifts.manage']]},
   {label:'Clínico',items:[['vacinacao','Vacinação','syringe','vaccines.view'],['calendario','Calendário vacinal','calcheck','vaccines.view'],['prontuario','Prontuário','file','records.view'],['procedimentos','Procedimentos','clip','procedures.verify']]},
+  {label:'Serviços',items:[['feridas','Feridas e estomias','activity',['wounds.view']],['estetica','Enfermagem estética','heart','aesthetic.view'],['ilpi','Longa permanência','home','ltc.view']]},
   {label:'Pessoas',items:[['profissionais','Profissionais','users','professionals.view'],['talentos','Banco de talentos','star','talent.manage'],['equipe','Equipe e acessos','shield','members.manage']]},
   {label:'Operação',items:[['estoque','Estoque','box','stock.view'],['temperatura','Temperatura','thermo','coldchain.view'],['homecare','Home care','home','homecare.view']]},
   {label:'Financeiro',items:[['pagar','Contas a pagar','wallet','finance.view'],['receber','Contas a receber','coins','finance.view'],['relatorios','Relatórios','chart','reports.view']]},
@@ -55,7 +56,8 @@ const MODULES=[
   ['users','Profissionais','Cadastro, conselho, competências e validação.'],['star','Banco de talentos','Convide profissionais e acompanhe a seleção.'],
   ['syringe','Vacinação','Registro com paciente, vacina, dose, lote, via e local de aplicação.'],['calcheck','Calendário vacinal','Calendário Nacional 2026 por idade, com conferência da caderneta.'],
   ['file','Prontuário eletrônico','Evoluções assinadas, caderneta, procedimentos e acessos registrados.'],['clip','Procedimentos','Registro pelo profissional e conferência pela responsável técnica.'],['box','Estoque','Lotes, validades, entradas, saídas, perdas e alertas.'],
-  ['thermo','Temperatura','Leituras da rede de frio e ocorrências com avaliação técnica.'],['home','Home care','Agenda domiciliar por profissional, paciente e região.'],
+  ['thermo','Temperatura','Leituras da rede de frio e ocorrências com avaliação técnica.'],['activity','Feridas e estomaterapia','Lesões com medidas, tecidos e gráfico de evolução; estomias e orientações.'],
+  ['heart','Enfermagem estética','Agenda, anamnese, termo de consentimento, sessões e pacotes.'],['users','Longa permanência','Leitos, medicação aprazada, cuidados por turno e passagem de plantão.'],['home','Home care','Agenda domiciliar por profissional, paciente e região.'],
   ['wallet','Financeiro','Contas a pagar e a receber com vencidos e baixas.'],['chart','Relatórios','Cobertura, horas, custos e aplicações em gráficos.'],
   ['hist','Auditoria','Quem fez o quê, quando e por qual motivo.'],['building','Organização','Edite, organize e exclua unidades, setores e catálogos.'],['shield','Perfis e permissões','Acesso por função e por unidade.'],['bell','Notificações','Avisos de vaga descoberta, trocas e alertas.']];
 
@@ -85,7 +87,7 @@ function Landing(){
           <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-lime px-3 py-1 text-xs font-bold text-onlime"><${Icon} n="check" s=${12}/>Presença confirmada</p></div>
         <div className="floaty glass absolute right-[9%] top-[6%] hidden w-[200px] rounded-[26px] p-4 md:block" style=${{'--r':'7deg',animationDelay:'1.2s'}}>
           <p className="text-xs text-white/80">Vaga de sexta, 07:00</p><p className="display-n mt-1 text-2xl">COBERTA</p><p className="mt-1 text-xs text-white/80">substituta validada pelas regras</p></div>
-        <p className="mx-auto mt-8 max-w-xl text-center text-[17px] text-white/90">Escalas, equipes, vacinação, estoque, temperatura, home care e financeiro em um só painel, para clínicas de vacinação, clínicas e empresas de home care.</p>
+        <p className="mx-auto mt-8 max-w-xl text-center text-[17px] text-white/90">Escalas, vacinação, prontuário, feridas, estética, longa permanência, home care, estoque e financeiro em um só painel, para clínicas, serviços de enfermagem, ILPIs e empresas de home care.</p>
         <div className="mt-7 flex flex-wrap justify-center gap-3"><button onClick=${openPicker} className="h-12 rounded-full bg-lime px-7 font-bold text-onlime transition hover:brightness-95">Experimentar a demonstração</button>
           <a href="#modulos" className="grid h-12 place-items-center rounded-full border-2 border-white px-7 font-bold transition hover:bg-white hover:text-[#1c3ee4]">Ver módulos</a></div>
         <button onClick=${openPicker} aria-label="Entrar na demonstração" className="absolute bottom-6 right-4 grid h-32 w-32 place-items-center rounded-full bg-lime text-onlime transition hover:scale-105 sm:right-10 sm:h-36 sm:w-36">
@@ -126,7 +128,7 @@ const PROFILES=[
   {id:'marcos',what:'Monta e gera escalas da Unidade Taquaral e cuida do estoque.'},
   {id:'helena',what:'Valida cadastros, confere procedimentos, registra vacinas e trata a rede de frio.'},
   {id:'carla',what:'Confirma plantões, registra ponto, vacinas e procedimentos, e consulta o prontuário.'},
-  {id:'paulo',what:'Enfermeiro: escala, atendimentos domiciliares e férias.'}];
+  {id:'paulo',what:'Enfermeiro: escala, home care, feridas, estomias e longa permanência.'}];
 function ProfilePicker({open,onClose}){
   const {S,login,reset}=useApp();const [confirm,setConfirm]=useState(false);
   return html`<${Modal} open=${open} onClose=${onClose} title="Escolha um perfil" desc="Demonstração com dados fictícios. As alterações ficam salvas só neste navegador.">
@@ -206,7 +208,7 @@ function Shell(){
 function Router(){
   const {page}=useApp();
   const M={inicio:Inicio,escalas:Escalas,solicitacoes:Solicitacoes,gerar:Gerar,profissionais:Profissionais,talentos:Talentos,equipe:Equipe,
-    vacinacao:Vacinacao,calendario:CalendarioVacinal,prontuario:Prontuario,procedimentos:Procedimentos,estoque:Estoque,temperatura:Temperatura,homecare:HomeCare,pagar:Pagar,receber:Receber,relatorios:Relatorios,
+    vacinacao:Vacinacao,calendario:CalendarioVacinal,prontuario:Prontuario,procedimentos:Procedimentos,feridas:Feridas,estetica:Estetica,ilpi:ILPI,estoque:Estoque,temperatura:Temperatura,homecare:HomeCare,pagar:Pagar,receber:Receber,relatorios:Relatorios,
     auditoria:Auditoria,organizacao:Organizacao,configuracoes:Organizacao,notificacoes:Notificacoes,meu:MinhaArea,manual:Manual};
   if(page.page==='prof')return html`<${ProfDetail} id=${page.id}/>`;
   if(page.page==='paciente')return html`<${PacienteDetail} key=${page.id} id=${page.id}/>`;

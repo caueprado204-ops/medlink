@@ -52,6 +52,14 @@ const PERMS={
  'records.write':['Registrar evoluções e cadastrar pacientes','Clínico'],
  'procedures.register':['Registrar procedimentos realizados','Clínico'],
  'procedures.verify':['Agendar e conferir procedimentos','Clínico'],
+ 'aesthetic.view':['Ver agenda de estética','Estética'],
+ 'aesthetic.manage':['Agendar, vender pacotes e editar catálogo de estética','Estética'],
+ 'aesthetic.perform':['Registrar sessões de estética','Estética'],
+ 'ltc.view':['Ver longa permanência','Longa permanência'],
+ 'ltc.care':['Registrar cuidados, medicações e intercorrências','Longa permanência'],
+ 'ltc.manage':['Admitir residentes, leitos e transcrever prescrições','Longa permanência'],
+ 'wounds.view':['Ver feridas e estomias','Feridas e estomaterapia'],
+ 'wounds.manage':['Registrar lesões, avaliações e estomias','Feridas e estomaterapia'],
  'stock.view':['Ver estoque','Operação'],
  'stock.manage':['Movimentar estoque','Operação'],
  'coldchain.view':['Ver temperatura','Operação'],
@@ -66,24 +74,26 @@ const ACT={create:'Criou plantão',update:'Editou plantão',move:'Moveu plantão
  org:'Alterou a organização',org_delete:'Excluiu da organização',org_archive:'Arquivou',shift_delete:'Excluiu rascunho de plantão',prof_delete:'Excluiu profissional',bill_delete:'Excluiu lançamento',
  patient:'Cadastrou ou editou paciente',patient_delete:'Excluiu paciente',record:'Registrou evolução',addendum:'Registrou adendo',record_view:'Acessou prontuário',imm_external:'Transcreveu dose da caderneta',
  proc_assign:'Agendou procedimento',proc_done:'Registrou procedimento realizado',proc_not:'Registrou procedimento não realizado',proc_ok:'Conferiu procedimento',proc_back:'Devolveu procedimento para correção',
- checkin:'Registrou entrada no plantão',checkout:'Registrou saída do plantão'};
-const ENT={shift:'Plantão',asg:'Escala do profissional',req:'Solicitação',prof:'Profissional',inst:'Instituição',stock:'Estoque',vaccine:'Vacinação',cold:'Temperatura',home:'Home care',finance:'Financeiro',talent:'Banco de talentos',org:'Organização',patient:'Prontuário',proc:'Procedimentos'};
+ checkin:'Registrou entrada no plantão',checkout:'Registrou saída do plantão',
+ aes_appt:'Agendou atendimento de estética',aes_status:'Atualizou atendimento de estética',aes_session:'Registrou sessão de estética',aes_pkg:'Vendeu pacote de estética',aes_anam:'Atualizou anamnese estética',aes_cat:'Alterou catálogo de estética',
+ ltc_admit:'Admitiu residente',ltc_discharge:'Registrou saída de residente',ltc_rx:'Transcreveu prescrição',ltc_rx_stop:'Suspendeu prescrição',ltc_mar:'Registrou administração de medicação',ltc_care:'Registrou cuidado',ltc_occ:'Registrou intercorrência',ltc_occ_close:'Encerrou intercorrência',ltc_handoff:'Registrou passagem de plantão',ltc_room:'Alterou quartos e leitos',wound_add:'Registrou lesão',wound_eval:'Registrou avaliação de lesão',wound_status:'Alterou situação da lesão',ostomy_add:'Registrou estomia',ostomy_eval:'Registrou avaliação de estomia'};
+const ENT={shift:'Plantão',asg:'Escala do profissional',req:'Solicitação',prof:'Profissional',inst:'Instituição',stock:'Estoque',vaccine:'Vacinação',cold:'Temperatura',home:'Home care',finance:'Financeiro',talent:'Banco de talentos',org:'Organização',patient:'Prontuário',proc:'Procedimentos',aes:'Estética',ltc:'Longa permanência',wound:'Feridas e estomias'};
 const ACTIVE=s=>s==='aguardando_confirmacao'||s==='confirmado'||s==='substituicao_solicitada';
 const ALL_PERMS=Object.keys(PERMS);
 
 /* ------------------------------------------------------------------ dados de demonstração */
 function seed(){
   const T=today(), W0=weekStart(T);
-  const S={v:3,inst:{name:'Clínica Vida Vacinas',type:'Clínica de vacinação e home care',city:'Campinas/SP',cnpj:'00.000.000/0001-00 (fictício)',phone:'(19) 3000-0000',email:'contato@vidavacinas.demo'},
+  const S={v:5,inst:{name:'Clínica Vida Vacinas',type:'Vacinação, estética, home care e longa permanência',city:'Campinas/SP',cnpj:'00.000.000/0001-00 (fictício)',phone:'(19) 3000-0000',email:'contato@vidavacinas.demo'},
     rules:{rest:11,week:44,maxShift:24},
     rates:{tecnico_enfermagem:28,enfermeiro:46,medico:150,auxiliar_enfermagem:24,farmaceutico:52},
     rolePerms:{
       admin:ALL_PERMS.slice(),
-      gestor:['org.manage','professionals.view','professionals.manage','talent.manage','shifts.view','shifts.manage','shifts.publish','requests.decide','stock.view','stock.manage','homecare.view','homecare.manage','vaccines.view','coldchain.view','reports.view','audit.view'],
-      rt:['professionals.view','documents.verify','shifts.view','vaccines.view','vaccines.apply','vaccines.manage','records.view','records.write','procedures.verify','stock.view','coldchain.view','coldchain.manage','homecare.view','reports.view','audit.view'],
-      prof:['vaccines.view','vaccines.apply','records.view','records.write','procedures.register']},
-    units:[{id:'u1',name:'Matriz Centro',addr:'Rua Barão de Jaguara, 1200, Centro'},{id:'u2',name:'Unidade Taquaral',addr:'Av. Heitor Penteado, 450, Taquaral'}],
-    services:[{id:'s1',unit:'u1',name:'Sala de vacinação'},{id:'s2',unit:'u1',name:'Atendimento de enfermagem'},{id:'s3',unit:'u2',name:'Sala de vacinação'},{id:'s4',unit:'u2',name:'Coleta domiciliar'}],
+      gestor:['wounds.view','aesthetic.view','aesthetic.manage','ltc.view','ltc.manage','org.manage','professionals.view','professionals.manage','talent.manage','shifts.view','shifts.manage','shifts.publish','requests.decide','stock.view','stock.manage','homecare.view','homecare.manage','vaccines.view','coldchain.view','reports.view','audit.view'],
+      rt:['wounds.view','wounds.manage','aesthetic.view','aesthetic.perform','ltc.view','ltc.care','ltc.manage','professionals.view','documents.verify','shifts.view','vaccines.view','vaccines.apply','vaccines.manage','records.view','records.write','procedures.verify','stock.view','coldchain.view','coldchain.manage','homecare.view','reports.view','audit.view'],
+      prof:['wounds.view','wounds.manage','aesthetic.view','aesthetic.perform','ltc.view','ltc.care','vaccines.view','vaccines.apply','records.view','records.write','procedures.register']},
+    units:[{id:'u1',name:'Matriz Centro',addr:'Rua Barão de Jaguara, 1200, Centro'},{id:'u2',name:'Unidade Taquaral',addr:'Av. Heitor Penteado, 450, Taquaral'},{id:'u3',name:'Residencial Vida Longa',addr:'Rua Padre Vieira, 300, Bosque'}],
+    services:[{id:'s1',unit:'u1',name:'Sala de vacinação'},{id:'s2',unit:'u1',name:'Atendimento de enfermagem'},{id:'s3',unit:'u2',name:'Sala de vacinação'},{id:'s4',unit:'u2',name:'Coleta domiciliar'},{id:'s5',unit:'u1',name:'Estética'},{id:'s6',unit:'u3',name:'Cuidados residenciais'}],
     users:[
       {id:'ana',name:'Ana Ribeiro',role:'admin',email:'ana.ribeiro@vidavacinas.demo'},
       {id:'marcos',name:'Marcos Lima',role:'gestor',units:['u2'],email:'marcos.lima@vidavacinas.demo'},
@@ -92,6 +102,7 @@ function seed(){
       {id:'paulo',name:'Paulo Santos',role:'prof',prof:'p5',email:'paulo.santos@email.demo'}],
     profs:[],shifts:[],asg:[],reqs:[],abs:[],notifs:[],audit:[],
     items:[],lots:[],moves:[],imm:[],equip:[],readings:[],occ:[],patients:[],visits:[],pay:[],rec:[],cands:[],opps:[],evol:[],procs:[],
+    aesCat:[],aesPkgs:[],aesAppts:[],wounds:[],ostomies:[],rooms:[],rx:[],mar:[],care:[],ltcOcc:[],handoff:[],
     procCat:['Aferição de sinais vitais','Curativo','Glicemia capilar','Coleta de material para exame','Administração de medicação prescrita','Retirada de pontos','Orientação de enfermagem'].map((n,i)=>({id:'pc'+(i+1),name:n,archived:false}))};
   let ph=0;
   const P=(id,name,cat,num,comps,extra={})=>{ph++;S.profs.push({id,name,cat,council:COUNCIL[cat],num,uf:'SP',comps,validation:'validado',active:true,email:'',phone:`(19) 9${8100+ph*37}-${pad(10+ph*7)}${pad(ph*3)}`,units:[],avail:[1,2,3,4,5,6].map(wd=>({wd,s:'07:00',e:'19:00'})),maxWeek:null,...extra})};
@@ -217,6 +228,57 @@ function seed(){
   PR('hp1','Curativo',-7,'09:00','p6','conferido',{notes:'Curativo realizado conforme prescrição.',vb:'Helena Prado'});
   PR('pa1','Orientação de enfermagem',-20,'15:00','p5','conferido',{notes:'Orientações sobre o calendário da gestante.',vb:'Helena Prado'});
 
+  /* enfermagem estética (catálogo configurável pela clínica; nomes e valores fictícios) */
+  [['Limpeza de pele',60,180,1,2],['Drenagem linfática',50,150,10,4],['Microagulhamento',60,420,4,6],['Peeling químico superficial',45,260,4,1],['Fotobiomodulação com LED',30,120,8,3],['Massagem modeladora',50,160,10,5]]
+    .forEach(([n,d,v,ses,c],i)=>S.aesCat.push({id:'ae'+(i+1),name:n,dur:d,price:v,sessions:ses,c,archived:false}));
+  PT('ae1','Larissa Moura',bm(31*12,40),'F',{region:'Cambuí',addr:'Rua Olavo Bilac, 210',aes:{at:addDays(T,-40),complaint:'Manchas e textura irregular na face',reported:'Nega gestação. Relata pele sensível ao sol.',notes:'Usa protetor solar diariamente.'}});
+  PT('ae2','Beatriz Lemos',bm(42*12,15),'F',{region:'Nova Campinas',addr:'Rua Buarque de Macedo, 77',aes:{at:addDays(T,-20),complaint:'Retenção de líquido nas pernas',reported:'Nega doenças crônicas.',notes:''}});
+  PT('ae3','Camila Torres',bm(29*12,80),'F',{region:'Taquaral',addr:'Rua Uruguai, 145',aes:null});
+  const PK=(pid,cat,used,d)=>{const c=S.aesCat.find(x=>x.id===cat);const k={id:'pk'+uid(),patient:pid,cat,total:c.sessions,used,price:c.price*c.sessions*0.85,created:addDays(T,d),status:used>=c.sessions?'concluido':'ativo'};S.aesPkgs.push(k);return k};
+  const pk1=PK('ae1','ae3',2,-40),pk2=PK('ae2','ae2',6,-12);
+  const AP=(pid,cat,d,t,prof,st,o={})=>S.aesAppts.push({id:'aa'+uid(),patient:pid,cat,date:addDays(T,d),start:t,prof,status:st,pkg:o.pkg||null,consent:!!o.consent,notes:o.notes||'',products:o.products||'',doneAt:st==='realizado'?at(addDays(T,d),t):null});
+  AP('ae1','ae3',-28,'10:00','p6','realizado',{pkg:pk1.id,consent:true,notes:'Sessão realizada conforme protocolo da clínica. Orientada sobre fotoproteção.',products:'Kit microagulhamento lote KM-221 (demo)'});
+  AP('ae1','ae3',-7,'10:00','p6','realizado',{pkg:pk1.id,consent:true,notes:'Sessão realizada sem intercorrências.',products:'Kit microagulhamento lote KM-240 (demo)'});
+  AP('ae2','ae2',-2,'16:00','p5','realizado',{pkg:pk2.id,consent:true,notes:'Drenagem realizada. Cliente refere bem-estar.'});
+  AP('ae1','ae3',0,'10:00','p6','confirmado',{pkg:pk1.id,consent:true});AP('ae2','ae2',0,'16:00','p5','agendado',{pkg:pk2.id,consent:true});
+  AP('ae3','ae1',0,'17:30','p6','agendado');AP('ae2','ae2',2,'16:00','p5','agendado',{pkg:pk2.id,consent:true});AP('ae3','ae5',3,'11:00','p6','agendado');
+  S.rec.push({id:'rc'+uid(),payer:'Larissa Moura',service:'Pacote Microagulhamento (4 sessões)',value:pk1.price,issued:addDays(T,-40),due:addDays(T,-40),received:addDays(T,-40)});
+
+  /* longa permanência (residentes e prescrições fictícios) */
+  S.rooms=[{id:'q1',name:'Quarto 1',beds:['A','B']},{id:'q2',name:'Quarto 2',beds:['A','B']},{id:'q3',name:'Quarto 3',beds:['A','B','C']},{id:'q4',name:'Quarto 4',beds:['A']}];
+  const RS=(id,name,age,sex,room,bed,grau,o={})=>PT(id,name,bm(age*12,id.charCodeAt(2)*7),sex,{region:'Residencial Vida Longa',addr:'Rua Padre Vieira, 300',ltc:{room,bed,grau,admitted:addDays(T,o.adm||-300),contact:o.contact||'',diet:o.diet||'Dieta geral',active:true},...o.extra});
+  RS('lr1','Dona Aurora Campos',86,'F','q1','A',3,{contact:'Sérgio Campos (filho), (19) 99111-2030',diet:'Dieta pastosa',extra:{allergies:['Penicilina (informada)'],conditions:['Demência (diagnóstico informado)']}});
+  RS('lr2','Sr. Benedito Rocha',79,'M','q1','B',2,{contact:'Marta Rocha (filha), (19) 99222-4050'});
+  RS('lr3','Dona Iracema Luz',91,'F','q2','A',3,{contact:'Paulo Luz (neto), (19) 99333-6070',diet:'Dieta branda'});
+  RS('lr4','Sr. Joaquim Prates',74,'M','q3','A',1,{contact:'Ana Prates (esposa), (19) 99444-8090',adm:-40});
+  RS('lr5','Dona Zélia Andrade',82,'F','q3','B',2,{contact:'Rita Andrade (filha), (19) 99555-1020',extra:{conditions:['Diabetes mellitus (informada)']}});
+  const PRESC='Dr. Rafael Nogueira, CRM fictício 184.322';
+  const RX=(pid,drug,dose,route,times,o={})=>S.rx.push({id:'rx'+uid(),patient:pid,drug,dose,route,times,prescriber:PRESC,start:addDays(T,-60),end:null,active:true,notes:o.notes||'',by:'Helena Prado',demo:true});
+  RX('lr1','Medicamento de uso contínuo A (demo)','1 comprimido','Via oral',['08:00','20:00']);RX('lr1','Suplemento nutricional (demo)','200 mL','Via oral',['10:00','15:00']);
+  RX('lr2','Medicamento de uso contínuo B (demo)','1 comprimido','Via oral',['08:00']);RX('lr3','Medicamento de uso contínuo C (demo)','1 comprimido','Via oral',['08:00','14:00','20:00']);
+  RX('lr4','Medicamento de uso contínuo D (demo)','1 comprimido','Via oral',['12:00']);RX('lr5','Medicamento de uso contínuo E (demo)','Conforme prescrição','Via subcutânea',['07:00','19:00'],{notes:'Registrar glicemia capilar antes da administração, conforme prescrição.'});
+  const nowHM=hm(nowIso());
+  S.rx.forEach(r=>r.times.forEach(t=>{[-1,0].forEach(d=>{if(d===0&&t>nowHM)return;if(d===0&&r.patient==='lr3'&&t==='14:00')return;
+    S.mar.push({id:'mr'+uid(),rx:r.id,patient:r.patient,date:addDays(T,d),time:t,status:r.patient==='lr2'&&t==='08:00'&&d===-1?'recusado':'administrado',note:r.patient==='lr2'&&t==='08:00'&&d===-1?'Residente recusou. Médico comunicado.':'',by:['Carla Mendes','Mariana Costa','Paulo Santos'][(t.charCodeAt(1)+d)%3],at:at(addDays(T,d),t)})})}));
+  {const sn=shiftNow(),ago=m=>new Date(Date.now()-m*6e4).toISOString();
+   ['lr1','lr2','lr3','lr5'].forEach((pid,i)=>{S.care.push({id:'cr'+uid(),patient:pid,date:T,shift:sn,kind:'higiene',value:i===2?'Realizada com auxílio total':'Realizada',by:'Mariana Costa',at:ago(150-i*8)});
+     if(i<3)S.care.push({id:'cr'+uid(),patient:pid,date:T,shift:sn,kind:'alimentacao',value:i===1?'Aceitação parcial':'Aceitação total',by:'Mariana Costa',at:ago(90-i*6)});});
+   S.care.push({id:'cr'+uid(),patient:'lr1',date:T,shift:sn,kind:'sinais',value:'PA 128/80 mmHg · FC 76 bpm · Tax 36,4 °C · SpO2 96%',by:'Paulo Santos',at:ago(70)});
+   S.care.push({id:'cr'+uid(),patient:'lr3',date:T,shift:sn,kind:'decubito',value:'Realizada',by:'Mariana Costa',at:ago(40)});}
+  S.ltcOcc.push({id:'lo'+uid(),patient:'lr3',at:at(addDays(T,-2),'03:40'),kind:'Queda',desc:'Encontrada sentada ao lado da cama durante a ronda. Consciente, sem queixa de dor no momento.',actions:'Avaliada pela enfermeira de plantão, família e médico comunicados. Grade da cama revisada.',by:'Ana Beatriz Lima',status:'aberta'});
+  S.handoff.push({id:'hf'+uid(),at:at(addDays(T,-1),'19:05'),shift:'tarde',by:'Ana Beatriz Lima',text:'Dona Iracema em observação após a queda de anteontem, sem novas queixas. Sr. Benedito recusou a medicação das 8h de ontem; médico ciente. Demais residentes sem intercorrências.'});
+  S.handoff.push({id:'hf'+uid(),at:at(T,'07:05'),shift:'noite',by:'Paulo Santos',text:'Noite tranquila. Dona Aurora dormiu bem, sem agitação. Rondas de 2 em 2 horas realizadas.'});
+
+  /* feridas e estomias (registros fictícios de demonstração) */
+  const WD=(pid,type,site,stage,days,evals)=>{const w={id:'wd'+uid(),patient:pid,type,site,stage,opened:addDays(T,-days),status:'em_tratamento',origin:'',evals:[]};
+    evals.forEach(([d,L,W,D,tis,ex,pain,cov,by],k)=>w.evals.push({id:'we'+uid(),at:at(addDays(T,d),'10:'+pad(10+k*7)),len:L,wid:W,dep:D,tissue:tis,exudate:ex,exType:ex==='Ausente'?'':'Seroso',odor:'Ausente',edges:k<evals.length-1?'Regulares, aderidas':'Regulares, com epitelização',peri:'Íntegra',pain,cover:cov,next:addDays(T,d+3),by,notes:''}));S.wounds.push(w);return w};
+  WD('hp1','Lesão por pressão','Região sacral','Estágio 3',42,[[-42,6.0,4.5,1.2,{gran:40,esf:50,nec:10,epi:0},'Moderado',5,'Cobertura conforme protocolo institucional (demo)','Ana Beatriz Lima'],[-28,5.2,4.0,1.0,{gran:60,esf:35,nec:5,epi:0},'Moderado',4,'Cobertura conforme protocolo institucional (demo)','Ana Beatriz Lima'],[-14,4.1,3.2,0.6,{gran:80,esf:15,nec:0,epi:5},'Pouco',3,'Cobertura conforme protocolo institucional (demo)','Paulo Santos'],[0,3.0,2.4,0.3,{gran:80,esf:5,nec:0,epi:15},'Pouco',2,'Cobertura conforme protocolo institucional (demo)','Ana Beatriz Lima']]);
+  WD('lr1','Lesão por pressão','Calcâneo direito','Estágio 2',18,[[-18,2.2,2.0,0.1,{gran:70,esf:30,nec:0,epi:0},'Pouco',2,'Cobertura conforme prescrição (demo)','Paulo Santos'],[-6,1.6,1.4,0.1,{gran:70,esf:10,nec:0,epi:20},'Pouco',1,'Cobertura conforme prescrição (demo)','Mariana Costa']]);
+  WD('hp2','Úlcera em pé diabético','Hálux esquerdo, face plantar','Não se aplica',30,[[-30,1.8,1.5,0.4,{gran:50,esf:50,nec:0,epi:0},'Moderado',3,'Cobertura conforme prescrição (demo)','Paulo Santos'],[-9,1.9,1.6,0.4,{gran:45,esf:55,nec:0,epi:0},'Moderado',4,'Cobertura conforme prescrição (demo)','Paulo Santos']]);
+  S.ostomies.push({id:'os'+uid(),patient:'hp3',type:'Colostomia',site:'Quadrante inferior esquerdo',since:addDays(T,-120),diameter:32,equipment:'Bolsa drenável de uma peça, recorte 35 mm (demo)',status:'ativa',evals:[
+    {id:'oe'+uid(),at:at(addDays(T,-15),'15:00'),aspect:'Vermelho vivo, úmido, protruso',peri:'Íntegra',effluent:'Fezes pastosas',diameter:32,change:true,teach:'Familiar orientado sobre recorte da placa e esvaziamento da bolsa.',by:'Paulo Santos'},
+    {id:'oe'+uid(),at:at(addDays(T,-1),'10:30'),aspect:'Vermelho vivo, úmido, protruso',peri:'Hiperemia leve às 6h',effluent:'Fezes pastosas',diameter:32,change:true,teach:'Reforçada orientação de recorte justo ao estoma.',by:'Paulo Santos'}]});
+
   /* financeiro */
   const PY=(sup,desc,cat,val,d,paid)=>S.pay.push({id:'py'+uid(),supplier:sup,desc,cat,value:val,due:addDays(T,d),paid:paid?addDays(T,paid):null});
   PY('Distribuidora Imuno (demo)','Lote de vacinas influenza','Vacinas e insumos',18640,6,null);PY('Frio Certo Manutenção (demo)','Manutenção preventiva das câmaras','Manutenção',1480,-2,null);
@@ -306,6 +368,13 @@ function orgUses(S,kind,id){const u=[];
   if(kind==='items'&&(S.moves.some(m=>m.item===id)||S.lots.some(l=>l.item===id&&l.qty>0)))u.push('movimentações');
   if(kind==='procCat'){const n=(S.procCat.find(p=>p.id===id)||{}).name;if(S.procs.some(p=>p.type===n))u.push('procedimentos registrados')}
   return u}
+const aesCatOf=(S,id)=>S.aesCat.find(x=>x.id===id);const roomOf=(S,id)=>S.rooms.find(x=>x.id===id)||{name:'Sem quarto',beds:[]};
+const shiftNow=()=>{const h=new Date().getHours();return h>=7&&h<13?'manha':h>=13&&h<19?'tarde':'noite'};const SHIFTN={manha:'Manhã (7h às 13h)',tarde:'Tarde (13h às 19h)',noite:'Noite (19h às 7h)'};
+const CARE={higiene:['Higiene corporal',['Realizada','Realizada com auxílio total','Recusou']],alimentacao:['Alimentação',['Aceitação total','Aceitação parcial','Recusou']],hidratacao:['Hidratação',null,'Ex.: 300 mL'],
+  decubito:['Mudança de decúbito',['Realizada']],sinais:['Sinais vitais',null,'Ex.: PA 120/80 mmHg, FC 72 bpm, Tax 36,5 °C'],eliminacoes:['Eliminações',['Diurese presente','Evacuação presente','Sem eliminações no turno']],sono:['Sono e repouso',['Dormiu bem','Sono agitado','Acordado']]};
+const WST={em_tratamento:['Em tratamento','amber'],cicatrizada:['Cicatrizada','teal'],encaminhada:['Encaminhada','sky']};
+const wArea=e=>e?Math.round(e.len*e.wid*10)/10:0;
+const AST2={agendado:['Agendado','sky'],confirmado:['Confirmado','teal'],realizado:['Realizado','p4'],faltou:['Faltou','amber'],cancelado:['Cancelado','neutral']};
 const PST={agendado:['Agendado','sky'],realizado:['Aguardando conferência','amber'],conferido:['Conferido','teal'],devolvido:['Devolvido para correção','danger'],nao_realizado:['Não realizado','neutral']};
 const itemQty=(S,id)=>S.lots.filter(l=>l.item===id).reduce((t,l)=>t+l.qty,0);
 
@@ -568,6 +637,82 @@ const A={
     x.status=ok?'conferido':'devolvido';x.verifiedBy=u.name;x.verifiedAt=nowIso();x.returnNote=ok?null:txt.trim();
     log(S,u,ok?'proc_ok':'proc_back','proc',x.patient,ok?null:txt,`${x.type}: ${patOf(S,x.patient).name}`);
     noteProf(S,u,x.prof,ok?'Procedimento conferido':'Procedimento devolvido para correção',`${x.type}, ${patOf(S,x.patient).name}${ok?'':'. '+txt}`);},
+  /* ---------------- enfermagem estética */
+  aesAppt(S,u,f){need(S,u,'aesthetic.manage');if(!f.patient||!f.cat||!f.prof||!f.date||!f.start)throw new Stop('validation','Preencha cliente, procedimento, profissional, data e horário.');
+    const c=S.aesCat.find(x=>x.id===f.cat);const end=m=>{const[h,mi]=m.split(':').map(Number);const t=h*60+mi+c.dur;return pad(Math.floor(t/60))+':'+pad(t%60)};
+    const clash=S.aesAppts.find(a=>a.prof===f.prof&&a.date===f.date&&!['cancelado','faltou'].includes(a.status)&&a.start<end(f.start)&&end(a.start)>f.start);
+    if(clash)throw new Stop('blocking',`${profOf(S,f.prof).name} já tem atendimento às ${clash.start} neste dia.`);
+    const pkg=S.aesPkgs.find(k=>k.patient===f.patient&&k.cat===f.cat&&k.status==='ativo');
+    S.aesAppts.push({id:'aa'+uid(),patient:f.patient,cat:f.cat,date:f.date,start:f.start,prof:f.prof,status:'agendado',pkg:pkg?pkg.id:null,consent:false,notes:'',products:'',doneAt:null});
+    log(S,u,'aes_appt','aes',f.patient,null,`${c.name}: ${patOf(S,f.patient).name}, ${D2(f.date)} ${f.start}`);noteProf(S,u,f.prof,'Novo atendimento de estética',`${c.name}, ${patOf(S,f.patient).name}, ${D2(f.date)} às ${f.start}`);},
+  aesStatus(S,u,id,st){const a=S.aesAppts.find(x=>x.id===id);if(!(can(S,u,'aesthetic.manage')||(u.prof===a.prof&&can(S,u,'aesthetic.perform'))))throw new Stop('permission','Sem permissão.');
+    a.status=st;log(S,u,'aes_status','aes',a.patient,null,`${aesCatOf(S,a.cat).name}: ${patOf(S,a.patient).name}, ${{confirmado:'confirmado',cancelado:'cancelado',faltou:'falta registrada'}[st]||st}`);},
+  aesAnam(S,u,pid,f){if(!(can(S,u,'aesthetic.perform')||can(S,u,'aesthetic.manage')))throw new Stop('permission','Sem permissão.');if(!(f.complaint||'').trim())throw new Stop('validation','Informe a queixa principal.');
+    patOf(S,pid).aes={at:today(),complaint:f.complaint.trim(),reported:(f.reported||'').trim(),notes:(f.notes||'').trim()};log(S,u,'aes_anam','aes',pid,null,patOf(S,pid).name);},
+  aesSession(S,u,id,f){need(S,u,'aesthetic.perform');const a=S.aesAppts.find(x=>x.id===id);const pt=patOf(S,a.patient);
+    if(!['agendado','confirmado'].includes(a.status))throw new Stop('validation','Este atendimento não está em aberto.');
+    if(!pt.aes)throw new Stop('blocking','Registre a anamnese estética do cliente antes da primeira sessão.');
+    if(!f.consent)throw new Stop('blocking','Confirme que o termo de consentimento foi assinado pelo cliente.');
+    if((f.notes||'').trim().length<10)throw new Stop('validation','Descreva a sessão (mínimo de 10 caracteres).');
+    a.status='realizado';a.consent=true;a.notes=f.notes.trim();a.products=(f.products||'').trim();a.doneAt=nowIso();a.by=u.name;
+    const k=a.pkg&&S.aesPkgs.find(x=>x.id===a.pkg);if(k){k.used=Math.min(k.total,k.used+1);if(k.used>=k.total)k.status='concluido'}
+    log(S,u,'aes_session','aes',pt.id,null,`${aesCatOf(S,a.cat).name}: ${pt.name}${k?` (sessão ${k.used} de ${k.total})`:''}`);},
+  aesPkg(S,u,f){need(S,u,'aesthetic.manage');const c=aesCatOf(S,f.cat);if(!f.patient||!c)throw new Stop('validation','Selecione cliente e procedimento.');
+    const n=Math.max(1,Math.round(+f.total||0)),v=+String(f.price).replace(/\./g,'').replace(',','.');if(!v||v<=0)throw new Stop('validation','Informe o valor do pacote.');
+    if(S.aesPkgs.some(k=>k.patient===f.patient&&k.cat===f.cat&&k.status==='ativo'))throw new Stop('validation','Este cliente já tem um pacote ativo deste procedimento.');
+    S.aesPkgs.push({id:'pk'+uid(),patient:f.patient,cat:f.cat,total:n,used:0,price:v,created:today(),status:'ativo'});
+    S.rec.push({id:'rc'+uid(),payer:patOf(S,f.patient).name,service:`Pacote ${c.name} (${n} sessões)`,value:v,issued:today(),due:f.due||today(),received:null});
+    log(S,u,'aes_pkg','aes',f.patient,null,`${c.name}, ${n} sessões, ${BRL(v)}`);},
+  aesCatSave(S,u,f){need(S,u,'aesthetic.manage');if((f.name||'').trim().length<3)throw new Stop('validation','Informe o nome do procedimento.');
+    const d={name:f.name.trim(),dur:Math.max(10,+f.dur||30),price:+String(f.price).replace(',','.')||0,sessions:Math.max(1,+f.sessions||1)};
+    if(f.id)Object.assign(aesCatOf(S,f.id),d);else S.aesCat.push({id:'ae'+uid(),...d,c:S.aesCat.length%6+1,archived:false});log(S,u,'aes_cat','aes',null,null,d.name);},
+  aesCatDel(S,u,id){need(S,u,'aesthetic.manage');const c=aesCatOf(S,id);if(S.aesAppts.some(a=>a.cat===id)){c.archived=true;log(S,u,'aes_cat','aes',null,null,'Arquivado: '+c.name);return 'archived'}
+    S.aesCat=S.aesCat.filter(x=>x.id!==id);log(S,u,'aes_cat','aes',null,null,'Excluído: '+c.name);return 'deleted';},
+  /* ---------------- longa permanência */
+  ltcAdmit(S,u,f){need(S,u,'ltc.manage');const p=patOf(S,f.patient);if(!p)throw new Stop('validation','Selecione o residente.');if(!f.room||!f.bed)throw new Stop('validation','Escolha quarto e leito.');
+    if(S.patients.some(x=>x.ltc&&x.ltc.active&&x.id!==p.id&&x.ltc.room===f.room&&x.ltc.bed===f.bed))throw new Stop('blocking','Este leito está ocupado.');
+    if(!['1','2','3',1,2,3].includes(f.grau))throw new Stop('validation','Informe o grau de dependência.');
+    const was=p.ltc&&p.ltc.active;p.ltc={room:f.room,bed:f.bed,grau:+f.grau,admitted:was?p.ltc.admitted:(f.date||today()),contact:f.contact||'',diet:f.diet||'Dieta geral',active:true};
+    log(S,u,'ltc_admit','ltc',p.id,null,`${p.name}: ${roomOf(S,f.room).name}, leito ${f.bed}, grau ${f.grau}`);},
+  ltcDischarge(S,u,pid,reason){need(S,u,'ltc.manage');if(!(reason||'').trim())throw new Stop('validation','Informe o motivo da saída.');const p=patOf(S,pid);
+    p.ltc.active=false;p.ltc.left=today();p.ltc.leftReason=reason;S.rx.filter(r=>r.patient===pid&&r.active).forEach(r=>{r.active=false;r.end=today()});log(S,u,'ltc_discharge','ltc',pid,reason,p.name);},
+  ltcRx(S,u,f){need(S,u,'ltc.manage');if(!f.patient||!(f.drug||'').trim()||!(f.dose||'').trim()||!f.route)throw new Stop('validation','Preencha residente, medicamento, dose e via.');
+    const times=(f.times||'').split(/[,; ]+/).map(t=>t.trim()).filter(Boolean);if(!times.length||times.some(t=>!/^\d{2}:\d{2}$/.test(t)))throw new Stop('validation','Informe os horários no formato 08:00, 20:00.');
+    if(!(f.prescriber||'').trim())throw new Stop('validation','Informe o prescritor e o registro do conselho.');
+    S.rx.push({id:'rx'+uid(),patient:f.patient,drug:f.drug.trim(),dose:f.dose.trim(),route:f.route,times:times.sort(),prescriber:f.prescriber.trim(),start:today(),end:null,active:true,notes:(f.notes||'').trim(),by:u.name});
+    log(S,u,'ltc_rx','ltc',f.patient,null,`${f.drug}, ${f.dose}, ${times.join(' ')}`);},
+  ltcRxStop(S,u,id,reason){need(S,u,'ltc.manage');if(!(reason||'').trim())throw new Stop('validation','Informe o motivo da suspensão.');const r=S.rx.find(x=>x.id===id);r.active=false;r.end=today();r.stopReason=reason;log(S,u,'ltc_rx_stop','ltc',r.patient,reason,r.drug);},
+  ltcMar(S,u,rxid,time,st,txt){need(S,u,'ltc.care');const r=S.rx.find(x=>x.id===rxid);const T=today();
+    if(S.mar.some(m=>m.rx===rxid&&m.date===T&&m.time===time))throw new Stop('validation','Este horário já foi registrado.');
+    if(st!=='administrado'&&!(txt||'').trim())throw new Stop('validation','Informe o motivo.');
+    S.mar.push({id:'mr'+uid(),rx:rxid,patient:r.patient,date:T,time,status:st,note:(txt||'').trim(),by:u.name,at:nowIso()});
+    log(S,u,'ltc_mar','ltc',r.patient,txt||null,`${r.drug} ${time}: ${st.replace('_',' ')}`);
+    if(st!=='administrado')note(S,u,'ltc.manage','Medicação não administrada',`${patOf(S,r.patient).name}: ${r.drug} das ${time}. ${txt}`,{page:'ilpi'});},
+  ltcCare(S,u,f){need(S,u,'ltc.care');if(!f.patient||!f.kind||!(f.value||'').trim())throw new Stop('validation','Informe o registro.');
+    S.care.push({id:'cr'+uid(),patient:f.patient,date:today(),shift:shiftNow(),kind:f.kind,value:f.value.trim(),by:u.name,at:nowIso()});log(S,u,'ltc_care','ltc',f.patient,null,`${CARE[f.kind][0]}: ${f.value}`);},
+  ltcOccAdd(S,u,f){need(S,u,'ltc.care');if(!f.patient||!f.kind||(f.desc||'').trim().length<10)throw new Stop('validation','Informe residente, tipo e descrição (mínimo de 10 caracteres).');
+    S.ltcOcc.unshift({id:'lo'+uid(),patient:f.patient,at:nowIso(),kind:f.kind,desc:f.desc.trim(),actions:(f.actions||'').trim(),by:u.name,status:'aberta'});
+    log(S,u,'ltc_occ','ltc',f.patient,null,`${f.kind}: ${patOf(S,f.patient).name}`);note(S,u,'ltc.manage','Intercorrência na longa permanência',`${f.kind}: ${patOf(S,f.patient).name}`,{page:'ilpi'});},
+  ltcOccClose(S,u,id,txt){need(S,u,'ltc.manage');if(!(txt||'').trim())throw new Stop('validation','Descreva o desfecho.');const o=S.ltcOcc.find(x=>x.id===id);o.status='encerrada';o.outcome=txt.trim();o.closedBy=u.name;log(S,u,'ltc_occ_close','ltc',o.patient,txt,o.kind);},
+  ltcHandoff(S,u,txt){need(S,u,'ltc.care');if((txt||'').trim().length<15)throw new Stop('validation','Escreva a passagem de plantão (mínimo de 15 caracteres).');
+    S.handoff.unshift({id:'hf'+uid(),at:nowIso(),shift:shiftNow(),by:u.name,text:txt.trim()});log(S,u,'ltc_handoff','ltc',null,null,SHIFTN[shiftNow()]);},
+  ltcRooms(S,u,rooms){need(S,u,'ltc.manage');S.rooms=rooms;log(S,u,'ltc_room','ltc',null,null,`${rooms.length} quartos, ${rooms.reduce((t,r)=>t+r.beds.length,0)} leitos`);},
+  /* ---------------- feridas e estomias */
+  woundAdd(S,u,f){need(S,u,'wounds.manage');if(!f.patient||!f.type||!(f.site||'').trim())throw new Stop('validation','Informe paciente, tipo e localização da lesão.');
+    const w={id:'wd'+uid(),patient:f.patient,type:f.type,site:f.site.trim(),stage:f.stage||'Não se aplica',opened:f.opened||today(),status:'em_tratamento',origin:(f.origin||'').trim(),evals:[]};S.wounds.push(w);
+    log(S,u,'wound_add','wound',f.patient,null,`${f.type}, ${f.site}: ${patOf(S,f.patient).name}`);return w.id;},
+  woundEval(S,u,id,f){need(S,u,'wounds.manage');const w=S.wounds.find(x=>x.id===id);const n=k=>+String(f[k]||'').replace(',','.');
+    if(!(n('len')>0&&n('wid')>0))throw new Stop('validation','Informe comprimento e largura em centímetros.');
+    const tis={gran:+f.gran||0,esf:+f.esf||0,nec:+f.nec||0,epi:+f.epi||0};const tot=tis.gran+tis.esf+tis.nec+tis.epi;if(tot!==100)throw new Stop('validation',`A soma dos tecidos precisa dar 100% (está em ${tot}%).`);
+    if(!(f.cover||'').trim())throw new Stop('validation','Informe a cobertura ou o curativo realizado, conforme a prescrição.');
+    w.evals.push({id:'we'+uid(),at:nowIso(),len:n('len'),wid:n('wid'),dep:n('dep')||0,tissue:tis,exudate:f.exudate,exType:f.exType||'',odor:f.odor,edges:f.edges||'',peri:f.peri||'',pain:+f.pain||0,cover:f.cover.trim(),next:f.next||'',by:u.name,notes:(f.notes||'').trim()});
+    if(f.stage)w.stage=f.stage;log(S,u,'wound_eval','wound',w.patient,null,`${w.type}, ${w.site}: ${(n('len')*n('wid')).toFixed(1).replace('.',',')} cm²`);},
+  woundStatus(S,u,id,st,txt){need(S,u,'wounds.manage');const w=S.wounds.find(x=>x.id===id);if(!(txt||'').trim())throw new Stop('validation','Registre a observação.');w.status=st;w.closed=today();w.closeNote=txt.trim();log(S,u,'wound_status','wound',w.patient,txt,`${w.type}: ${WST[st][0].toLowerCase()}`);},
+  ostomyAdd(S,u,f){need(S,u,'wounds.manage');if(!f.patient||!f.type)throw new Stop('validation','Informe paciente e tipo de estomia.');
+    S.ostomies.push({id:'os'+uid(),patient:f.patient,type:f.type,site:(f.site||'').trim(),since:f.since||today(),diameter:+f.diameter||null,equipment:(f.equipment||'').trim(),status:'ativa',evals:[]});log(S,u,'ostomy_add','wound',f.patient,null,f.type);},
+  ostomyEval(S,u,id,f){need(S,u,'wounds.manage');const o=S.ostomies.find(x=>x.id===id);if(!f.aspect||!f.peri)throw new Stop('validation','Informe o aspecto do estoma e da pele periestomal.');
+    o.evals.push({id:'oe'+uid(),at:nowIso(),aspect:f.aspect,peri:f.peri,effluent:(f.effluent||'').trim(),diameter:+f.diameter||o.diameter,change:!!f.change,teach:(f.teach||'').trim(),by:u.name});if(+f.diameter)o.diameter=+f.diameter;
+    log(S,u,'ostomy_eval','wound',o.patient,null,`${o.type}: ${patOf(S,o.patient).name}`);},
   /* ---------------- ponto do plantão */
   punch(S,u,aid,kind){const a=A.myAsg(S,u,aid),s=shiftOf(S,a.shift);if(a.status!=='confirmado')throw new Stop('validation','Confirme a presença antes de registrar o ponto.');
     const now=Date.now(),st=+new Date(s.start),en=+new Date(s.end);
@@ -578,8 +723,8 @@ const A={
 };
 
 /* ------------------------------------------------------------------ armazenamento */
-const SKEY='medlink-demo-v3',UKEY='medlink-demo-user3',TKEY='medlink-theme';
-const load=()=>{try{const s=JSON.parse(localStorage.getItem(SKEY));if(s&&s.v===3)return s}catch(e){}return null};
+const SKEY='medlink-demo-v5',UKEY='medlink-demo-user3',TKEY='medlink-theme';
+const load=()=>{try{const s=JSON.parse(localStorage.getItem(SKEY));if(s&&s.v===5)return s}catch(e){}return null};
 const save=s=>{try{localStorage.setItem(SKEY,JSON.stringify(s))}catch(e){}};
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
